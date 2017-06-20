@@ -1,0 +1,23 @@
+feature: {'Double_quote': 0, 'Right': 0, 'Prompt': 0, 'End_script': 0, 'Confirm': 0, 'Url': u'http://192.168.184.129/mutillidae/index.php?page=document-viewer.php&PathToDocument=documentation/how-to-access-Mutillidae-over-Virtual-Box-network.php', 'Attribute': 2, 'JavaScript': 0, 'Back_quote': 0, 'Param': u'PathToDocument', 'Alert': 0, 'Html': 8, None: 0, 'Start_script': 0, 'Backquote': 0, 'VBScript': 0, 'Quotation': 1, 'Msgbox': 0, 'Single_quote': 0, 'Left': 0}
+
+('95', 0.99562198)　★"></iframe><script>alert();</script>
+('111', 0.0019542025)
+('99', 0.001519129)
+Elapsed time  :6.74000000954[sec]
+
+
+feature: {'Double_quote': 0, 'Right': 0, 'Prompt': 0, 'End_script': 0, 'Confirm': 0, 'Url': u'http://192.168.184.129/mutillidae/index.php?page=document-viewer.php&PathToDocument=documentation/how-to-access-Mutillidae-over-Virtual-Box-network.php', 'Attribute': 0, 'JavaScript': 0, 'Back_quote': 0, 'Param': u'PathToDocument', 'Alert': 0, 'Html': 10, None: 0, 'Start_script': 0, 'Backquote': 0,'VBScript': 0, 'Quotation': 0, 'Msgbox': 0, 'Single_quote': 0, 'Left': 0}
+
+('107', 0.93892336)　★<script>alert();</script>
+('10', 0.058358233)
+('103', 0.0012320951)
+Elapsed time  :7.00200009346[sec]
+
+feature: {'Double_quote': 0, 'Right': 0, 'Prompt': 0, 'End_script': 0, 'Confirm': 0, 'Url': u'http://192.168.184.129/mutillidae/index.php?page=password-generator.php&username=anonymous', 'Attribute': 0, 'JavaScript': 0, 'Back_quote': 0, 'Param': u'username', 'Alert': 0, 'Html': 6, None: 0, 'Start_script': 0, 'Backquote': 0, 'VBScript': 0, 'Quotation': 0, 'Msgbox': 0, 'Single_quote': 0, 'Left': 0}
+
+('10', 0.46793631)　★NG：</textarea><script>alert();</script>
+('107', 0.25127023)
+('103', 0.24925834)
+Elapsed time  :7.60400009155[sec]
+
+
