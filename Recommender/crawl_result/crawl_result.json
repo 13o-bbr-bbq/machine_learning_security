@@ -1,0 +1,10 @@
+[
+{"urls": ["http://192.168.0.6/xss/reflect/full1?in=change_me"]},
+{"urls": ["http://192.168.0.6/xss/reflect/basic?in=2change"]},
+{"urls": ["http://192.168.0.6/xss/reflect/basic_in_tag?in=2change"]},
+{"urls": ["http://192.168.0.6/xss/reflect/textarea1?in=foo1"]},
+{"urls": ["http://192.168.0.6/xss/reflect/textarea2?in=foo2"]},
+{"urls": ["http://192.168.0.6/xss/reflect/onmouseover?in=changeme4"]},
+{"urls": ["http://192.168.0.6/xss/reflect/onmouseover_unquoted?in=changeme5"]},
+{"urls": ["http://192.168.0.6/xss/reflect/onmouseover_div_unquoted?in=changeme6"]}
+]
