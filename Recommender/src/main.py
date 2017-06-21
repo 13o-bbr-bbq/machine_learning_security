@@ -61,13 +61,13 @@ if __name__ == "__main__":
     str_cmd_option = ' -a target_url=' + target + ' -a allow_domain=' + str_allow_domain +\
                      ' -a delay=' + spider_delay_time
     str_cmd = 'scrapy runspider Spider.py -o ' + str_result_file + str_cmd_option
-    proc = Popen(str_cmd, shell=True)
-    proc.wait()
+    #proc = Popen(str_cmd, shell=True)
+    #proc.wait()
 
     # get crawl's result
-    fin = open(str_result_file)
+    #fin = open(str_result_file)
     # DEBUG
-    #fin = open('crawl_result\\20170616061147_crawl_result.json')
+    fin = open('crawl_result\\crawl_result.json')
     dict_json = json.load(fin)
     lst_target = []
     for idx in range(len(dict_json)):
@@ -81,13 +81,11 @@ if __name__ == "__main__":
     all_feature_list = obj_invest.main_control(lst_target)
 
     # recommends
-    flt_start = time.time()
     obj_recommend = Recommend()
-
     for dic_feature in all_feature_list:
+        flt_start = time.time()
         print('feature: %s' % dic_feature)
         lst_feature = convert_feature_vector(dic_feature)
         obj_recommend.predict(lst_feature)
-
         flt_elapsed_time = time.time() - flt_start
         print("Elapsed time  :{0}".format(flt_elapsed_time) + "[sec]")

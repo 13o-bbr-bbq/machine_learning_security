@@ -80,6 +80,8 @@ class Investigate:
                 return 3
             elif str_feature == 'href':
                 return 4
+            elif str_feature == 'class':
+                return 5
             else:
                 return 99
         elif str_type == 'JavaScript':
@@ -92,14 +94,14 @@ class Investigate:
             elif str_feature == 'var':
                 return 3
             else:
-                return 9
+                return 99
         elif str_type == 'VBScript':
             if str_feature == '':
                 return 0
             elif str_feature == 'plane':
                 return 1
             else:
-                return 9
+                return 99
         elif str_type == 'quotation':
             if str_feature == '':
                 return 0
@@ -108,7 +110,7 @@ class Investigate:
             elif str_feature == "'":
                 return 2
             else:
-                return 9
+                return 99
 
     def get_escape_key_name(self, str_mark):
         if str_mark == '"':
