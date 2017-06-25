@@ -24,7 +24,8 @@ classes = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
            '101', '102', '103', '104', '105', '106', '107', '108', '109', '110',
            '111', '112', '113', '114', '115', '116', '117', '118', '119', '120',
            '121', '122', '123', '124', '125', '126', '127', '128', '129', '130',
-           '131', '132', '133']
+           '131', '132', '133', '134', '135', '136', '137', '138', '139', '140',
+           '141']
 
 
 class Recommend:
@@ -66,9 +67,6 @@ class Recommend:
         df_Y_train = obj_train.iloc[:, [17, 18]]
         for idx in range(len(df_Y_train)):
             Y_train.append(list(df_Y_train.iloc[idx, [0]].values.flatten()))
-
-        # X_train = [[int(elm) for elm in x] for x in csv.reader(open('train_X.csv', 'r'))]
-        # Y_train = [[int(elm) for elm in y] for y in csv.reader(open('train_Y.csv', 'r'))]
 
         # convert training data to 1-dimensional array
         X_train = np.array(X_train, np.ndarray)

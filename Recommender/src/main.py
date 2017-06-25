@@ -11,27 +11,6 @@ from Investigator import Investigate
 from Recommender import Recommend
 
 
-def convert_feature_vector(dic_feature):
-    lst_feature = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    lst_feature[0] = dic_feature['Html']
-    lst_feature[1] = dic_feature['Attribute']
-    lst_feature[2] = dic_feature['JavaScript']
-    lst_feature[3] = dic_feature['VBScript']
-    lst_feature[4] = dic_feature['Quotation']
-    lst_feature[5] = dic_feature['Double_quote']
-    lst_feature[6] = dic_feature['Single_quote']
-    lst_feature[7] = dic_feature['Back_quote']
-    lst_feature[8] = dic_feature['Left']
-    lst_feature[9] = dic_feature['Right']
-    lst_feature[10] = dic_feature['Alert']
-    lst_feature[11] = dic_feature['Prompt']
-    lst_feature[12] = dic_feature['Confirm']
-    lst_feature[13] = dic_feature['Backquote']
-    lst_feature[14] = dic_feature['Start_script']
-    lst_feature[15] = dic_feature['End_script']
-    lst_feature[16] = dic_feature['Msgbox']
-    return lst_feature
-
 if __name__ == "__main__":
     inifile = ConfigParser.SafeConfigParser()
     try:
@@ -61,13 +40,12 @@ if __name__ == "__main__":
     str_cmd_option = ' -a target_url=' + target + ' -a allow_domain=' + str_allow_domain +\
                      ' -a delay=' + spider_delay_time
     str_cmd = 'scrapy runspider Spider.py -o ' + str_result_file + str_cmd_option
-    #proc = Popen(str_cmd, shell=True)
-    #proc.wait()
+    proc = Popen(str_cmd, shell=True)
+    proc.wait()
 
     # get crawl's result
-    #fin = open(str_result_file)
-    # DEBUG
-    fin = open('crawl_result\\crawl_result.json')
+    fin = open(str_result_file)
+    #fin = open('crawl_result\\crawl_result.json')
     dict_json = json.load(fin)
     lst_target = []
     for idx in range(len(dict_json)):
@@ -78,14 +56,14 @@ if __name__ == "__main__":
 
     # generates feature vector
     obj_invest = Investigate(target)
-    all_feature_list = obj_invest.main_control(lst_target)
+    all_feature_list, all_target_list = obj_invest.main_control(lst_target)
 
     # recommends
     obj_recommend = Recommend()
-    for dic_feature in all_feature_list:
+    for feature_list, target_list in zip(all_feature_list, all_target_list):
         flt_start = time.time()
-        print('feature: %s' % dic_feature)
-        lst_feature = convert_feature_vector(dic_feature)
-        obj_recommend.predict(lst_feature)
+        print('target url: {0}, parameter: {1}'.format(target_list[0], target_list[1]))
+        print('feature: {0}'.format(feature_list))
+        obj_recommend.predict(feature_list)
         flt_elapsed_time = time.time() - flt_start
-        print("Elapsed time  :{0}".format(flt_elapsed_time) + "[sec]")
+        print('Elapsed time  :{0}'.format(flt_elapsed_time) + "[sec]")

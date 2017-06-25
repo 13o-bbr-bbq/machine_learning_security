@@ -23,6 +23,14 @@ class Investigate:
         self.xss_signature = inifile.get('Investigator', 'xss_signature')
         self.scan_result = inifile.get('Investigator', 'scan_result')
         self.target_tags = inifile.get('Investigator', 'target_tags')
+        self.convert_tags = inifile.get('Investigator', 'convert_tags')
+        self.convert_attr = inifile.get('Investigator', 'convert_attr')
+        self.convert_js = inifile.get('Investigator', 'convert_js')
+        self.convert_vbs = inifile.get('Investigator', 'convert_vbs')
+        self.convert_quot = inifile.get('Investigator', 'convert_quot')
+        self.output_key = inifile.get('Investigator', 'output_key')
+        self.escape_key = inifile.get('Investigator', 'escape_key')
+        self.escape_value = inifile.get('Investigator', 'escape_value')
         self.scan_delay_time = float(inifile.get('Investigator', 'delay_time'))
         self.proxy_scheme = inifile.get('Investigator', 'proxy_scheme')
         self.proxy_addr = inifile.get('Investigator', 'proxy_addr')
@@ -32,111 +40,77 @@ class Investigate:
         self.str_allow_domain = obj_parsed.netloc
         self.obj_signatures = pd.read_csv(self.xss_signature, encoding='utf-8').fillna('')
 
-        # dictionary of feature
-        self.dic_feature = {'Url': '', 'Param': '', 'Html': 0, 'Attribute': 0, 'JavaScript': 0, 'VBScript': 0,
-                            'Quotation': 0, 'Double_quote': 0, 'Single_quote': 0, 'Back_quote': 0,
-                            'Left': 0, 'Right': 0, 'Alert': 0, 'Prompt': 0, 'Confirm': 0, 'Backquote': 0,
-                            'Start_script': 0, 'End_script': 0, 'Msgbox': 0}
+        # dictionary of feature(base)
+        self.dic_feature = {'Url': '', 'Param': ''}
         self.dic_feature_temp = {}
+
+        # make feature dictionary and convert table
+        self.dic_convert_output = {}
+        self.dic_convert_escape = {}
+        self.make_dictionary()
+
+    def make_dictionary(self):
+        # make conversion table for output places
+        list_tags = self.convert_tags.split(',')
+        list_attr = self.convert_attr.split(',')
+        list_js = self.convert_js.split(',')
+        list_vbs = self.convert_vbs.split(',')
+        list_quot = self.convert_quot.split(',')
+        for idx, str_tag in enumerate(list_tags):
+            self.dic_convert_output[str_tag] = idx
+        for idx, str_attr in enumerate(list_attr):
+            self.dic_convert_output[str_attr] = idx
+        for idx, str_js in enumerate(list_js):
+            self.dic_convert_output[str_js] = idx
+        for idx, str_vbs in enumerate(list_vbs):
+            self.dic_convert_output[str_vbs] = idx
+        for idx, str_quot in enumerate(list_quot):
+            self.dic_convert_output[str_quot] = idx
+
+        # make conversion table for escape
+        list_esc_value = self.escape_value.split(',')
+        list_esc_key = self.escape_key.split(',')
+        for str_key, str_value in zip(list_esc_value, list_esc_key):
+            self.dic_convert_escape[str_key] = str_value
+
+        # make feature dictionary
+        list_output = self.output_key.split(',')
+        for str_output in list_output:
+            self.dic_feature[str_output] = 0
+        for str_escape in list_esc_key:
+            self.dic_feature[str_escape] = 0
+
+    def convert_feature_list(self, dic_feature):
+        lst_feature = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        list_output = self.output_key.split(',')
+        list_esc_key = self.escape_key.split(',')
+        idx = 0
+        for str_output_key in list_output:
+            lst_feature[idx] = dic_feature[str_output_key]
+            idx += 1
+        for str_escape_key in list_esc_key:
+            lst_feature[idx] = dic_feature[str_escape_key]
+            idx += 1
+        return lst_feature
 
     def gen_rand_str(self, int_length):
         str_chars = string.digits + string.letters
         return ''.join([random.choice(str_chars) for idx in range(int_length)])
 
     def convert_feature_to_vector(self, str_type, str_feature):
-        if str_type == 'html':
-            if str_feature == '':
-                return 0
-            elif str_feature == 'comment':
-                return 1
-            elif str_feature == 'body':
-                return 2
-            elif str_feature == 'frame':
-                return 3
-            elif str_feature == 'img':
-                return 4
-            elif str_feature == 'input':
-                return 5
-            elif str_feature == 'script':
-                return 6
-            elif str_feature == 'textarea':
-                return 7
-            elif str_feature == 'iframe':
-                return 8
-            elif str_feature == 'a':
-                return 9
-            elif str_feature == 'div':
-                return 10
-            else:
-                return 99
-        elif str_type == 'attribute':
-            if str_feature == '':
-                return 0
-            elif str_feature == 'id':
-                return 1
-            elif str_feature == 'src':
-                return 2
-            elif str_feature == 'value':
-                return 3
-            elif str_feature == 'href':
-                return 4
-            elif str_feature == 'class':
-                return 5
-            else:
-                return 99
-        elif str_type == 'JavaScript':
-            if str_feature == '':
-                return 0
-            elif str_feature == '/*':
-                return 1
-            elif str_feature == '//':
-                return 2
-            elif str_feature == 'var':
-                return 3
-            else:
-                return 99
-        elif str_type == 'VBScript':
-            if str_feature == '':
-                return 0
-            elif str_feature == 'plane':
-                return 1
-            else:
-                return 99
-        elif str_type == 'quotation':
-            if str_feature == '':
-                return 0
-            elif str_feature == '"':
-                return 1
-            elif str_feature == "'":
-                return 2
-            else:
-                return 99
+        if str_feature == '':
+            str_feature = 'none_' + str_type
+        try:
+            return int(self.dic_convert_output[str_feature])
+        except:
+            return 99
 
     def get_escape_key_name(self, str_mark):
-        if str_mark == '"':
-            return 'Double_quote'
-        elif str_mark == "'":
-            return 'Single_quote'
-        elif str_mark == '`':
-            return 'Back_quote'
-        elif str_mark == '<':
-            return 'Left'
-        elif str_mark == '>':
-            return 'Right'
-        elif str_mark == 'alert();':
-            return 'Alert'
-        elif str_mark == 'prompt();':
-            return 'Prompt'
-        elif str_mark == 'confirm();':
-            return 'Confirm'
-        elif str_mark == '``':
-            return 'Backquote'
-        elif str_mark == '<script>':
-            return 'Start_script'
-        elif str_mark == '</script>':
-            return 'End_script'
-        elif str_mark == 'Msgbox':
-            return 'Msgbox'
+        try:
+            return self.dic_convert_escape[str_mark]
+        except:
+            print('usage: no conversion key.')
+            exit(1)
 
     def specify_escape_type(self, str_response, str_seek_before, str_seek_after, str_signature, dic_feature_local):
         str_pattern = r'.*' + str_seek_before + r'(.*)' + str_seek_after
@@ -183,11 +157,11 @@ class Investigate:
 
     def specify_feature(self, str_response, str_url, dict_params, str_param, str_craft_value):
         lst_tag_feature = []
-        obj_bs = BeautifulSoup(str_response)
+        obj_bs = BeautifulSoup(str_response, 'lxml')
         lst_get_tags = self.target_tags.split(',')
         for str_tag in lst_get_tags:
             obj_bs_temp = copy.copy(obj_bs)
-            lst_tags = obj_bs_temp.find_all(str_tag.replace(' ', ''))
+            lst_tags = obj_bs_temp.find_all(str_tag)
             obj_bs_temp = None
             if len(lst_tags) == 0:
                 continue
@@ -215,9 +189,10 @@ class Investigate:
                                                                            str_url,
                                                                            str_param,
                                                                            dic_feature_attr)
-                        lst_tag_feature.append(dic_feature_attr)
+                        lst_tag_feature.append(self.convert_feature_list(dic_feature_attr))
                 # checking contents
                 if str_craft_value in obj_tag.get_text():
+                    # TODO:コメント内の処理を追加
                     # convert feature vector for "output place"
                     dic_feature_contents = copy.deepcopy(self.dic_feature)
                     dic_feature_contents['Html'] = self.convert_feature_to_vector('html', obj_tag.name)
@@ -233,11 +208,12 @@ class Investigate:
                                                                            str_url,
                                                                            str_param,
                                                                            dic_feature_contents)
-                    lst_tag_feature.append(dic_feature_contents)
+                    lst_tag_feature.append(self.convert_feature_list(dic_feature_contents))
         return lst_tag_feature
 
     def main_control(self, lst_target):
         all_feature_list = []
+        all_target_list = []
         for str_url in lst_target:
             obj_parsed = urlparse.urlparse(str_url)
             # checking domain
@@ -288,7 +264,8 @@ class Investigate:
                                                         dict_craft_params[str_param])
                     for feature in feature_list:
                         all_feature_list.append(feature)
+                        all_target_list.append([str_url, str_param])
                 else:
                     continue
             time.sleep(float(self.delay_time))
-        return all_feature_list
+        return all_feature_list, all_target_list
