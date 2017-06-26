@@ -4,6 +4,8 @@ It recommends inspection strings of web apps for vulnerability assessment.
 In the current version, it only supports reflective XSS.  
 ex) "></iframe><script>alert();</script>, onmousemove=alert``; 
 
+![PyRecommender overview](system_overview.png)
+
 ## Description
 
 PyRecommender has two subsystems.  
@@ -16,7 +18,7 @@ PyRecommender has two subsystems.
 
 ### Recommender
 
-**Recommender** creates inspection strings using vectorized values by Investigator and recommends its to security engineers. By the way, Recommender has recommendation engine realized by **Machine learning (Multilayer perceptron)**.
+**Recommender** computes recommended inspection strings using vectorized values by Investigator and recommends its to security engineers. By the way, Recommender has recommendation engine realized by **Machine learning (Multilayer perceptron)**.
 
 #### Examples
 ```
@@ -51,22 +53,26 @@ op_vbs:	Output places in VBScript
 op_quot: Quotation types 
 
 #### Escaping types
-esc_double: 
-esc_single: 
-esc_back:	
-esc_left: 
-esc_right: 
-esc_alert: 
-esc_prompt: 
-esc_confirm: 
-esc_balert: 
-esc_sscript: 
-esc_escript: 
-esc_msgbox: 
+esc_double: Double quotation (") is Pass (0) or Fail (1).  
+esc_single: Single quotation (') is Pass (0) or Fail (1).  
+esc_back:	Back quotation (\`) is Pass (0) or Fail (1).  
+esc_left: Left symbol (<) is Pass (0) or Fail (1).  
+esc_right: Right symbol (>) is Pass (0) or Fail (1).  
+esc_alert: Script string (alert();) is Pass (0) or Fail (1).  
+esc_prompt: Script string (prompt();) is Pass (0) or Fail (1).  
+esc_confirm: Script string (confirm();) is Pass (0) or Fail (1).  
+esc_balert: Script string (alert\`\`;) is Pass (0) or Fail (1).  
+esc_sscript: Script tag (<script>) is Pass (0) or Fail (1).  
+esc_escript: Script tag (</script>) is Pass (0) or Fail (1).  
+esc_msgbox: Script tag (Msgbox();) is Pass (0) or Fail (1).  
 
 ### response variable
 label: label name  
 inspection_strings: Inspection strings corresponding each labels.  
+
+***
+PyRecommender converts above feature to vector using predefined convertion table.  
+Conversion table is [here](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Recommender/temp/convert_table_en.png).
 
 ## Demo
 ### Trains
@@ -75,17 +81,33 @@ https://www.youtube.com/watch?v=V2sqJIfYiKk
 ### Recommends
 https://www.youtube.com/watch?v=0PlQM1NwXlw
 
-## Requirement
-
 ## Usage
 
-## Install
+* train
 
-## Contribution
+
+* recommend
+
+## Requirement libraries
+* pandas
+* requests
+* beautifulsoup4
+* numpy
+* scikit-learn
+* keras
+
+## Operation check environment
+* Python 2.7.12 (Anaconda2)
+* pandas 0.18.1
+* requests 2.13.0
+* beautifulsoup4 4.5.1 
+* numpy 1.12.1
+* scikit-learn 0.18.1
+* keras 1.1.1
 
 ## Licence
 
-[Apache License 2.0](https://github.com/13o-bbr-bbq/tool/blob/master/LICENCE)
+[Apache License 2.0](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Recommender/LICENSE)
 
 ## Author
 
