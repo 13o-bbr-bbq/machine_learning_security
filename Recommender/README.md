@@ -4,6 +4,9 @@ It recommends inspection strings of web apps for vulnerability assessment.
 In the current version, it only supports reflective XSS.  
 ex) "></iframe><script>alert();</script>, onmousemove=alert``; 
 
+[more info](http://www.mbsd.jp/blog/takaesu_index.html)
+
+### system overview
 ![PyRecommender overview](system_overview.png)
 
 ## Description
