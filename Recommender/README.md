@@ -7,17 +7,18 @@ ex) "></iframe><script>alert();</script>, onmousemove=alert``;
 ## Description
 
 PyRecommender has two subsystems.  
-1) Investigator
-2) Recommender
+* Investigator
+* Recommender
 
 ### Investigator
 
-Investigator investigates possibility of vulnerability while crawling target web apps. In the detail, it sends crafted HTTP requests to each query parameters. And, it vectorizes output places of parameter values and escaping type of symbols / script strings for RXSS.
+**Investigator** investigates possibility of vulnerability while crawling target web apps. In the detail, it sends crafted HTTP requests to each query parameters. And, it vectorizes output places of parameter values and escaping type of symbols / script strings for RXSS.
 
 ### Recommender
 
-Recommender creates inspection strings using vectorized values by Investigator and recommends its to security engineers. By the way, Recommender has recommendation engine realized by Machine learning (Multilayer perceptron).
+**Recommender** creates inspection strings using vectorized values by Investigator and recommends its to security engineers. By the way, Recommender has recommendation engine realized by **Machine learning (Multilayer perceptron)**.
 
+#### Examples
 ```
 Recommender>python main.py http://192.168.0.6/
 Using Theano backend.
@@ -39,10 +40,40 @@ Loading learned data from recommender.h5
 ('138', 0.0083016483)
 Elapsed time  :0.283999919891[sec]
 ```
+You have to pre-learning PyRecommender using such as [this data set](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Recommender/train_data/train_xss.csv).
+
+### explanatory variable
+#### Output places of parameter values
+op_html: HTML tag types  
+op_attr: Attribute types  
+op_js: Output places in JavaScript  
+op_vbs:	Output places in VBScript
+op_quot: Quotation types 
+
+#### Escaping types
+esc_double: 
+esc_single: 
+esc_back:	
+esc_left: 
+esc_right: 
+esc_alert: 
+esc_prompt: 
+esc_confirm: 
+esc_balert: 
+esc_sscript: 
+esc_escript: 
+esc_msgbox: 
+
+### response variable
+label: label name  
+inspection_strings: Inspection strings corresponding each labels.  
 
 ## Demo
+### Trains
+https://www.youtube.com/watch?v=V2sqJIfYiKk
 
-## VS. 
+### Recommends
+https://www.youtube.com/watch?v=0PlQM1NwXlw
 
 ## Requirement
 
