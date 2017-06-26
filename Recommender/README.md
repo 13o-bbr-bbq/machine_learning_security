@@ -83,10 +83,16 @@ https://www.youtube.com/watch?v=0PlQM1NwXlw
 
 ## Usage
 
-* train
+### Train
+```
+Recommender>python main.py TRAIN
+```
 
-
-* recommend
+### Recommend
+Recommender>python main.py [target url]  
+```
+Recommender>python main.py http://192.168.0.6/
+```
 
 ## Requirement libraries
 * pandas
