@@ -4,10 +4,13 @@ import time
 import random
 import string
 import copy
+import json
 import re
 import urlparse
 import ConfigParser
 import pandas as pd
+from datetime import datetime
+from subprocess import Popen
 from requests import Request, Session
 from bs4 import BeautifulSoup
 
@@ -20,6 +23,9 @@ class Investigate:
         except:
             print('usage: can\'t read config.ini.')
             exit(1)
+        self.output_base_path = inifile.get('Spider', 'output_base_path')
+        self.output_filename = inifile.get('Spider', 'output_filename')
+        self.spider_delay_time = inifile.get('Spider', 'delay_time')
         self.xss_signature = inifile.get('Investigator', 'xss_signature')
         self.scan_result = inifile.get('Investigator', 'scan_result')
         self.target_tags = inifile.get('Investigator', 'target_tags')
@@ -36,6 +42,7 @@ class Investigate:
         self.proxy_addr = inifile.get('Investigator', 'proxy_addr')
         self.conn_timeout = inifile.get('Investigator', 'conn_timeout')
         self.delay_time = inifile.get('Investigator', 'delay_time')
+        self.str_target_url = target
         obj_parsed = urlparse.urlparse(target)
         self.str_allow_domain = obj_parsed.netloc
         self.obj_signatures = pd.read_csv(self.xss_signature, encoding='utf-8').fillna('')
@@ -192,7 +199,7 @@ class Investigate:
                         lst_tag_feature.append(self.convert_feature_list(dic_feature_attr))
                 # checking contents
                 if str_craft_value in obj_tag.get_text():
-                    # TODO:コメント内の処理を追加
+                    # TODO: checking output values in HTML comment syntax
                     # convert feature vector for "output place"
                     dic_feature_contents = copy.deepcopy(self.dic_feature)
                     dic_feature_contents['Html'] = self.convert_feature_to_vector('html', obj_tag.name)
@@ -211,7 +218,32 @@ class Investigate:
                     lst_tag_feature.append(self.convert_feature_list(dic_feature_contents))
         return lst_tag_feature
 
-    def main_control(self, lst_target):
+    def run_spider(self):
+        now_time = datetime.now().strftime('%Y%m%d%H%M%S')
+        str_result_file = self.output_base_path + now_time + self.output_filename
+        str_cmd_option = ' -a target_url=' + self.str_target_url + ' -a allow_domain=' + self.str_allow_domain + \
+                         ' -a delay=' + self.spider_delay_time
+        str_cmd = 'scrapy runspider Spider.py -o ' + str_result_file + str_cmd_option
+        proc = Popen(str_cmd, shell=True)
+        proc.wait()
+
+        # get crawl's result
+        fin = open(str_result_file)
+        # fin = open('crawl_result\\crawl_result.json')
+        dict_json = json.load(fin)
+        lst_target = []
+        for idx in range(len(dict_json)):
+            items = dict_json[idx]['urls']
+            for item in items:
+                if self.str_allow_domain in item:
+                    lst_target.append(item)
+        return lst_target
+
+    def main_control(self):
+        # start Spider
+        lst_target = self.run_spider()
+
+        # start Investigation
         all_feature_list = []
         all_target_list = []
         for str_url in lst_target:
@@ -220,7 +252,7 @@ class Investigate:
             if self.str_allow_domain != obj_parsed.netloc:
                 continue
 
-            # checking parameters
+            # checking parameters(query parameters only)
             if '?' in str_url:
                 dict_params = urlparse.parse_qs(str_url[str_url.find('?') + 1:])
                 lst_param = dict_params.keys()
@@ -250,6 +282,7 @@ class Investigate:
                 except:
                     print('usage: timeout. ' + str_url)
                     continue
+
                 print(str_url + ',' + str(obj_response.status_code))
                 if dict_craft_params[str_param] in obj_response.text:
                     # input URL and parameter to feature dictionary

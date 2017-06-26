@@ -1,6 +1,5 @@
 #!/usr/bin/python
 # coding:utf-8
-import csv
 import ConfigParser
 import numpy as np
 import pandas as pd
