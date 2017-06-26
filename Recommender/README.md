@@ -1,7 +1,7 @@
 ## PyRecommender: recommends inspection strings for you.
 
 It recommends inspection strings of web apps for vulnerability assessment.  
-In the current version, it only supports reflective XSS.  
+Now, PyRecommender is beta version, it only supports reflective XSS.  
 ex) "></iframe><script>alert();</script>, onmousemove=alert``; 
 
 [more info](http://www.mbsd.jp/blog/takaesu_index.html)
@@ -21,7 +21,7 @@ PyRecommender has two subsystems.
 
 ### Recommender
 
-**Recommender** computes recommended inspection strings using vectorized values by Investigator and recommends its to security engineers. By the way, Recommender has recommendation engine realized by **Machine learning (Multilayer perceptron)**.
+**Recommender** computes recommended inspection strings using vectorized values by Investigator and recommends it to security engineers. By the way, Recommender has recommendation engine realized by **Machine learning (Multilayer perceptron)**.
 
 #### Examples
 ```
@@ -45,11 +45,11 @@ Loading learned data from recommender.h5
 ('138', 0.0083016483)
 Elapsed time  :0.283999919891[sec]
 ```
-Above number (130, 110, 126 e.g.,) is corresponding each inspection strings.  
-You have to pre-learning PyRecommender using such as [this data set](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Recommender/train_data/train_xss.csv).
+Above numbers (130, 110, 126 e.g.,) are corresponding each inspection strings.  
+You have to pre-train PyRecommender using such as [this data set](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Recommender/train_data/train_xss.csv).
 
 ### explanatory variable
-#### Output plaaes of parameter values
+#### Output places of parameter values
 op_html: HTML tag types  
 op_attr: Attribute types  
 op_js: Output places in JavaScript  
@@ -75,7 +75,7 @@ label: label name
 inspection_strings: Inspection strings corresponding each labels.  
 
 ***
-PyRecommender converts above feature to vector using predefined convertion table.  
+PyRecommender converts above features to vectors using predefined convertion table.  
 Conversion table is [here](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Recommender/temp/convert_table_en.png).
 
 ## Usage
