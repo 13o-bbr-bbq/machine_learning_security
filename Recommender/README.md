@@ -85,8 +85,8 @@ https://www.youtube.com/watch?v=0PlQM1NwXlw
 
 ## Licence
 
-[MIT](https://github.com/tcnksm/tool/blob/master/LICENCE)
+[MIT](https://github.com/13o-bbr-bbq/tool/blob/master/LICENCE)
 
 ## Author
 
-[tcnksm](https://github.com/tcnksm)
+[bbr_bbq](https://github.com/13o-bbr-bbq)
