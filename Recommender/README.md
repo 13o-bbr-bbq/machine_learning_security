@@ -85,8 +85,8 @@ https://www.youtube.com/watch?v=0PlQM1NwXlw
 
 ## Licence
 
-[MIT](https://github.com/13o-bbr-bbq/tool/blob/master/LICENCE)
+[Apache License 2.0](https://github.com/13o-bbr-bbq/tool/blob/master/LICENCE)
 
 ## Author
 
-[bbr_bbq](https://github.com/13o-bbr-bbq)
+[Isao Takaesu](https://github.com/13o-bbr-bbq)
