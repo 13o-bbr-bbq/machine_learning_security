@@ -1,4 +1,4 @@
-## PyRecommender: recommens inspection strings for you.
+## PyRecommender: recommends inspection strings for you.
 
 It recommends inspection strings of web apps for vulnerability assessment.  
 In the current version, it only supports reflective XSS.  
@@ -42,15 +42,16 @@ Loading learned data from recommender.h5
 ('138', 0.0083016483)
 Elapsed time  :0.283999919891[sec]
 ```
+Above number (130, 110, 126 e.g.,) is corresponding each inspection strings.  
 You have to pre-learning PyRecommender using such as [this data set](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Recommender/train_data/train_xss.csv).
 
 ### explanatory variable
-#### Output places of parameter values
+#### Output plaaes of parameter values
 op_html: HTML tag types  
 op_attr: Attribute types  
 op_js: Output places in JavaScript  
-op_vbs:	Output places in VBScript
-op_quot: Quotation types 
+op_vbs:	Output places in VBScript  
+op_quot: Quotation types  
 
 #### Escaping types
 esc_double: Double quotation (") is Pass (0) or Fail (1).  
@@ -74,25 +75,20 @@ inspection_strings: Inspection strings corresponding each labels.
 PyRecommender converts above feature to vector using predefined convertion table.  
 Conversion table is [here](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Recommender/temp/convert_table_en.png).
 
-## Demo
-### Trains
-https://www.youtube.com/watch?v=V2sqJIfYiKk
-
-### Recommends
-https://www.youtube.com/watch?v=0PlQM1NwXlw
-
 ## Usage
 
 ### Train
 ```
 Recommender>python main.py TRAIN
 ```
+[Demo](https://www.youtube.com/watch?v=V2sqJIfYiKk)
 
 ### Recommend
 Recommender>python main.py [target url]  
 ```
 Recommender>python main.py http://192.168.0.6/
 ```
+[Demo](https://www.youtube.com/watch?v=0PlQM1NwXlw)
 
 ## Requirement libraries
 * pandas
