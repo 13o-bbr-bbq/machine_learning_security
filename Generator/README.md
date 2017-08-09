@@ -1,6 +1,6 @@
 ## PyGenerator using Genetic Algorithm.
 
-It's tool is generating injection codes for assessment of Web Apps.
+It's tool is generating injection codes for assessment of Web Apps.  
 Now, PyGenerator is beta version, it only supports reflective XSS.  
 ex) <iframe/onload=alert();>size=<command, <video><source onerror=javascript:alert();>kind=
 
@@ -8,7 +8,7 @@ ex) <iframe/onload=alert();>size=<command, <video><source onerror=javascript:ale
 
 ## Description
 
-PyGenerator uses Genetic Algorithm.
+PyGenerator uses Genetic Algorithm.  
 You must prepair Chrome of web driver for execution.
 
 #### Examples
