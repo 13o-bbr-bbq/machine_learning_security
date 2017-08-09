@@ -9,7 +9,7 @@ ex) `<iframe/onload=alert();>size=<command`, `<video><source onerror=javascript:
 ## Description
 
 PyGenerator uses Genetic Algorithm.  
-You must prepair Chrome of web driver for execution.
+You must prepare Web driver of Chrome for execution.
 
 #### Examples
 ```
