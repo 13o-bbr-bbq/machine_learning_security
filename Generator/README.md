@@ -2,7 +2,7 @@
 
 It's tool is generating injection codes for assessment of Web Apps.  
 Now, PyGenerator is beta version, it only supports reflective XSS.  
-ex) <iframe/onload=alert();>size=<command, <video><source onerror=javascript:alert();>kind=
+ex) `<iframe/onload=alert();>size=<command`, `<video><source onerror=javascript:alert();>kind=`
 
 [more info](http://www.mbsd.jp/blog/takaesu_index.html)
 
