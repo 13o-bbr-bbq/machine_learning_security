@@ -1,17 +1,26 @@
-## PyGenerator using Genetic Algorithm.
+## PyGenerator using Genetic Algorithm and Generative Adversarial Networks.
 
-It's tool is generating injection codes for assessment of Web Apps.  
-Now, PyGenerator is beta version, it only supports reflective XSS.  
+It's tool (PyGenerator) can generate injection codes for web app vulnerabilities.  
+There are many different types of web app vulnerabilities, but PyGenerator has targeted reflected XSS in this version.  
 ex) `<iframe/onload=alert();>size=<command`, `<video><source onerror=javascript:alert();>kind=`
 
 [more info](http://www.mbsd.jp/blog/takaesu_index.html)
 
 ## Description
 
-PyGenerator uses Genetic Algorithm.  
-You must prepare Web driver of Chrome for execution.
+PyGenerator consists of two algorithms that Genetic Algorithm (GA) and Generative Adversarial Networks (GAN).  
+The injection codes are generated in two steps.  
 
-#### Examples
+1. Generation of injection codes using GA.
+2. Augment injection codes using GAN.
+
+#### 1. Generation of injection codes using GA.
+You must prepare the gene list.  
+Gen list is minimum components of HTML and JavaScript.  
+ex) [<img/], [src=], [xxx], [onerror=], [alert();], [/>] etc.  
+
+You must prepare the gene list.  
+And, you execute ga_main.py as the following.  
 ```
 Generator>python ga_main.py
 Using Theano backend.
