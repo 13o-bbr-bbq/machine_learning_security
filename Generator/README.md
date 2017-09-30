@@ -111,7 +111,7 @@ Enjoy!!
 * selenium 3.4.3
 
 ## Inquiry
-[takaesu235@gmail.com](<takaesu235@gmail.com>)
+[takaesu235@gmail.com](<mailto:takaesu235@gmail.com>)
 
 ## Licence
 
