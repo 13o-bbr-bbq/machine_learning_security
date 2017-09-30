@@ -1,6 +1,6 @@
 ## PyGenerator using Genetic Algorithm and Generative Adversarial Networks.
 
-It's tool (PyGenerator) can generate injection codes for web app vulnerabilities.  
+PyGenerator can generate injection codes for web app vulnerabilities.  
 There are many different types of web app vulnerabilities, but PyGenerator has targeted reflected XSS in this version.  
 ex) `<iframe/onload=alert();>size=<command`, `<video><source onerror=javascript:alert();>kind=`
 
