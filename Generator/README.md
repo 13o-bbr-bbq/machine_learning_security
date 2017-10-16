@@ -103,6 +103,8 @@ Enjoy!!
 * pandas
 * requests
 * selenium
+* numpy
+* Keras
 
 ## Operation check environment
 * Python 2.7.12 (Anaconda2)
