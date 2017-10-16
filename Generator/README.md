@@ -109,6 +109,8 @@ Enjoy!!
 * pandas 0.18.1
 * requests 2.13.0
 * selenium 3.4.3
+* numpy 1.13.1
+* Keras 1.1.1
 
 ## Inquiry
 [takaesu235@gmail.com](<mailto:takaesu235@gmail.com>)
