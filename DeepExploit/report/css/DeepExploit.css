@@ -1,0 +1,38 @@
+@charset "UTF-8";
+html {
+  overflow: auto;
+}
+
+body {
+  background: #ffffff;
+  margin: 0;
+  padding: 0;
+  color: #000;
+  font-family: Consolas, monaco, monospace;
+  font-size: 100%;
+  line-height: 1.4;
+  overflow-x: auto;
+  overflow-y: auto;
+  min-width: 970px;
+  position: relative;
+}
+
+table, th, td {
+  border-collapse: collapse;
+}
+
+th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #4CAF50;
+  color: white;
+}
+
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #ddd;
+}
