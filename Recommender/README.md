@@ -46,7 +46,7 @@ Elapsed time  :0.283999919891[sec]
 ```
 
 Above numbers (130, 110, 126 e.g.,) are corresponding each injection code.  
-You have to pre-train PyRecommender using such as [this data set](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Recommender/train_data/train_xss.csv).  
+You have to **train PyRecommender** using such as [this data set](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Recommender/train_data/train_xss.csv).  
 
 #### Explanatory variable
 ##### Output places of parameter values
@@ -91,7 +91,7 @@ Conversion table is following.
 Recommender> python main.py TRAIN
 ```
 
- * Demo movie
+ * Demo movie  
  [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/V2sqJIfYiKk/0.jpg)](https://www.youtube.com/watch?v=V2sqJIfYiKk)
 
 ### Recommend
@@ -99,8 +99,9 @@ Recommender>python main.py [target url]
 ```
 Recommender> python main.py http://192.168.0.6/
 ```
+`http://192.168.0.6/` is URL of target web app.  
 
- * Demo movie
+ * Demo movie  
  [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/0PlQM1NwXlw/0.jpg)](https://www.youtube.com/watch?v=0PlQM1NwXlw)
 
 ## Operation check environment
