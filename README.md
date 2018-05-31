@@ -1,4 +1,4 @@
-# Machine Learning and Cyber Security
+# Machine Learning and Security
 Source code about machine learning and security.
 
 ## Line up.
