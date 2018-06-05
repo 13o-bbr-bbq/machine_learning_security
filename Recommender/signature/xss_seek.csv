@@ -1,5 +1,5 @@
 Signature
 """|'|`|<|>"
-alert();|prompt();|confirm();|``;
+alert();|prompt();|confirm();|alert``;
 <script>|</script>
 Msgbox
