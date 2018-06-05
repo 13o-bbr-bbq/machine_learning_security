@@ -1,14 +1,16 @@
 #!/usr/bin/python
 # coding:utf-8
+import os
 import time
 import random
 import string
 import copy
 import json
 import re
-import urlparse
-import ConfigParser
+import codecs
+import configparser
 import pandas as pd
+from urllib.parse import urlparse, parse_qs
 from datetime import datetime
 from subprocess import Popen
 from requests import Request, Session
@@ -17,33 +19,46 @@ from bs4 import BeautifulSoup
 
 class Investigate:
     def __init__(self, target):
-        inifile = ConfigParser.SafeConfigParser()
+        # Read config.ini.
+        full_path = os.path.dirname(os.path.abspath(__file__))
+        config = configparser.ConfigParser()
         try:
-            inifile.read('config.ini')
-        except:
-            print('usage: can\'t read config.ini.')
+            config.read(os.path.join(full_path, 'config.ini'))
+        except FileExistsError as err:
+            print('[-] File exists error: {0}', err)
             exit(1)
-        self.output_base_path = inifile.get('Spider', 'output_base_path')
-        self.output_filename = inifile.get('Spider', 'output_filename')
-        self.spider_delay_time = inifile.get('Spider', 'delay_time')
-        self.xss_signature = inifile.get('Investigator', 'xss_signature')
-        self.scan_result = inifile.get('Investigator', 'scan_result')
-        self.target_tags = inifile.get('Investigator', 'target_tags')
-        self.convert_tags = inifile.get('Investigator', 'convert_tags')
-        self.convert_attr = inifile.get('Investigator', 'convert_attr')
-        self.convert_js = inifile.get('Investigator', 'convert_js')
-        self.convert_vbs = inifile.get('Investigator', 'convert_vbs')
-        self.convert_quot = inifile.get('Investigator', 'convert_quot')
-        self.output_key = inifile.get('Investigator', 'output_key')
-        self.escape_key = inifile.get('Investigator', 'escape_key')
-        self.escape_value = inifile.get('Investigator', 'escape_value')
-        self.scan_delay_time = float(inifile.get('Investigator', 'delay_time'))
-        self.proxy_scheme = inifile.get('Investigator', 'proxy_scheme')
-        self.proxy_addr = inifile.get('Investigator', 'proxy_addr')
-        self.conn_timeout = inifile.get('Investigator', 'conn_timeout')
-        self.delay_time = inifile.get('Investigator', 'delay_time')
+        self.output_base_path = config['Spider']['output_base_path']
+        check_path = os.path.join(full_path, self.output_base_path)
+        if os.path.exists(check_path) is False:
+            os.mkdir(check_path)
+        self.output_filename = config['Spider']['output_filename']
+        self.spider_delay_time = config['Spider']['delay_time']
+        self.xss_signature = os.path.join(full_path, config['Investigator']['xss_signature'])
+        self.scan_result_path = os.path.join(full_path, config['Investigator']['scan_result_path'])
+        if os.path.exists(self.scan_result_path) is False:
+            os.mkdir(self.scan_result_path)
+        self.scan_result_file = config['Investigator']['scan_result_file']
+        self.scan_result = os.path.join(self.scan_result_path, self.scan_result_file)
+        self.target_tags = config['Investigator']['target_tags']
+        self.convert_tags = config['Investigator']['convert_tags']
+        self.convert_attr = config['Investigator']['convert_attr']
+        self.convert_js = config['Investigator']['convert_js']
+        self.convert_vbs = config['Investigator']['convert_vbs']
+        self.convert_quot = config['Investigator']['convert_quot']
+        self.output_key = config['Investigator']['output_key']
+        self.escape_key = config['Investigator']['escape_key']
+        self.escape_value = config['Investigator']['escape_value']
+        self.scan_delay_time = float(config['Investigator']['delay_time'])
+        if config['Investigator']['proxy_switch'] == 'on':
+            self.proxy_switch = True
+        else:
+            self.proxy_switch = False
+        self.proxy_scheme = config['Investigator']['proxy_scheme']
+        self.proxy_addr = config['Investigator']['proxy_addr']
+        self.conn_timeout = config['Investigator']['conn_timeout']
+        self.delay_time = config['Investigator']['delay_time']
         self.str_target_url = target
-        obj_parsed = urlparse.urlparse(target)
+        obj_parsed = urlparse(target)
         self.str_allow_domain = obj_parsed.netloc
         self.obj_signatures = pd.read_csv(self.xss_signature, encoding='utf-8').fillna('')
 
@@ -101,8 +116,8 @@ class Investigate:
         return lst_feature
 
     def gen_rand_str(self, int_length):
-        str_chars = string.digits + string.letters
-        return ''.join([random.choice(str_chars) for idx in range(int_length)])
+        str_chars = string.digits + string.ascii_letters
+        return ''.join([random.choice(str_chars) for _ in range(int_length)])
 
     def convert_feature_to_vector(self, str_type, str_feature):
         if str_feature == '':
@@ -116,7 +131,7 @@ class Investigate:
         try:
             return self.dic_convert_escape[str_mark]
         except:
-            print('usage: no conversion key.')
+            print('[-] Usage: Conversion key is not found: {}.'.format(str_mark))
             exit(1)
 
     def specify_escape_type(self, str_response, str_seek_before, str_seek_after, str_signature, dic_feature_local):
@@ -147,14 +162,21 @@ class Investigate:
         obj_prepped = obj_session.prepare_request(obj_request)
         obj_response = None
         try:
-            obj_response = obj_session.send(obj_prepped,
-                                            verify=True,
-                                            proxies={self.proxy_scheme: self.proxy_addr},
-                                            timeout=int(self.conn_timeout),
-                                            allow_redirects=False
-                                            )
-        except:
-            print('usage: timeout. ' + str_url)
+            if self.proxy_switch:
+                obj_response = obj_session.send(obj_prepped,
+                                                verify=False,
+                                                proxies={self.proxy_scheme: self.proxy_addr},
+                                                timeout=int(self.conn_timeout),
+                                                allow_redirects=False
+                                                )
+            else:
+                obj_response = obj_session.send(obj_prepped,
+                                                verify=False,
+                                                timeout=int(self.conn_timeout),
+                                                allow_redirects=False
+                                                )
+        except Exception as err:
+            print('[*] {0}'.format(err))
             return dic_feature_local
         return self.specify_escape_type(obj_response.text,
                                         str_seek_before,
@@ -220,24 +242,25 @@ class Investigate:
 
     def run_spider(self):
         now_time = datetime.now().strftime('%Y%m%d%H%M%S')
-        str_result_file = self.output_base_path + now_time + self.output_filename
+        str_result_file = os.path.join(self.output_base_path, now_time + self.output_filename)
         str_cmd_option = ' -a target_url=' + self.str_target_url + ' -a allow_domain=' + self.str_allow_domain + \
                          ' -a delay=' + self.spider_delay_time
-        str_cmd = 'scrapy runspider Spider.py -o ' + str_result_file + str_cmd_option
+        str_cmd = 'scrapy runspider Spider.py' + str_cmd_option + ' -o ' + str_result_file
         proc = Popen(str_cmd, shell=True)
         proc.wait()
 
         # get crawl's result
-        fin = open(str_result_file)
-        # fin = open('crawl_result\\crawl_result.json')
-        dict_json = json.load(fin)
+        dict_json = {}
+        if os.path.exists(str_result_file):
+            with codecs.open(str_result_file, 'r', encoding='utf-8') as fin:
+                dict_json = json.load(fin)
         lst_target = []
         for idx in range(len(dict_json)):
             items = dict_json[idx]['urls']
             for item in items:
                 if self.str_allow_domain in item:
                     lst_target.append(item)
-        return lst_target
+        return list(set(lst_target))
 
     def main_control(self):
         # start Spider
@@ -247,14 +270,14 @@ class Investigate:
         all_feature_list = []
         all_target_list = []
         for str_url in lst_target:
-            obj_parsed = urlparse.urlparse(str_url)
+            obj_parsed = urlparse(str_url)
             # checking domain
             if self.str_allow_domain != obj_parsed.netloc:
                 continue
 
             # checking parameters(query parameters only)
             if '?' in str_url:
-                dict_params = urlparse.parse_qs(str_url[str_url.find('?') + 1:])
+                dict_params = parse_qs(str_url[str_url.find('?') + 1:])
                 lst_param = dict_params.keys()
             else:
                 continue
@@ -273,14 +296,20 @@ class Investigate:
                 obj_prepped = obj_session.prepare_request(obj_request)
                 obj_response = None
                 try:
-                    obj_response = obj_session.send(obj_prepped,
-                                                    verify=True,
-                                                    proxies={self.proxy_scheme: self.proxy_addr},
-                                                    timeout=int(self.conn_timeout),
-                                                    allow_redirects=False
-                                                    )
-                except:
-                    print('usage: timeout. ' + str_url)
+                    if self.proxy_switch:
+                        obj_response = obj_session.send(obj_prepped,
+                                                        verify=False,
+                                                        proxies={self.proxy_scheme: self.proxy_addr},
+                                                        timeout=int(self.conn_timeout),
+                                                        allow_redirects=False
+                                                        )
+                    else:
+                        obj_response = obj_session.send(obj_prepped,
+                                                        verify=False,
+                                                        timeout=int(self.conn_timeout),
+                                                        allow_redirects=False)
+                except Exception as err:
+                    print('[*] {0}'.format(err))
                     continue
 
                 print(str_url + ',' + str(obj_response.status_code))
