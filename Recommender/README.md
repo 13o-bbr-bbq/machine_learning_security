@@ -2,7 +2,7 @@
 **Recommends optimal injection code for you.**
 
 ---
-PyRecommender can recommend optimal injection code for detecting web app vulnerabilities.  
+PyRecommender can **recommend optimal injection code for detecting web app vulnerabilities**.  
 Current PyRecommender's version is beta, it only supports reflective Cross Site Scripting (RXSS).  
 
 Please refer to this [blog](https://www.mbsd.jp/blog/20170707.html) for detail explanation of some of this tool.  
@@ -118,7 +118,7 @@ Using TensorFlow backend.
 Parameter: userinput
 [*] Feature: [7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 [*] Loading trained data: C:\Users\i.takaesu\Documents\GitHub\Recommender\src\../trained_data\recommender.h5
-[*] Prediction.
+[*] Recommended.
 [+] Rank	     Injection code	                         Probability
 =============================================================================
 [+] 1	        </textarea><script>alert();</script>	   0.9992570281028748
@@ -130,7 +130,7 @@ Parameter: userinput
 Parameter: userinput
 [*] Feature: [6, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 0]
 [*] Loading trained data: C:\Users\i.takaesu\Documents\GitHub\Recommender\src\../trained_data\recommender.h5
-[*] Prediction.
+[*] Recommended.
 [+] Rank	     Injection code	Probability
 =============================================================================
 [+] 1	        </textarea><img src=x onerror=alert();>	 0.9942600727081299
@@ -141,8 +141,12 @@ Parameter: userinput
 ...snip...
 ```
 
-Recommendation's accuracy depend on quality of training data.  
-So, you have to prepare the high quality training data.  
+Injection codes are displayed in order of recommendation.  
+And, `Probability` indicates accuracy of recommendation.  
+
+ |Note|
+ |:---|
+ |Recommendation's accuracy depend on quality of training data. So, you have to prepare the high quality training data.|
 
 ## Training data.
 Training data consists of **explanatory variable** and **response variable**.  
@@ -189,10 +193,10 @@ The response variable indicates the **answer (injection code) corresponding to t
  |label is expressed number.|Inspection code is expressed string.|
 
 ### Conversion rule.
-PyRecommender converts above features to vectors using **convertion table**.  
+PyRecommender uses the **conversion table** to convert the behavior of the web app into a numerical value.  
 
- * Conversion table is following.  
-
+ * Conversion table  
+ 
  ||value|0|1|2|3|4|5|6|7|8|9|10|
  |:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
  |Place|html tag|None|`<!---->`|`<body>`|`<frame>`|`<img>`|`<input>`|`<script>`|`<textarea>`|`<iframe>`|`<a>`|`<div>`|
@@ -200,18 +204,18 @@ PyRecommender converts above features to vectors using **convertion table**.
  ||JavaScript|None|`/**/`|`//`|`var`|-|-|-|-|-|-|-|
  ||VBScript|None|plane|-|-|-|-|-|-|-|-|-|
  ||Quotation|None|`"`|`'`|-|-|-|-|-|-|-|-|
- |Escape|`"`|None|`&quot;`|-|-|-|-|-|-|-|-|-|
- ||`'`|None|`&#39;`|-|-|-|-|-|-|-|-|-|
- ||`|None|`&#96;`|-|-|-|-|-|-|-|-|-|
- ||`<`|None|`&lt;`|-|-|-|-|-|-|-|-|-|
- ||`>`|None|`&gt;`|-|-|-|-|-|-|-|-|-|
- ||`alert();`|None|block|-|-|-|-|-|-|-|-|-|
- ||`prompt();`|None|block|-|-|-|-|-|-|-|-|-|
- ||`confirm();`|None|block|-|-|-|-|-|-|-|-|-|
- ||alert``;|None|block|-|-|-|-|-|-|-|-|-|
- ||`<script>`|None|block|-|-|-|-|-|-|-|-|-|
- ||`</script>`|None|block||-|-|-|-|-|-|-|-|-|
- ||`Msgbox()`|None|-|-|-|-|-|-|-|-|-|-|
+ |Escape|`"`|non-escape|escape|-|-|-|-|-|-|-|-|-|
+ ||`'`|non-escape|escape|-|-|-|-|-|-|-|-|-|
+ ||`|non-escape|escape|-|-|-|-|-|-|-|-|-|
+ ||`<`|non-escape|escape|-|-|-|-|-|-|-|-|-|
+ ||`>`|non-escape|escape|-|-|-|-|-|-|-|-|-|
+ ||`alert();`|non-escape|escape|-|-|-|-|-|-|-|-|-|
+ ||`prompt();`|non-escape|escape|-|-|-|-|-|-|-|-|-|
+ ||`confirm();`|non-escape|escape|-|-|-|-|-|-|-|-|-|
+ ||alert``;|non-escape|escape|-|-|-|-|-|-|-|-|-|
+ ||`<script>`|non-escape|escape|-|-|-|-|-|-|-|-|-|
+ ||`</script>`|non-escape|escape||-|-|-|-|-|-|-|-|-|
+ ||`Msgbox()`|non-escape|escape|-|-|-|-|-|-|-|-|-|
 
 ## Installation
 #### Step.0 Git clone pyRecommender's repository.
