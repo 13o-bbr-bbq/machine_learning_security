@@ -62,17 +62,17 @@ class Investigate:
         self.str_allow_domain = obj_parsed.netloc
         self.obj_signatures = pd.read_csv(self.xss_signature, encoding='utf-8').fillna('')
 
-        # dictionary of feature(base)
+        # Dictionary of feature (base).
         self.dic_feature = {'Url': '', 'Param': ''}
         self.dic_feature_temp = {}
 
-        # make feature dictionary and convert table
+        # Make feature dictionary and convert table.
         self.dic_convert_output = {}
         self.dic_convert_escape = {}
         self.make_dictionary()
 
     def make_dictionary(self):
-        # make conversion table for output places
+        # Make conversion table for output places.
         list_tags = self.convert_tags.split(',')
         list_attr = self.convert_attr.split(',')
         list_js = self.convert_js.split(',')
@@ -89,13 +89,13 @@ class Investigate:
         for idx, str_quot in enumerate(list_quot):
             self.dic_convert_output[str_quot] = idx
 
-        # make conversion table for escape
+        # Make conversion table for escape.
         list_esc_value = self.escape_value.split(',')
         list_esc_key = self.escape_key.split(',')
         for str_key, str_value in zip(list_esc_value, list_esc_key):
             self.dic_convert_escape[str_key] = str_value
 
-        # make feature dictionary
+        # Make feature dictionary.
         list_output = self.output_key.split(',')
         for str_output in list_output:
             self.dic_feature[str_output] = 0
@@ -131,7 +131,7 @@ class Investigate:
         try:
             return self.dic_convert_escape[str_mark]
         except:
-            print('[-] Usage: Conversion key is not found: {}.'.format(str_mark))
+            print('[-] Conversion key is not found: {}.'.format(str_mark))
             exit(1)
 
     def specify_escape_type(self, str_response, str_seek_before, str_seek_after, str_signature, dic_feature_local):
@@ -196,14 +196,14 @@ class Investigate:
                 continue
 
             for obj_tag in lst_tags:
-                # checking attributes
+                # Checking attributes.
                 lst_attrs = obj_tag.attrs.keys()
                 for str_attr in lst_attrs:
-                    # including inspection string in attribute value?
+                    # Including inspection string in attribute value.
                     if str_craft_value in obj_tag.attrs[str_attr]:
                         str_tag = str(obj_tag)
                         idx = str(obj_tag).find(str_craft_value)
-                        # convert feature vector for "output place"
+                        # Convert feature vector for "output place".
                         dic_feature_attr = copy.deepcopy(self.dic_feature)
                         dic_feature_attr['Html'] = self.convert_feature_to_vector('html', obj_tag.name)
                         dic_feature_attr['Attribute'] = self.convert_feature_to_vector('attribute', str_attr)
@@ -219,10 +219,10 @@ class Investigate:
                                                                            str_param,
                                                                            dic_feature_attr)
                         lst_tag_feature.append(self.convert_feature_list(dic_feature_attr))
-                # checking contents
+                # Checking contents.
                 if str_craft_value in obj_tag.get_text():
                     # TODO: checking output values in HTML comment syntax
-                    # convert feature vector for "output place"
+                    # Convert feature vector for "output place".
                     dic_feature_contents = copy.deepcopy(self.dic_feature)
                     dic_feature_contents['Html'] = self.convert_feature_to_vector('html', obj_tag.name)
                     dic_feature_contents['Attribute'] = 0
@@ -230,7 +230,7 @@ class Investigate:
                     dic_feature_contents['VBScript'] = 0
                     dic_feature_contents['Quotation'] = 0
 
-                    # convert feature vector for "escape"
+                    # Convert feature vector for "escape".
                     for idx in range(len(self.obj_signatures)):
                         dic_feature_contents = self.specify_feature_escape(dict_params,
                                                                            idx,
@@ -241,6 +241,7 @@ class Investigate:
         return lst_tag_feature
 
     def run_spider(self):
+        # Execute crawling using Scrapy.
         now_time = datetime.now().strftime('%Y%m%d%H%M%S')
         str_result_file = os.path.join(self.output_base_path, now_time + self.output_filename)
         str_cmd_option = ' -a target_url=' + self.str_target_url + ' -a allow_domain=' + self.str_allow_domain + \
@@ -249,12 +250,13 @@ class Investigate:
         proc = Popen(str_cmd, shell=True)
         proc.wait()
 
-        # get crawl's result
+        # Get crawling result.
         dict_json = {}
         if os.path.exists(str_result_file):
             with codecs.open(str_result_file, 'r', encoding='utf-8') as fin:
                 dict_json = json.load(fin)
         lst_target = []
+        # Exclude except allowed domains.
         for idx in range(len(dict_json)):
             items = dict_json[idx]['urls']
             for item in items:
@@ -263,28 +265,28 @@ class Investigate:
         return list(set(lst_target))
 
     def main_control(self):
-        # start Spider
+        # Start Spider.
         lst_target = self.run_spider()
 
-        # start Investigation
+        # Start Investigation.
         all_feature_list = []
         all_target_list = []
         for str_url in lst_target:
             obj_parsed = urlparse(str_url)
-            # checking domain
+            # Checking domains.
             if self.str_allow_domain != obj_parsed.netloc:
                 continue
 
-            # checking parameters(query parameters only)
+            # Checking parameters (query parameters only).
             if '?' in str_url:
                 dict_params = parse_qs(str_url[str_url.find('?') + 1:])
                 lst_param = dict_params.keys()
             else:
                 continue
 
-            # checking each parameter
+            # Checking each parameter.
             for str_param in lst_param:
-                # checking reflected value at HTTP response
+                # Checking reflected value at HTTP response.
                 dict_craft_params = copy.deepcopy(dict_params)
                 str_value = dict_params[str_param][0]
                 str_seek_before = self.gen_rand_str(3)
@@ -314,11 +316,11 @@ class Investigate:
 
                 print(str_url + ',' + str(obj_response.status_code))
                 if dict_craft_params[str_param] in obj_response.text:
-                    # input URL and parameter to feature dictionary
+                    # Input URL and parameter to feature dictionary.
                     self.dic_feature['Url'] = str_url
                     self.dic_feature['Param'] = str_param
 
-                    # investigate output place and escape type
+                    # Investigate output place and escape type.
                     feature_list = self.specify_feature(obj_response.text,
                                                         str_target,
                                                         dict_params,

@@ -27,7 +27,7 @@ if __name__ == "__main__":
     obj_recommend = Recommend()
     for feature_list, target_list in zip(all_feature_list, all_target_list):
         flt_start = time.time()
-        print('-'*100)
+        print('-'*130)
         print('[*] Target url: {0}\nParameter: {1}'.format(target_list[0], target_list[1]))
         print('[*] Feature: {0}'.format(feature_list))
         obj_recommend.predict(feature_list)
