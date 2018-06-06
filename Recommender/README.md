@@ -81,9 +81,28 @@ You have to **train PyRecommender** using such as [this data set](https://github
  |inspection_strings|Inspection strings corresponding each labels.|
 
 PyRecommender converts above features to vectors using predefined convertion table.  
-Conversion table is following.  
 
- ![table](./temp/convert_table_en.png).
+ * Conversion table is following.  
+
+ ||value|0|1|2|3|4|5|6|7|8|9|10|
+ |:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|:---|
+ |Place|html tag|None|`<!---->`|`<body>`|`<frame>`|`<img>`|`<input>`|`<script>`|`<textarea>`|`<iframe>`|`<a>`|`<div>`|
+ ||attribute|None|`id`|`src`|`value`|`href`|-|-|-|-|-|-|
+ ||JavaScript|None|`/**/`|`//`|`var`|-|-|-|-|-|-|-|
+ ||VBScript|None|plane|-|-|-|-|-|-|-|-|-|
+ ||Quotation|None|`"`|`'`|-|-|-|-|-|-|-|-|
+ |Escape|`"`|None|`&quot;`|-|-|-|-|-|-|-|-|-|
+ ||`'`|None|`&#39;`|-|-|-|-|-|-|-|-|-|
+ ||`|None|`&#96;`|-|-|-|-|-|-|-|-|-|
+ ||`<`|None|`&lt;`|-|-|-|-|-|-|-|-|-|
+ ||`>`|None|`&gt;`|-|-|-|-|-|-|-|-|-|
+ ||`alert();`|None|block|-|-|-|-|-|-|-|-|-|
+ ||`prompt();`|None|block|-|-|-|-|-|-|-|-|-|
+ ||`confirm();`|None|block|-|-|-|-|-|-|-|-|-|
+ ||`alert``;`|None|block|-|-|-|-|-|-|-|-|-|
+ ||`<script>`|None|block|-|-|-|-|-|-|-|-|-|
+ ||`</script>`|None|block||-|-|-|-|-|-|-|-|-|
+ ||`Msgbox()`|None|-|-|-|-|-|-|-|-|-|-|
 
 ## Usage
 ### Train
