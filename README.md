@@ -2,6 +2,8 @@
 Source codes about machine learning and security.
 
 ## Line up.
+ * [Vulnerabilties of Machine Learning](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Vulnerabilities_of_ML/)  
+ Summary of Machine Learning vulnerability.  
  * [Analytics](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Analytics)  
  Analyzing packet capture data using k-means.  
  * [CNN_test](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/CNN_test)  
