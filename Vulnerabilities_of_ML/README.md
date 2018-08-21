@@ -1,6 +1,5 @@
 ## Vulnerabilities of Machine Learning
 脆弱性のカテゴリ分類（仮）。  
-内容は仮であり、正確性を欠く可能性があります。  
 
  * Adversarial example  
  * Decision boundary manipulation  
