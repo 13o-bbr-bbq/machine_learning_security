@@ -1,5 +1,5 @@
 ## Vulnerabilities of Machine Learning
-脆弱性のカテゴリ分類（仮）。  
+安全性評価手法のカテゴリ分類（仮）。  
 
  * Adversarial example  
  * Decision boundary manipulation  
