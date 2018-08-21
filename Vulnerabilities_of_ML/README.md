@@ -10,7 +10,7 @@
  * Other  
 
 ### Adversarial example
- MLモデルに入力するデータ（画像や音声など）に微小な細工を加えることで、モデルの判断を誤らせる手法。  
+ MLモデルに入力するデータ（画像や音声等）に微小な細工を加えることで、モデルの判断を誤らせる手法。  
  微小な細工につき、データが細工されているか否か判断することは困難。  
 
  * [Simple Black-Box Adversarial Perturbations for Deep Networks](https://arxiv.org/abs/1612.06299)  
@@ -55,7 +55,7 @@
 
 ### Decision boundary manipulation  
  訓練データを細工することで、MLモデルのDecision boundary（以下、決定境界）を操作する手法。  
- これにより、機械学習ベースのスパムフィルタや侵入検知などを回避することが可能となる。  
+ これにより、機械学習ベースのスパムフィルタや侵入検知等を回避することが可能となる。  
 
  * [Making & Breaking Machine Learning Anomaly Detectors in Real Life](https://www.slideshare.net/codeblue_jp/making-breaking-machine-learning-anomaly-detectors-in-real-life-by-clarence-chio-code-blue-2015)  
  訓練データに少数の細工データを紛れ込ませることで、決定境界を操作する手法。  
@@ -77,8 +77,8 @@
  * [Stealing Machine Learning Models via Prediction APIs](https://arxiv.org/abs/1609.02943)  
  MLモデルへの入出力をブラックボックスアクセスで観測し、MLモデルの内部ロジックを復元する手法。  
  2項ロジスティック回帰や多項ロジスティック回帰、多層パーセプトロン、決定木等、多数のMLモデルを標的にしている。  
- [一部検証済み](https://www.mbsd.jp/blog/20170117.html)  
  検証コードは[こちら](https://github.com/ftramer/Steal-ML)  
+ [一部検証済み](https://www.mbsd.jp/blog/20170117.html)  
 
  * [Machine Learning with Membership Privacy using Adversarial Regularization](https://arxiv.org/abs/1807.05852)  
  TBA.  
@@ -95,14 +95,14 @@
 
  * [DeepLocker - Concealing Targeted Attacks with AI Locksmithing](https://www.blackhat.com/us-18/briefings/schedule/index.html#deeplocker---concealing-targeted-attacks-with-ai-locksmithing-11549)  
  Deep Neural Network（以下、DNN）を利用した標的型マルウエア。  
- 平時はビデオアプリ等として動作し、（顔画像や音声などで）標的を認識するとランサムウエア化する。  
+ 平時はビデオアプリ等として動作し、（顔画像や音声等で）標的を認識するとランサムウエア化する。  
  ランサムウエアのペイロードを暗号化（ロック）しておき、DNNで標的を認識するとその復号鍵を生成して動作するため、既存のアンチマルウエアでは検知が難しいとの事。  
 
 ### Unsafety framework and library
  機械学習フレームワークやライブラリに存在する脆弱性を利用する手法。  
 
  * [Summoning Demons: The Pursuit of Exploitable Bugs in Machine Learning](https://arxiv.org/abs/1701.04739)  
- OpenCVやScikit-Learn等の脆弱性を利用してDoSやBoFなどを引き起こす手法。  
+ OpenCVやScikit-Learn等の脆弱性を利用してDoSやBoF等を引き起こす手法。  
 
  * [Security Risks in Deep Learning Implementations](https://arxiv.org/abs/1711.11008)  
  TensorFlowやCaffe等が利用しているライブラリの脆弱性を利用してDoSやBoF等を引き起こす手法。  
@@ -135,6 +135,6 @@
 
  * [Deep Pwning](https://github.com/cchio/deep-pwning)  
  機械学習版のMetasploitを目指したツール。  
- 更新は止まっているようだが、コンセプトなどを参考にしたい。  
+ 更新は止まっているようだが、コンセプト等を参考にしたい。  
 
 以上
