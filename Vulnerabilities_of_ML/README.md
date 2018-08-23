@@ -140,6 +140,6 @@
 ## Other contents
  * [ADVERSARIAL MACHINE LEARNING TUTORIAL](https://aaai18adversarial.github.io/)  
  Adversarial攻撃のチュートリアル。防御手法も掲載されている。  
- 情報提供：@icoxfog417 氏  
+ 情報提供：[@icoxfog417](https://twitter.com/icoxfog417) 氏  
  
 以上
