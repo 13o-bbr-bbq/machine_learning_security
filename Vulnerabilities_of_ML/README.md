@@ -8,6 +8,7 @@
  * Unsafety framework and library  
  * Other  
 
+## Vulnerability
 ### Adversarial example
  MLモデルに入力するデータ（画像や音声等）に微小な細工を加えることで、モデルの判断を誤らせる手法。  
  微小な細工につき、データが細工されているか否か判断することは困難。  
@@ -136,4 +137,9 @@
  機械学習版のMetasploitを目指したツール。  
  更新は止まっているようだが、コンセプト等を参考にしたい。  
 
+## Other contents
+ * [ADVERSARIAL MACHINE LEARNING TUTORIAL](https://aaai18adversarial.github.io/)  
+ Adversarial攻撃のチュートリアル。防御手法も掲載されている。  
+ 情報提供：@icoxfog417 氏  
+ 
 以上
