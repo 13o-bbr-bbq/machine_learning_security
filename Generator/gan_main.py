@@ -27,7 +27,7 @@ K.set_image_dim_ordering('th')
 
 # Generative Adversarial Networks.
 class GAN:
-    def __init__(self, individual_list):
+    def __init__(self):
         self.util = Utilty()
 
         # Read config.ini.
@@ -39,9 +39,6 @@ class GAN:
             self.util.print_message(FAIL, 'File exists error: {}'.format(e))
             sys.exit(1)
 
-        # Train dataset from genetic algorithm.
-        self.train_list = individual_list
-
         # Common setting value.
         self.wait_time = float(config['Common']['wait_time'])
         self.html_dir = self.util.join_path(full_path, config['Common']['html_dir'])
@@ -52,7 +49,7 @@ class GAN:
         self.genom_length = int(config['Genetic']['genom_length'])
         self.gene_dir = self.util.join_path(full_path, config['Genetic']['gene_dir'])
         self.genes_path = self.util.join_path(self.gene_dir, config['Genetic']['gene_file'])
-        self.result_file = config['Genetic']['result_dir']
+        self.result_file = config['Genetic']['result_file']
 
         # Generative Adversarial Network setting value.
         self.input_size = int(config['GAN']['input_size'])
@@ -148,11 +145,17 @@ class GAN:
 
         return lst_scripts
 
-    def main(self, obj_browser):
+    def main(self, obj_browser, eval_place):
         sig_path = self.util.join_path(self.result_dir, self.result_file.replace('*', obj_browser.name))
         df_sigs = pd.read_csv(sig_path, encoding='utf-8').fillna('')
-        df_genes = pd.read_csv(self.genes_path, encoding='utf-8').fillna('')
+        df_selected_sigs = df_sigs[(df_sigs[0] == eval_place)]
 
-        # Generate injection codes.
-        lst_scripts = self.train(df_genes, df_sigs)
-        self.util.print_message(NOTE, 'Generated injection codes: {}'.format(lst_scripts))
+        if len(df_selected_sigs) != 0:
+            df_genes = pd.read_csv(self.genes_path, encoding='utf-8').fillna('')
+
+            # Generate injection codes.
+            lst_scripts = self.train(df_genes, df_sigs)
+            self.util.print_message(NOTE, 'Generated injection codes: {}'.format(lst_scripts))
+        else:
+            self.util.print_message(WARNING, 'Signature of {} do not include in {}.'.format(eval_place, sig_path))
+            self.util.print_message(WARNING, 'Skip process of Generative Adversarial Networks')
