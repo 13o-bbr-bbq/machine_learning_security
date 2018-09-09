@@ -11,7 +11,6 @@ import configparser
 import csv
 import pandas as pd
 from decimal import Decimal
-from selenium import webdriver
 from selenium.webdriver.common.action_chains import ActionChains
 from jinja2 import Environment, FileSystemLoader
 from util import Utilty
@@ -83,17 +82,9 @@ class GeneticAlgorithm:
         self.html_checked_path = self.util.join_path(self.html_dir, config['Genetic']['html_checked_file'])
         self.html_eval_place_list = config['Genetic']['html_eval_place'].split('@')
         self.warning_score = float(config['Genetic']['warning_score'])
-        self.error_score = int(config['Genetic']['error_score'])
+        self.error_score = float(config['Genetic']['error_score'])
         self.result_file = config['Genetic']['result_file']
         self.result_list = []
-
-        # Selenium setting value.
-        self.driver_dir = self.util.join_path(full_path, config['Selenium']['driver_dir'])
-        self.driver_list = config['Selenium']['driver_list'].split('@')
-        self.window_width = int(config['Selenium']['window_width'])
-        self.window_height = int(config['Selenium']['window_height'])
-        self.position_width = int(config['Selenium']['position_width'])
-        self.position_height = int(config['Selenium']['position_height'])
 
     # Create population.
     def create_genom(self, df_gene):
@@ -127,22 +118,19 @@ class GeneticAlgorithm:
         str_eval_result = ''
         with codecs.open(self.html_checked_path, 'r', encoding='utf-8') as fin:
             str_eval_result = fin.read()
-        # Check warning number.
-        str_pattern = r'.*Tidy found (.*) warnings'
+        # Check warning and error number.
+        str_pattern = r'.*Tidy found ([0-9]+) warnings and ([0-9]+) errors.*$'
         obj_match = re.match(str_pattern, str_eval_result.replace('\t', '').replace('\r', '').replace('\n', ''))
-        warnings = 0
+        warnings = 0.0
+        errors = 0.0
         if obj_match:
-            warnings = obj_match.group(1)
-
-        # Check error number.
-        str_pattern = r'.*warnings and (.*) error!'
-        obj_match = re.match(str_pattern, str_eval_result.replace('\t', '').replace('\r', '').replace('\n', ''))
-        errors = 0
-        if obj_match:
-            errors = obj_match.group(1)
+            warnings = int(obj_match.group(1)) * -0.1
+            errors = int(obj_match.group(2)) * -1.0
+        else:
+            return None, 1
 
         # Compute score.
-        int_score = int(warnings) * self.warning_score + int(errors) * self.error_score
+        int_score = warnings + errors
 
         # Evaluate running script using selenium.
         eval_status = 0
@@ -151,8 +139,7 @@ class GeneticAlgorithm:
             obj_browser.get(eval_html_path)
         except Exception as e:
             obj_browser.switch_to.alert.accept()
-            eval_status = 1
-            return None, eval_status
+            return None, 1
 
         # Judge JavaScript (include event handler).
         try:
@@ -167,14 +154,14 @@ class GeneticAlgorithm:
             int_score += 1
             self.result_list.append([eval_place, indivisual])
 
-        # Output evaluation results.
-        self.util.print_message(OK, 'Evaluation result : Browser={} {}, '
-                                    'Individual="{} ({})", '
-                                    'Score={}'.format(obj_browser.name,
-                                                      obj_browser.capabilities['version'],
-                                                      indivisual,
-                                                      obj_ga.genom_list,
-                                                      str(int_score)))
+            # Output evaluation results.
+            self.util.print_message(OK, 'Evaluation result : Browser={} {}, '
+                                        'Individual="{} ({})", '
+                                        'Score={}'.format(obj_browser.name,
+                                                          obj_browser.capabilities['version'],
+                                                          indivisual,
+                                                          obj_ga.genom_list,
+                                                          str(int_score)))
         return int_score, eval_status
 
     # Select elite individual.
@@ -237,122 +224,98 @@ class GeneticAlgorithm:
         return lst_ga
 
     # Main control.
-    def main(self):
+    def main(self, obj_browser):
         # Load gene list.
         df_genes = pd.read_csv(self.genes_path, encoding='utf-8').fillna('')
 
-        # Start revolution using each browser.
-        for browser in self.driver_list:
-            # Create Web driver.
-            obj_browser = None
-            if 'geckodriver' in browser:
-                obj_browser = webdriver.Firefox(executable_path=self.util.join_path(self.driver_dir, browser))
-                self.util.print_message(NOTE, 'Launched : {} {}'.format(obj_browser.capabilities['browserName'],
-                                                                        obj_browser.capabilities['browserVersion']))
-            elif 'chrome' in browser:
-                obj_browser = webdriver.Chrome(executable_path=self.util.join_path(self.driver_dir, browser))
-                self.util.print_message(NOTE, 'Launched : {} {}'.format(obj_browser.capabilities['browserName'],
-                                                                        obj_browser.capabilities['version']))
-            elif 'IE' in browser:
-                obj_browser = webdriver.Ie(executable_path=self.util.join_path(self.driver_dir, browser))
-                self.util.print_message(NOTE, 'Launched : {} {}'.format(obj_browser.capabilities['browserName'],
-                                                                        obj_browser.capabilities['version']))
-            else:
-                self.util.print_message(FAIL, 'Invalid browser driver : {}'.format(browser))
+        # Evaluate indivisual each evaluating place in html.
+        for eval_place in self.html_eval_place_list:
+            self.util.print_message(NOTE, 'Evaluating html place : {}'.format(eval_place))
 
-            # Browser setting.
-            obj_browser.set_window_size(self.window_width, self.window_height)
-            obj_browser.set_window_position(self.position_width, self.position_height)
+            # Setting template.
+            env = Environment(loader=FileSystemLoader(self.html_dir))
+            template = env.get_template(self.html_template)
 
-            # Evaluate indivisual each evaluating place in html.
-            for eval_place in self.html_eval_place_list:
-                self.util.print_message(NOTE, 'Evaluating html place : {}'.format(eval_place))
+            # Generate 1st generation.
+            self.util.print_message(NOTE, 'Create population.')
+            current_generation = []
+            for _ in range(self.max_genom_list):
+                current_generation.append(self.create_genom(df_genes))
 
-                # Setting template.
-                env = Environment(loader=FileSystemLoader(self.html_dir))
-                template = env.get_template(self.html_template)
+            # Evaluate each generation.
+            for int_count in range(1, self.max_generation + 1):
+                self.util.print_message(NOTE, 'Evaluate individual : {}/{} generation.'.format(str(int_count),
+                                                                                               self.max_generation))
+                for indivisual, idx in enumerate(range(self.max_genom_list)):
+                    self.util.print_message(OK, 'Evaluation individual in {}: '
+                                                '{}/{} in {} generation'.format(eval_place,
+                                                                                indivisual + 1,
+                                                                                self.max_genom_list,
+                                                                                str(int_count)))
+                    evaluation_result, eval_status = self.evaluation(current_generation[indivisual],
+                                                                     df_genes,
+                                                                     obj_browser,
+                                                                     eval_place,
+                                                                     template,
+                                                                     idx)
 
-                # Generate 1st generation.
-                self.util.print_message(NOTE, 'Create population.')
-                lst_current_generation = []
-                for _ in range(self.max_genom_list):
-                    lst_current_generation.append(self.create_genom(df_genes))
+                    idx += 1
+                    if eval_status == 1:
+                        indivisual -= 1
+                        continue
+                    current_generation[indivisual].setEvaluation(evaluation_result)
+                    time.sleep(self.wait_time)
 
-                # Evaluate individual.
-                for int_count in range(1, self.max_generation + 1):
-                    self.util.print_message(NOTE, 'Evaluate individual : {}/{} generation.'.format(str(int_count),
-                                                                                                   self.max_generation))
-                    for indivisual, idx in enumerate(range(self.max_genom_list)):
-                        self.util.print_message(OK, 'Evaluation individual in {}: '
-                                                    '{}/{} in {} generation'.format(eval_place,
-                                                                                    indivisual + 1,
-                                                                                    self.max_genom_list,
-                                                                                    str(int_count)))
-                        evaluation_result, eval_status = self.evaluation(lst_current_generation[indivisual],
-                                                                         df_genes,
-                                                                         obj_browser,
-                                                                         eval_place,
-                                                                         template,
-                                                                         idx)
+                # Select elite's individual.
+                elite_genes = self.select(current_generation, self.select_genom)
 
-                        idx += 1
-                        if eval_status == 1:
-                            indivisual -= 1
-                            continue
-                        lst_current_generation[indivisual].setEvaluation(evaluation_result)
-                        time.sleep(self.wait_time)
+                # Crossover of elite gene.
+                progeny_gene = []
+                for i in range(0, self.select_genom):
+                    progeny_gene.extend(self.crossover(elite_genes[i - 1], elite_genes[i]))
 
-                    # Select elite's individual.
-                    elite_genes = self.select(lst_current_generation, self.select_genom)
+                # Select elite group.
+                next_generation_individual_group = self.next_generation_gene_create(current_generation,
+                                                                                    elite_genes,
+                                                                                    progeny_gene)
 
-                    # Crossover of elite gene.
-                    progeny_gene = []
-                    for i in range(0, self.select_genom):
-                        progeny_gene.extend(self.crossover(elite_genes[i - 1], elite_genes[i]))
+                # Mutation
+                next_generation_individual_group = self.mutation(next_generation_individual_group,
+                                                                 self.individual_mutation_rate,
+                                                                 self.genom_mutation_rate,
+                                                                 df_genes)
 
-                    # Select elite group.
-                    next_generation_individual_group = self.next_generation_gene_create(lst_current_generation,
-                                                                                        elite_genes,
-                                                                                        progeny_gene)
+                # Finish evolution computing for current generation.
+                # Arrange fitness each individual.
+                fits = [_.getEvaluation() for _ in current_generation]
 
-                    # Mutation
-                    next_generation_individual_group = self.mutation(next_generation_individual_group,
-                                                                     self.individual_mutation_rate,
-                                                                     self.genom_mutation_rate,
-                                                                     df_genes)
+                # evaluate evolution result.
+                flt_avg = sum(fits) / float(len(fits))
+                self.util.print_message(NOTE, '{} generation result: '
+                                              'Min={}, Max={}, Avg={}.'.format(int_count,
+                                                                               min(fits),
+                                                                               max(fits),
+                                                                               flt_avg))
 
-                    # Finish evolution computing for current generation.
-                    # Arrange fitness each individual.
-                    fits = [_.getEvaluation() for _ in lst_current_generation]
+                # Judge fitness.
+                if flt_avg > self.max_fitness:
+                    self.util.print_message(NOTE, 'Finish evolution: average={}'.format(str(flt_avg)))
+                    break
 
-                    # evaluate evolution result.
-                    flt_avg = sum(fits) / float(len(fits))
-                    self.util.print_message(NOTE, '{} generation result: '
-                                                  'Min={}, Max={}, Avg={}.'.format(int_count,
-                                                                                   min(fits),
-                                                                                   max(fits),
-                                                                                   flt_avg))
+                # Replace current generation and next generation.
+                current_generation = next_generation_individual_group
 
-                    # Judge fitness.
-                    if flt_avg > self.max_fitness:
-                        self.util.print_message(NOTE, 'Finish evolution: average={}'.format(str(flt_avg)))
-                        break
+        # Save individual.
+        save_path = self.util.join_path(self.result_dir, self.result_file.replace('*', obj_browser.name))
+        with codecs.open(save_path, 'w', encoding='utf-8') as fout:
+            writer = csv.writer(fout, lineterminator='\n')
+            writer.writerows(self.result_list)
 
-                    # Replace current generation and next generation.
-                    current_generation_individual_group = next_generation_individual_group
+        # Output final result.
+        str_best_individual = ''
+        for gene_num in elite_genes[0].getGenom():
+            str_best_individual += str(df_genes.loc[gene_num].values[0])
+        str_best_individual = str_best_individual.replace('%s', ' ').replace('&quot;', '"').replace('%comma', ',')
+        self.util.print_message(NOTE, 'Best individual : "{}"'.format(str_best_individual))
 
-            # Save individual.
-            save_path = self.util.join_path(self.result_dir, self.result_file.replace('*', obj_browser.name))
-            with codecs.open(save_path, 'w', encoding='utf-8') as fout:
-                writer = csv.writer(fout, lineterminator='\n')
-                writer.writerows(self.result_list)
-
-            # Close browser.
-            obj_browser.close()
-
-            # Output final result.
-            str_best_individual = ''
-            for gene_num in elite_genes[0].getGenom():
-                str_best_individual += str(df_genes.loc[gene_num].values[0])
-            str_best_individual = str_best_individual.replace('%s', ' ').replace('&quot;', '"').replace('%comma', ',')
-            self.util.print_message(NOTE, 'Best individual : "{}"'.format(str_best_individual))
+        return self.result_list
