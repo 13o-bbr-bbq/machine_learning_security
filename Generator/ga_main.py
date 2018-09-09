@@ -152,7 +152,7 @@ class GeneticAlgorithm:
 
             # compute score for running script.
             int_score += 1
-            self.result_list.append([eval_place, indivisual])
+            self.result_list.append([eval_place, obj_ga.genom_list, indivisual])
 
             # Output evaluation results.
             self.util.print_message(OK, 'Evaluation result : Browser={} {}, '
@@ -228,13 +228,13 @@ class GeneticAlgorithm:
         # Load gene list.
         df_genes = pd.read_csv(self.genes_path, encoding='utf-8').fillna('')
 
+        # Setting template.
+        env = Environment(loader=FileSystemLoader(self.html_dir))
+        template = env.get_template(self.html_template)
+
         # Evaluate indivisual each evaluating place in html.
         for eval_place in self.html_eval_place_list:
             self.util.print_message(NOTE, 'Evaluating html place : {}'.format(eval_place))
-
-            # Setting template.
-            env = Environment(loader=FileSystemLoader(self.html_dir))
-            template = env.get_template(self.html_template)
 
             # Generate 1st generation.
             self.util.print_message(NOTE, 'Create population.')
@@ -305,11 +305,11 @@ class GeneticAlgorithm:
                 # Replace current generation and next generation.
                 current_generation = next_generation_individual_group
 
-        # Save individual.
-        save_path = self.util.join_path(self.result_dir, self.result_file.replace('*', obj_browser.name))
-        with codecs.open(save_path, 'w', encoding='utf-8') as fout:
-            writer = csv.writer(fout, lineterminator='\n')
-            writer.writerows(self.result_list)
+            # Save individual.
+            save_path = self.util.join_path(self.result_dir, self.result_file.replace('*', obj_browser.name))
+            with codecs.open(save_path, 'w', encoding='utf-8') as fout:
+                writer = csv.writer(fout, lineterminator='\n')
+                writer.writerows(self.result_list)
 
         # Output final result.
         str_best_individual = ''
