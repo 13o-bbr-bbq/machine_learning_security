@@ -307,7 +307,7 @@ class GeneticAlgorithm:
 
             # Save individual.
             save_path = self.util.join_path(self.result_dir, self.result_file.replace('*', obj_browser.name))
-            with codecs.open(save_path, 'w', encoding='utf-8') as fout:
+            with codecs.open(save_path, 'a', encoding='utf-8') as fout:
                 writer = csv.writer(fout, lineterminator='\n')
                 writer.writerows(self.result_list)
 
