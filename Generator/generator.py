@@ -5,6 +5,7 @@ import configparser
 from selenium import webdriver
 from util import Utilty
 from ga_main import GeneticAlgorithm
+from jinja2 import Environment, FileSystemLoader
 from gan_main import GAN
 
 # Type of printing.
@@ -26,6 +27,10 @@ if __name__ == "__main__":
         util.print_message(FAIL, 'File exists error: {}'.format(e))
         sys.exit(1)
 
+    # Common setting value.
+    html_dir = util.join_path(full_path, config['Common']['html_dir'])
+    html_template = config['Common']['html_template']
+
     # Genetic Algorithm setting value.
     html_eval_place_list = config['Genetic']['html_eval_place'].split('@')
 
@@ -36,6 +41,10 @@ if __name__ == "__main__":
     window_height = int(config['Selenium']['window_height'])
     position_width = int(config['Selenium']['position_width'])
     position_height = int(config['Selenium']['position_height'])
+
+    # Setting template.
+    env = Environment(loader=FileSystemLoader(html_dir))
+    template = env.get_template(html_template)
 
     # Start revolution using each browser.
     for browser in driver_list:
@@ -60,22 +69,18 @@ if __name__ == "__main__":
         obj_browser.set_window_size(window_width, window_height)
         obj_browser.set_window_position(position_width, position_height)
 
-        # Create a few individuals.
-        # util.print_message(NOTE, 'Create individuals using Genetic Algorithm.')
-        # ga = GeneticAlgorithm()
-        # individual_list = ga.main(obj_browser)
+        # Create a few individuals from gene list.
+        util.print_message(NOTE, 'Create individuals using Genetic Algorithm.')
+        ga = GeneticAlgorithm(template, obj_browser)
+        individual_list = ga.main()
 
         # Debug
-        individual_list = [1]
+        # individual_list = [1]
         if len(individual_list) != 0:
             # Multiply individual.
             util.print_message(NOTE, 'Multiply individual using Generative Adversarial Networks.')
-            gan = GAN()
-
-            # Evaluate indivisual each evaluating place in html.
-            for eval_place in html_eval_place_list:
-                util.print_message(NOTE, 'Evaluating html place : {}'.format(eval_place))
-                gan.main(obj_browser, eval_place)
+            gan = GAN(template, obj_browser)
+            gan.main()
         else:
             util.print_message(WARNING, 'Genetic Algorithm cannot individual.')
             util.print_message(WARNING, 'Skip process of Generative Adversarial Networks')

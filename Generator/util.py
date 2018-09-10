@@ -6,6 +6,7 @@ import string
 import random
 import configparser
 from datetime import datetime
+from selenium.webdriver.common.action_chains import ActionChains
 
 # Printing colors.
 OK_BLUE = '\033[94m'      # [*]
@@ -104,3 +105,37 @@ class Utilty:
     # Join the paths according to environment.
     def join_path(self, path1, path2):
         return os.path.join(path1, path2)
+
+    # Transform gene from number to string.
+    def transform_gene_num2str(self, df_gene, individual_genom_list):
+        indivisual = ''
+        for gene_num in individual_genom_list:
+            indivisual += str(df_gene.loc[gene_num].values[0])
+            indivisual = indivisual.replace('%s', ' ').replace('&quot;', '"').replace('%comma', ',')
+        return indivisual
+
+    # Check individual using selenium.
+    def check_individual_selenium(self, obj_browser, eval_html_path):
+        # Evaluate running script using selenium.
+        int_score = 0
+        error_flag = False
+
+        # Refresh browser for next evaluation.
+        try:
+            obj_browser.get(eval_html_path)
+        except Exception as e:
+            obj_browser.switch_to.alert.accept()
+            error_flag = True
+            return int_score, error_flag
+
+        # Judge JavaScript (include event handler).
+        try:
+            obj_browser.refresh()
+            ActionChains(obj_browser).move_by_offset(10, 10).perform()
+            obj_browser.refresh()
+        except Exception as e:
+            # Run script.
+            obj_browser.switch_to.alert.accept()
+            int_score = 1
+
+        return int_score, error_flag

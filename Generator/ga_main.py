@@ -8,11 +8,9 @@ import subprocess
 import time
 import locale
 import configparser
-import csv
 import pandas as pd
 from decimal import Decimal
 from selenium.webdriver.common.action_chains import ActionChains
-from jinja2 import Environment, FileSystemLoader
 from util import Utilty
 
 # Type of printing.
@@ -47,8 +45,10 @@ class Gene:
 
 # Genetic Algorithm.
 class GeneticAlgorithm:
-    def __init__(self):
+    def __init__(self, template, browser):
         self.util = Utilty()
+        self.template = template
+        self.obj_browser = browser
 
         # Read config.ini.
         full_path = os.path.dirname(os.path.abspath(__file__))
@@ -63,7 +63,7 @@ class GeneticAlgorithm:
         self.html_dir = self.util.join_path(full_path, config['Common']['html_dir'])
         self.html_template = config['Common']['html_template']
         self.html_template_path = self.util.join_path(self.html_dir, self.html_template)
-        self.html_file = config['Common']['html_file']
+        self.html_file = config['Common']['ga_html_file']
         self.result_dir = self.util.join_path(full_path, config['Common']['result_dir'])
 
         # Genetic Algorithm setting value.
@@ -95,13 +95,10 @@ class GeneticAlgorithm:
         return Gene(lst_gene, 0)
 
     # Evaluation.
-    def evaluation(self, obj_ga, df_gene, obj_browser, eval_place, template, individual_idx):
+    def evaluation(self, obj_ga, df_gene, eval_place, individual_idx):
         # Build html syntax.
-        indivisual = ''
-        for gene_num in obj_ga.genom_list:
-            indivisual += str(df_gene.loc[gene_num].values[0])
-            indivisual = indivisual.replace('%s', ' ').replace('&quot;', '"').replace('%comma', ',')
-        html = template.render({eval_place: indivisual})
+        indivisual = self.util.transform_gene_num2str(df_gene, obj_ga.genom_list)
+        html = self.template.render({eval_place: indivisual})
         eval_html_path = self.util.join_path(self.html_dir, self.html_file.replace('*', str(individual_idx)))
         with codecs.open(eval_html_path, 'w', encoding='utf-8') as fout:
             fout.write(html)
@@ -133,36 +130,27 @@ class GeneticAlgorithm:
         int_score = warnings + errors
 
         # Evaluate running script using selenium.
-        eval_status = 0
-        # Refresh browser for next evaluation.
-        try:
-            obj_browser.get(eval_html_path)
-        except Exception as e:
-            obj_browser.switch_to.alert.accept()
+        selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser, eval_html_path)
+        if error_flag:
             return None, 1
 
-        # Judge JavaScript (include event handler).
-        try:
-            obj_browser.refresh()
-            ActionChains(obj_browser).move_by_offset(10, 10).perform()
-            obj_browser.refresh()
-        except Exception as e:
+        # Check result of selenium.
+        if selenium_score > 0:
             self.util.print_message(OK, 'Detect running script: "{}" in {}.'.format(indivisual, eval_place))
-            obj_browser.switch_to.alert.accept()
 
             # compute score for running script.
-            int_score += 1
+            int_score += selenium_score
             self.result_list.append([eval_place, obj_ga.genom_list, indivisual])
 
             # Output evaluation results.
             self.util.print_message(OK, 'Evaluation result : Browser={} {}, '
                                         'Individual="{} ({})", '
-                                        'Score={}'.format(obj_browser.name,
-                                                          obj_browser.capabilities['version'],
+                                        'Score={}'.format(self.obj_browser.name,
+                                                          self.obj_browser.capabilities['version'],
                                                           indivisual,
                                                           obj_ga.genom_list,
                                                           str(int_score)))
-        return int_score, eval_status
+        return int_score, 0
 
     # Select elite individual.
     def select(self, obj_ga, elite):
@@ -224,13 +212,9 @@ class GeneticAlgorithm:
         return lst_ga
 
     # Main control.
-    def main(self, obj_browser):
+    def main(self):
         # Load gene list.
         df_genes = pd.read_csv(self.genes_path, encoding='utf-8').fillna('')
-
-        # Setting template.
-        env = Environment(loader=FileSystemLoader(self.html_dir))
-        template = env.get_template(self.html_template)
 
         # Evaluate indivisual each evaluating place in html.
         for eval_place in self.html_eval_place_list:
@@ -254,9 +238,7 @@ class GeneticAlgorithm:
                                                                                 str(int_count)))
                     evaluation_result, eval_status = self.evaluation(current_generation[indivisual],
                                                                      df_genes,
-                                                                     obj_browser,
                                                                      eval_place,
-                                                                     template,
                                                                      idx)
 
                     idx += 1
@@ -305,11 +287,13 @@ class GeneticAlgorithm:
                 # Replace current generation and next generation.
                 current_generation = next_generation_individual_group
 
-            # Save individual.
-            save_path = self.util.join_path(self.result_dir, self.result_file.replace('*', obj_browser.name))
-            with codecs.open(save_path, 'a', encoding='utf-8') as fout:
-                writer = csv.writer(fout, lineterminator='\n')
-                writer.writerows(self.result_list)
+        # Save individuals.
+        save_path = self.util.join_path(self.result_dir, self.result_file.replace('*', self.obj_browser.name))
+        pd.DataFrame(self.result_list,
+                     columns=['eval_place', 'sig_vector', 'sig_string']).to_csv(save_path,
+                                                                                mode='w',
+                                                                                header=True,
+                                                                                index=False)
 
         # Output final result.
         str_best_individual = ''
