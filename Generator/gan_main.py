@@ -63,6 +63,7 @@ class GAN:
         self.gen_weight_file = config['GAN']['generator_weight_file']
         self.dis_weight_file = config['GAN']['discriminator_weight_file']
         self.gan_result_file = config['GAN']['result_file']
+        self.gan_vec_result_file = config['GAN']['vec_result_file']
 
     # Build generator model.
     def generator_model(self):
@@ -166,13 +167,9 @@ class GAN:
 
         return lst_scripts
 
-    # Additional of two vectors.
-    def vector_additional(self, vector1, vector2):
-        return vector1 + vector2
-
-    # Subtraction of two vectors.
-    def vector_subtraction(self, vector1, vector2):
-        return vector1 - vector2
+    # Mean of two vectors.
+    def vector_mean(self, vector1, vector2):
+        return (vector1 + vector2)/2
 
     # Main control.
     def main(self):
@@ -196,6 +193,13 @@ class GAN:
                 self.util.print_message(NOTE, 'Start generating injection codes using {}'.format(target_sig))
                 target_sig_list = [target_sig for _ in range(self.max_sig_num)]
                 lst_scripts.extend(self.train(df_genes, target_sig_list))
+
+            # Create saving file.
+            save_path = self.util.join_path(self.result_dir, self.gan_result_file.replace('*', self.obj_browser.name))
+            pd.DataFrame([], columns=['eval_place', 'sig_vector', 'sig_string']).to_csv(save_path,
+                                                                                                 mode='w',
+                                                                                                 header=True,
+                                                                                                 index=False)
 
             # Evaluate generated individual.
             result_list = []
@@ -223,15 +227,11 @@ class GAN:
                         result_list.append([eval_place, indivisual[0], indivisual[1]])
                         valid_noise_list.append(indivisual[2])
 
-            # Save individuals.
-            save_path = self.util.join_path(self.result_dir, self.gan_result_file.replace('*', self.obj_browser.name))
-            pd.DataFrame(result_list, columns=['eval_place', 'sig_vector', 'sig_string']).to_csv(save_path,
-                                                                                                 mode='w',
-                                                                                                 header=True,
-                                                                                                 index=False)
+                # Save individuals.
+                pd.DataFrame(result_list).to_csv(save_path, mode='a', header=False, index=False)
 
-            # TODO: 合成ベクトルの評価を行うこと。
-            # add_noise = self.vector_additional()
+            # Calculate of tensor mean.
+            mean_noise = self.vector_mean()
             self.util.print_message(NOTE, 'Generated injection codes.')
         else:
             self.util.print_message(WARNING, 'Signature of {} do not include.'.format(sig_path))
