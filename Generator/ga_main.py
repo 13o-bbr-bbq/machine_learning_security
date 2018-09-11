@@ -10,7 +10,6 @@ import locale
 import configparser
 import pandas as pd
 from decimal import Decimal
-from selenium.webdriver.common.action_chains import ActionChains
 from util import Utilty
 
 # Type of printing.
@@ -216,6 +215,14 @@ class GeneticAlgorithm:
         # Load gene list.
         df_genes = pd.read_csv(self.genes_path, encoding='utf-8').fillna('')
 
+        # Create saving file (only header).
+        save_path = self.util.join_path(self.result_dir, self.result_file.replace('*', self.obj_browser.name))
+        if os.path.exists(save_path) is False:
+            pd.DataFrame([], columns=['eval_place', 'sig_vector', 'sig_string']).to_csv(save_path,
+                                                                                        mode='w',
+                                                                                        header=True,
+                                                                                        index=False)
+
         # Evaluate indivisual each evaluating place in html.
         for eval_place in self.html_eval_place_list:
             self.util.print_message(NOTE, 'Evaluating html place : {}'.format(eval_place))
@@ -288,12 +295,7 @@ class GeneticAlgorithm:
                 current_generation = next_generation_individual_group
 
         # Save individuals.
-        save_path = self.util.join_path(self.result_dir, self.result_file.replace('*', self.obj_browser.name))
-        pd.DataFrame(self.result_list,
-                     columns=['eval_place', 'sig_vector', 'sig_string']).to_csv(save_path,
-                                                                                mode='w',
-                                                                                header=True,
-                                                                                index=False)
+        pd.DataFrame(self.result_list).to_csv(save_path, mode='a', header=True, index=False)
 
         # Output final result.
         str_best_individual = ''
@@ -301,5 +303,6 @@ class GeneticAlgorithm:
             str_best_individual += str(df_genes.loc[gene_num].values[0])
         str_best_individual = str_best_individual.replace('%s', ' ').replace('&quot;', '"').replace('%comma', ',')
         self.util.print_message(NOTE, 'Best individual : "{}"'.format(str_best_individual))
+        self.util.print_message(NOTE, 'Done creation of injection codes using Genetic Algorithm.')
 
         return self.result_list

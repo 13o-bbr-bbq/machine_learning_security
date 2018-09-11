@@ -111,7 +111,8 @@ class Utilty:
         indivisual = ''
         for gene_num in individual_genom_list:
             indivisual += str(df_gene.loc[gene_num].values[0])
-            indivisual = indivisual.replace('%s', ' ').replace('&quot;', '"').replace('%comma', ',')
+            indivisual = indivisual.replace('%s', ' ').replace('&quot;', '"')\
+                .replace('%comma', ',').replace('&apos;', "'")
         return indivisual
 
     # Check individual using selenium.

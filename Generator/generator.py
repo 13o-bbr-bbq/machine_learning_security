@@ -33,6 +33,7 @@ if __name__ == "__main__":
 
     # Genetic Algorithm setting value.
     html_eval_place_list = config['Genetic']['html_eval_place'].split('@')
+    max_try_num = int(config['Genetic']['max_try_num'])
 
     # Selenium setting value.
     driver_dir = util.join_path(full_path, config['Selenium']['driver_dir'])
@@ -64,26 +65,22 @@ if __name__ == "__main__":
                                                                obj_browser.capabilities['version']))
         else:
             util.print_message(FAIL, 'Invalid browser driver : {}'.format(browser))
+            sys.exit(1)
 
         # Browser setting.
         obj_browser.set_window_size(window_width, window_height)
         obj_browser.set_window_position(position_width, position_height)
 
         # Create a few individuals from gene list.
-        util.print_message(NOTE, 'Create individuals using Genetic Algorithm.')
-        ga = GeneticAlgorithm(template, obj_browser)
-        individual_list = ga.main()
+        for idx in range(max_try_num):
+            util.print_message(NOTE, '{}/{} Create individuals using Genetic Algorithm.'.format(idx + 1, max_try_num))
+            ga = GeneticAlgorithm(template, obj_browser)
+            individual_list = ga.main()
 
-        # Debug
-        # individual_list = [1]
-        if len(individual_list) != 0:
-            # Multiply individual.
-            util.print_message(NOTE, 'Multiply individual using Generative Adversarial Networks.')
-            gan = GAN(template, obj_browser)
-            gan.main()
-        else:
-            util.print_message(WARNING, 'Genetic Algorithm cannot individual.')
-            util.print_message(WARNING, 'Skip process of Generative Adversarial Networks')
+        # Generate many individuals from ga result.
+        util.print_message(NOTE, 'Generate individual using Generative Adversarial Networks.')
+        gan = GAN(template, obj_browser)
+        gan.main()
 
         # Close browser.
         obj_browser.close()
