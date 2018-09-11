@@ -140,9 +140,11 @@ src=x%s
 src=/%s
 src=%s%s
 src=&quot;data:text/html%comma
+src=saivs.js%s
 type=&quot;image&quot;%s
 type=&quot;text/x-scriptlet&quot;%s
 data=saivs.html%s
+data=&quot;data:text/html%comma
 accept=
 accept-charset=
 action=
@@ -216,3 +218,4 @@ prompt(1);
 &#x0A;
 &#x0D;
 -->
+&apos;
