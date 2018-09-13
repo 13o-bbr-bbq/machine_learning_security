@@ -60,6 +60,7 @@ class GAN:
         self.batch_size = int(config['GAN']['batch_size'])
         self.num_epoch = int(config['GAN']['num_epoch'])
         self.max_sig_num = int(config['GAN']['max_sig_num'])
+        self.max_explore_codes_num = int(config['GAN']['max_explore_codes_num'])
         self.max_synthetic_num = int(config['GAN']['max_synthetic_num'])
         self.weight_dir = self.util.join_path(full_path, config['GAN']['weight_dir'])
         self.gen_weight_file = config['GAN']['generator_weight_file']
@@ -179,7 +180,7 @@ class GAN:
                             self.util.print_message(WARNING, 'Detect running script: "{}" in {}.'.format(str_html,
                                                                                                          eval_place))
                             # Save running script.
-                            lst_scripts.append([eval_place, lst_genom, str_html, noise])
+                            lst_scripts.append([eval_place, str_html])
 
             # Save weights of network each epoch.
             self.generator.save_weights(self.util.join_path(self.weight_dir,
@@ -206,71 +207,101 @@ class GAN:
 
     # Main control.
     def main(self):
+        # Define saving path.
+        gan_save_path = self.util.join_path(self.result_dir, self.gan_result_file.replace('*', self.obj_browser.name))
+        vec_save_path = self.util.join_path(self.result_dir, self.gan_vec_result_file.replace('*', self.obj_browser.name))
+
+        # Start generating injection code.
         if os.path.exists(self.weight_path):
-            # Calculate of tensor mean.
+            # Load trained model.
             self.generator = self.generator_model()
             self.generator.load_weights('{}'.format(self.weight_path))
+
+            # Explore the valid injection codes.
+            valid_code_list = []
+            result_list = []
+            for idx in range(self.max_explore_codes_num):
+                self.util.print_message(NOTE, '{}/{} Explore valid injection code.'.format(idx + 1,
+                                                                                           self.max_explore_codes_num))
+                # Generate injection codes.
+                noise = np.array([np.random.uniform(-1, 1, self.input_size) for _ in range(1)])
+                generated_codes = self.generator.predict(noise, verbose=0)
+                str_html = self.util.transform_gene_num2str(self.df_genes, self.transform_code2gene(generated_codes[0]))
+
+                # Evaluate injection code using selenium.
+                for eval_place in self.eval_place_list:
+                    html = self.template.render({eval_place: str_html})
+                    with codecs.open(self.eval_html_path, 'w', encoding='utf-8') as fout:
+                        fout.write(html)
+
+                    selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser,
+                                                                                     self.eval_html_path)
+                    if error_flag:
+                        continue
+
+                    # Check generated injection code.
+                    if selenium_score > 0:
+                        self.util.print_message(WARNING, 'Find valid injection code: "{}" in {}.'.format(str_html,
+                                                                                                         eval_place))
+                        valid_code_list.append([str_html, noise])
+                        result_list.append([eval_place, str_html])
+
+            # Save generated injection codes.
+            if os.path.exists(gan_save_path) is False:
+                pd.DataFrame(result_list, columns=['eval_place', 'injection_code']).to_csv(gan_save_path,
+                                                                                           mode='w',
+                                                                                           header=True,
+                                                                                           index=False)
+            else:
+                pd.DataFrame(result_list).to_csv(gan_save_path, mode='a', header=False, index=False)
+
+            # Synthesize injection codes.
             vector_result_list = []
             for idx in range(self.max_synthetic_num):
-                self.util.print_message(NOTE, '{}/{} Start synthesizing individuals.'.format(idx + 1,
-                                                                                             self.max_synthetic_num))
+                noise_idx1 = np.random.randint(0, len(valid_code_list))
+                noise_idx2 = np.random.randint(0, len(valid_code_list))
+                self.util.print_message(NOTE, '{}/{} Synthesize injection codes.'.format(idx+1, self.max_synthetic_num))
+                self.util.print_message(OK, 'Use two injection codes : ({}) + ({}).'.
+                                        format(valid_code_list[noise_idx1][0], valid_code_list[noise_idx2][0]))
 
                 # Generate injection codes.
-                noise_list = []
-                for noise_idx in range(2):
-                    code_list = []
-                    self.util.print_message(OK, '{}/2 Generate injection codes'.format(noise_idx + 1))
-                    noise = np.array([np.random.uniform(-1, 1, self.input_size) for _ in range(self.batch_size)])
-                    generated_codes = self.generator.predict(noise, verbose=0)
-                    for generated_code in generated_codes:
-                        code_list.append(self.util.transform_gene_num2str(self.df_genes,
-                                                                          self.transform_code2gene(generated_code)))
-                    noise_list.append([code_list, noise])
-
-                # Synthesize injection codes.
-                self.util.print_message(OK, 'Synthesize injection codes.')
-                self.util.print_message(OK, '{}/{} Synthetic of two individual groups : ({}) + ({}).'.
-                                        format(idx + 1,
-                                               self.max_synthetic_num,
-                                               noise_list[0][0],
-                                               noise_list[1][0]))
-                synthesized_noise = self.vector_mean(noise_list[0][1], noise_list[1][1])
+                synthesized_noise = self.vector_mean(valid_code_list[noise_idx1][1], valid_code_list[noise_idx2][1])
                 generated_codes = self.generator.predict(synthesized_noise, verbose=0)
+                str_html = self.util.transform_gene_num2str(self.df_genes, self.transform_code2gene(generated_codes[0]))
 
-                # Build HTML syntax from synthesized codes.
-                for generated_code in generated_codes:
-                    str_html = self.util.transform_gene_num2str(self.df_genes, self.transform_code2gene(generated_code))
+                # Evaluate synthesized injection code using selenium.
+                for eval_place in self.eval_place_list:
+                    hit_flag = 'Failure'
+                    html = self.template.render({eval_place: str_html})
+                    with codecs.open(self.eval_html_path, 'w', encoding='utf-8') as fout:
+                        fout.write(html)
 
-                    for eval_place in self.eval_place_list:
-                        # Build html syntax.
-                        html = self.template.render({eval_place: str_html})
-                        with codecs.open(self.eval_html_path, 'w', encoding='utf-8') as fout:
-                            fout.write(html)
+                    selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser,
+                                                                                     self.eval_html_path)
+                    if error_flag:
+                        continue
 
-                        # Evaluate individual using selenium.
-                        selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser,
-                                                                                         self.eval_html_path)
-                        if error_flag:
-                            continue
+                    # Check synthesized injection code using selenium.
+                    if selenium_score > 0:
+                        self.util.print_message(WARNING, 'Find running script: "{}".'.format(str_html))
+                        hit_flag = 'Bingo'
 
-                        # Check synthetic individual using selenium.
-                        if selenium_score > 0:
-                            self.util.print_message(WARNING,
-                                                    'Detect running script: "{}" in {}.'.format(str_html,
-                                                                                                eval_place))
+                    # Save running script.
+                    vector_result_list.append([eval_place, str_html,
+                                               valid_code_list[noise_idx1][0],
+                                               valid_code_list[noise_idx2][0],
+                                               hit_flag])
 
-                            # Save running script.
-                            vector_result_list.append([eval_place, str_html,
-                                                       noise_list[0][0], noise_list[1][0]])
-
-            # Save synthesized individuals.
-            save_path = self.util.join_path(self.result_dir, self.gan_vec_result_file.
-                                            replace('*', self.obj_browser.name))
-            pd.DataFrame(vector_result_list,
-                         columns=['synthesized_script', 'origin_script1', 'origin_script2']).to_csv(save_path,
-                                                                                                    mode='w',
-                                                                                                    header=True,
-                                                                                                    index=False)
+            # Save synthesized injection codes.
+            if os.path.exists(vec_save_path) is False:
+                pd.DataFrame(vector_result_list,
+                             columns=['eval_place', 'synthesized_code',
+                                      'origin_code1', 'origin_code2', 'bingo']).to_csv(vec_save_path,
+                                                                                       mode='w',
+                                                                                       header=True,
+                                                                                       index=False)
+            else:
+                pd.DataFrame(vector_result_list).to_csv(vec_save_path, mode='a', header=False, index=False)
         else:
             # Load created individuals by Genetic Algorithm.
             sig_path = self.util.join_path(self.result_dir, self.ga_result_file.replace('*', self.obj_browser.name))
@@ -291,14 +322,13 @@ class GAN:
                 target_sig_list.extend([target_sig for _ in range(self.max_sig_num)])
             lst_scripts.extend(self.train(target_sig_list))
 
-            # Create saving file.
-            save_path = self.util.join_path(self.result_dir, self.gan_result_file.replace('*', self.obj_browser.name))
-            if os.path.exists(save_path) is False:
-                pd.DataFrame(lst_scripts[:3], columns=['eval_place', 'sig_vector', 'sig_string']).to_csv(save_path,
-                                                                                                         mode='w',
-                                                                                                         header=True,
-                                                                                                         index=False)
+            # Save generated injection codes.
+            if os.path.exists(gan_save_path) is False:
+                pd.DataFrame(lst_scripts, columns=['eval_place', 'injection_code']).to_csv(gan_save_path,
+                                                                                           mode='w',
+                                                                                           header=True,
+                                                                                           index=False)
             else:
-                pd.DataFrame(lst_scripts[:3]).to_csv(save_path, mode='a', header=False, index=False)
+                pd.DataFrame(lst_scripts).to_csv(gan_save_path, mode='a', header=False, index=False)
 
         self.util.print_message(NOTE, 'Done generation of injection codes using Generative Adversarial Networks.')
