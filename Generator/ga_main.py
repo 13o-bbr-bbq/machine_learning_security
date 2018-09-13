@@ -80,6 +80,7 @@ class GeneticAlgorithm:
         self.html_checker_option = config['Genetic']['html_checker_option']
         self.html_checked_path = self.util.join_path(self.html_dir, config['Genetic']['html_checked_file'])
         self.html_eval_place_list = config['Genetic']['html_eval_place'].split('@')
+        self.bingo_score = float(config['Genetic']['bingo_score'])
         self.warning_score = float(config['Genetic']['warning_score'])
         self.error_score = float(config['Genetic']['error_score'])
         self.result_file = config['Genetic']['result_file']
@@ -138,7 +139,7 @@ class GeneticAlgorithm:
             self.util.print_message(OK, 'Detect running script: "{}" in {}.'.format(indivisual, eval_place))
 
             # compute score for running script.
-            int_score += selenium_score
+            int_score += self.bingo_score
             self.result_list.append([eval_place, obj_ga.genom_list, indivisual])
 
             # Output evaluation results.
