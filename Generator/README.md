@@ -43,22 +43,53 @@ PS C:\machine_learning_security\Generator> pip install -r requirements.txt
 ### Step.2 Get the web driver for selenium.
 [!] I use the Google chrome driver in this example.  
 
-You get the [chrome driver](http://chromedriver.chromium.org/downloads) for selenium.  
-And you have to move downloaded driver to `web_drivers` directory.  
+You have to download the [chrome driver](http://chromedriver.chromium.org/downloads) for selenium.  
+And you have to move downloaded driver file to `web_drivers` directory.  
 
 ```
 PS C:\machine_learning_security\Generator> mkdir web_drivers
 PS C:\machine_learning_security\Generator> mv chromedriver.exe web_drivers
+PS C:\machine_learning_security\Generator> ls .\web_drivers
+
+
+    Directory: C:\machine_learning_security\Generator\web_drivers
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+-a----       2018/07/27     12:32        6737408 chromedriver.exe
 ```
 
 ### Step.3 Get html checker (tidy).
 [!] I use the `tidy 5.4.0 win64` in this example.  
 
-You get the [`tidy 5.4.0 win64`](http://binaries.html-tidy.org/).  
-And you have to put the tidy directory to pyGenerator root.  
+You have to download the [`tidy 5.4.0 win64`](http://binaries.html-tidy.org/).  
+And you have to move tidy directory to pyGenerator root.  
 
 ```
 PS C:\users\itaka\Downloads> mv tidy-5.4.0-win64 C:\machine_learning_security\Generator\
+PS C:\users\itaka\Downloads> ls C:\machine_learning_security\Generator
+
+
+    Directory: C:\machine_learning_security\Generator
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----       2018/09/18      6:39                .idea
+d-----       2018/09/11     16:10                gene
+d-----       2018/09/11     14:55                html
+d-----       2018/09/10      7:05                img
+d-----       2018/09/14     11:46                result
+d-----       2018/09/11     14:28                tidy-5.4.0-win64
+d-----       2018/09/10      8:02                web_drivers
+d-----       2018/09/13      7:46                weight
+d-----       2018/09/13     15:19                __pycache__
+-a----       2018/09/13     11:36           1477 config.ini
+-a----       2018/09/13     15:15          17510 gan_main.py
+-a----       2018/09/11     15:41          14595 ga_main.py
+-a----       2018/09/11     13:26           3697 generator.py
+-a----       2018/09/11     11:30           4911 util.py
 ```
 
 ## Usage
