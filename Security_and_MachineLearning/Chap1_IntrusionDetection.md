@@ -53,7 +53,7 @@
 
 　下記の結果を見て分かる通り、決定境界を境にして3品種のIrisを概ね正しく分類していることが分かります。  
 
- ![ロジスティック回帰](.\img\logistic_regression2.png)
+ ![ロジスティック回帰](./img/logistic_regression2.png)
  ※分類結果を分かり易くするために各品種の領域とデータを色づけしています。  
  * 青色：setosa
  * 肌色：versicolor
