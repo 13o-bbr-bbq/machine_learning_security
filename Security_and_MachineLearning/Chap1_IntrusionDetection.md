@@ -30,7 +30,7 @@
  |:--------------------------|
  | データの特徴を数値で表したもの。|
 
-　以下、一般に公開されている**[Iris flower dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set)**と呼ばれるデータセットを使用して、ロジスティック回帰を解説します。  
+　以下、一般に公開されている[Iris flower dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set)と呼ばれるデータセットを使用して、ロジスティック回帰を解説します。  
 
  | Iris flower dataset|
  |:--------------------------|
@@ -62,9 +62,6 @@
 　下記の結果を見て分かる通り、決定境界を境にして3品種のIrisを概ね正しく分類していることが分かります。  
 
 　![ロジスティック回帰](./img/logistic_regression2.png)
-　* 青色：setosa
-　* 肌色：versicolor
-　* 茶色：virginica
 
 　上記の結果から、「setosa」のデータは全て正しく分類できていることが分かります。一方、「versicolor」と「virginica」は、幾つかのデータを誤って分類していることが分かります。これは、Iris flower datasetの中に「versicolor」と「virginica」の**特徴量が類似したデータが存在**しているためであり、これにより誤分類が発生しています。しかし、若干数の誤りはあるものの、「versicolor」と「virginica」を概ね正しく分類する決定境界が求められていることが分かります。  
 
@@ -88,7 +85,7 @@
 
 　このデータセットは1999年に作られたものであるため内容は古いですが、正常通信と様々な種類の異常通信が含まれているため、侵入検知システムの学習データとして利用することにしました。  
 
-　先ず上記のサイトから「kddcup.data_10_percent.gz」をダウンロードして解凍します。すると、約50万件のデータが収録されたCSV形式のファイル「kddcup.data_10_percent_corrected」が現れます。この状態ではカラム名が無く扱い難いため、カラム名が収録された「kddcup.names」をダウンロードし、以下のように「kddcup.data_10_percent_corrected」の先頭行にカラム行を追加します。  
+　先ず上記のサイトから[kddcup.data_10_percent.gz](http://kdd.ics.uci.edu/databases/kddcup99/kddcup.data_10_percent.gz)をダウンロードして解凍します。すると、約50万件のデータが収録されたCSV形式のファイル「kddcup.data_10_percent_corrected」が現れます。この状態ではカラム名が無く扱い難いため、カラム名が収録された[kddcup.names](http://kdd.ics.uci.edu/databases/kddcup99/kddcup.names)をダウンロードし、以下のように「kddcup.data_10_percent_corrected」の先頭行にカラム行を追加します。  
 
 ```
 duration: continuous.,protocol_type: symbolic.,service: symbolic.,flag: symbolic.,src_bytes: continuous.,dst_bytes: continuous.,land: symbolic.,wrong_fragment: continuous.,urgent: continuous.,hot: continuous.,num_failed_logins: continuous.,logged_in: symbolic.,num_compromised: continuous.,root_shell: continuous.,su_attempted: continuous.,num_root: continuous.,num_file_creations: continuous.,num_shells: continuous.,num_access_files: continuous.,num_outbound_cmds: continuous.,is_host_login: symbolic.,is_guest_login: symbolic.,count: continuous.,srv_count: continuous.,serror_rate: continuous.,srv_serror_rate: continuous.,rerror_rate: continuous.,srv_rerror_rate: continuous.,same_srv_rate: continuous.,diff_srv_rate: continuous.,srv_diff_host_rate: continuous.,dst_host_count: continuous.,dst_host_srv_count: continuous.,dst_host_same_srv_rate: continuous.,dst_host_diff_srv_rate: continuous.,dst_host_same_src_port_rate: continuous.,dst_host_srv_diff_host_rate: continuous.,dst_host_serror_rate: continuous.,dst_host_srv_serror_rate: continuous.,dst_host_rerror_rate: continuous.,dst_host_srv_rerror_rate: continuous.
@@ -129,7 +126,7 @@ duration: continuous.,protocol_type: symbolic.,service: symbolic.,flag: symbolic
 
 　正常通信`normal.`の他に、探索行為に使用される`nmap.`や権限昇格に使われる`buffer_overflow.`等の異常通信のデータが含まれていることが分かります。  
 
-　本ブログでは解説を簡潔にするため、学習に使用するラベルを上記の5種類に限定し、それ以外のラベルに紐付くデータは全て削除します。これにより、データ数は約10万件に削減されます。この状態のファイルを学習データ「kddcup_train.csv」として保存します。  
+　本ブログでは解説を簡潔にするため、学習に使用するラベルを上記の5種類に限定し、それ以外のラベルに紐付くデータは全て削除します。これにより、データ数は約10万件に削減されます。この状態のファイルを学習データ「[kddcup_train.csv](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/dataset/kddcup_train.csv)」として保存します。  
 
 #### 1.2.2. 特徴量の選択  
 　学習に使用する特徴量を選択します。  
@@ -181,7 +178,7 @@ duration: continuous.,protocol_type: symbolic.,service: symbolic.,flag: symbolic
 　侵入検知システムの性能を評価するためのテストデータを準備します。  
 　ここでも、KDD Cup 1999で公開されているデータを使用します。  
 
-　[KDD Cup 1999](http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html)から「corrected.gz」をダウンロードして解凍します。すると、約30万件のデータが収録されたCSV形式のファイル「corrected」が現れますが、このファイルにもカラムが無いため、学習データの時と同じ要領でカラムを追加します。そして、侵入検知の対象とする5種類の通信（normal, nmap, teardrop, buffer_overflow, guess_password）のデータのみを残します。これにより、データ数は約6万5千件に削減されます。この状態のファイルをテストデータ「kddcup_test.csv」として保存します。  
+　[KDD Cup 1999](http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html)から[corrected.gz](http://kdd.ics.uci.edu/databases/kddcup99/corrected.gz)をダウンロードして解凍します。すると、約30万件のデータが収録されたCSV形式のファイル「corrected」が現れますが、このファイルにもカラムが無いため、学習データの時と同じ要領でカラムを追加します。そして、侵入検知の対象とする5種類の通信（normal, nmap, teardrop, buffer_overflow, guess_password）のデータのみを残します。これにより、データ数は約6万5千件に削減されます。この状態のファイルをテストデータ「[kddcup_test.csv](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/dataset/kddcup_test.csv)」として保存します。  
 
 　これで、学習データとテストデータの準備が完了しました。  
 　次節では実際にサンプルコードを実行し、テストデータに含まれる各種攻撃の通信を正しく分類できるのか検証します。  
@@ -189,6 +186,8 @@ duration: continuous.,protocol_type: symbolic.,service: symbolic.,flag: symbolic
 ### 1.3. サンプルコード及び実行結果
 #### 1.3.1. サンプルコード
 　本ブログではPython3を使用し、簡易的な侵入検知システムを実装しました。  
+　※本コードは[こちら](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/src/intrusion_detection.py)から入手できます。  
+
 　本システムの大まかな処理フローは以下のとおりです。  
 
  1. 学習データおよびテストデータのロード
@@ -206,13 +205,13 @@ from sklearn import linear_model
 from sklearn import metrics
 
 # Load train data
-df_train = pd.read_csv('.\\dataset\\kddcup_train.csv')
+df_train = pd.read_csv('..\\dataset\\kddcup_train.csv')
 X_train = df_train.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]  # feature(X)
 X_train = (X_train - X_train.mean()) / X_train.mean()       # normalization
 y_train = df_train.iloc[:, [41]]                            # label(y)
 
 # Load test data
-df_test = pd.read_csv('.\\dataset\\kddcup_test.csv')
+df_test = pd.read_csv('..\\dataset\\kddcup_test.csv')
 X_test = df_test.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]
 X_test = (X_test - X_test.mean()) / X_test.mean()
 y_test = df_test.iloc[:, [41]]
@@ -396,6 +395,8 @@ guess_passwd.     normal.         0.999790317
 　`-----`以下は、通信データ毎の「ラベル、分類結果、分類確率」を出力しています。  
 
 　この結果から、「normal」や「nmap」「teardrop」「guess_passwd」は概ね正しく分類できていることが分かります。但し、「nmap」や「teardrop」「guess_passwd」の分類確率を見ると、「normal」より低いことが分かります（69%、50%、38% 等）。これは、今回使用した特徴量よりも、より適切な特徴量が存在する可能性を示唆しています。  
+
+
 　一方、「buffer_overflow」は殆ど正しく分類できておらず、「normal」や「guess_passwd」として誤検知していることが分かります。これは、「buffer_overflow」の特徴量を見直す必要があることを示唆しています。本ブログでは一般公開されてるデータセットを使用しましたが、実際に収集したリアルなデータを学習に使用する場合は、収集する情報の種類を見直す必要があるかもしれません。  
 
 　本ブログでは、ロジスティック回帰を使用することで、検知精度「約89.9%」の侵入検知システムを構築しました。概ね正常と異常の通信を検知することができましたが、同時に特徴選択が検知精度に大きく影響を与えることも分かりました。  
