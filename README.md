@@ -2,6 +2,8 @@
 Source codes about machine learning and security.
 
 ## Line up.
+ * [Cyber security and Machine Learning course](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Security_and_MachineLearning)  
+ The elementary training course of Machine learning for security engineer.  
  * [Vulnerabilties of Machine Learning](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Vulnerabilities_of_ML/)  
  Summary of Machine Learning vulnerability.  
  * [Analytics](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Analytics)  
