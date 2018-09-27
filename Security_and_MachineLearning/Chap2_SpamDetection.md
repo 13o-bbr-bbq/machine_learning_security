@@ -83,7 +83,7 @@ Web,Normal
 ```
 
 　1カラム目は特徴量、2カラム目がラベル（メールの種別＝答え）を表しています。  
-　この状態のファイルを学習データ「train_spam.csv」とし、**UTF-8**で保存しておきます。  
+　この状態のファイルを学習データ「[train_spam.csv](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/dataset/train_spam.csv)」とし、**UTF-8**で保存しておきます。  
 
 #### 2.2.2. テストデータの準備
 　スパム検知システムの性能を評価するためのテストデータを準備します。  
