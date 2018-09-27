@@ -86,8 +86,8 @@ if __name__ == '__main__':
     # Get stop words.
     stop_words = get_stopwords()
 
-    # Get inbox data (This example uses Mozilla Thunderbird).
-    mail_box = mailbox.mbox('C:\\Users\\i.takaesu\\AppData\\Roaming\\Thunderbird\\Profiles\\i032z0le.default\\ImapMail\\imap.gmail.com\\INBOX-1')
+    # Get inbox data (ex. Mozilla Thunderbird).
+    mail_box = mailbox.mbox('Your mailbox path')
     for idx, key in enumerate(mail_box.keys()[::-1]):
         if idx + 1 > MAX_COUNT:
             break
