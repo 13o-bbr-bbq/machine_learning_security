@@ -468,6 +468,6 @@ print('[Judgement]\nThis mail is <{}>.\n{}: {}%, {}: {}%\n'.format(result,
 
 #### 2.3. 動作条件
  * Python 3.6.1（Anaconda3）
- * nltk 3.2.3
- * numpy 1.11.3
- * scikit-learn 0.19.0
+ * nltk 3.3.0
+ * numpy 1.15.1
+ * scikit-learn 0.20.0
