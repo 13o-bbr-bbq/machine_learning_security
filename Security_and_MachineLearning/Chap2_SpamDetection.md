@@ -412,7 +412,7 @@ print('[Judgement]\nThis mail is <{}>.\n{}: {}%, {}: {}%\n'.format(result,
 　1通目のメールは以下のとおりです。  
 　これは**スパムメール**を想定して用意したテストデータです。  
 
-　 ![スパムメール](../img/spam_mail.png)
+　 ![スパムメール](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/img/spam_mail.png)
 
 　これに対するスパム検知システムの出力結果は以下のとおりです。  
 
@@ -438,7 +438,7 @@ print('[Judgement]\nThis mail is <{}>.\n{}: {}%, {}: {}%\n'.format(result,
 　2通目のメールは以下のとおりです。  
 　これは**正常メール**を想定して用意したテストデータです。  
 
-　![正常メール](../img/normal_mail.png)
+　![正常メール](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/img/normal_mail.png)
 
 　これに対するスパム検知システムの出力結果は以下のとおりです。  
 
