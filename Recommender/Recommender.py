@@ -38,8 +38,7 @@ class Recommend:
         if os.path.exists(trained_dir) is False:
             os.mkdir(trained_dir)
         train_dir = os.path.join(full_path, config['Recommender']['train_dir'])
-        train_file = os.path.join(train_dir, config['Recommender']['train_file'])
-        self.train_path = os.path.join(os.path.join(full_path, train_dir), train_file)
+        self.train_path = os.path.join(train_dir, config['Recommender']['train_file'])
         self.state_size = state_size
         self.save_path = os.path.join(trained_dir, save_name)
 

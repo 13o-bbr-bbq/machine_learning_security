@@ -26,7 +26,7 @@ if __name__ == "__main__":
     config = configparser.ConfigParser()
     config.read(os.path.join(full_path, 'config.ini'))
 
-    if len(sys.argv) != 2:
+    if len(sys.argv) == 1:
         utility.print_message(FAIL, 'Invalid parameter "{}"'.format(sys.argv))
         exit(1)
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
         utility.print_message(NOTE, 'Start {} mode.'.format(sys.argv[1]))
         target_info = sys.argv[2]
         obj_parsed = urlparse(target_info)
-        if utility.check_arg_value(obj_parsed.scheme, obj_parsed.netloc, obj_parsed.port, obj_parsed.path):
+        if utility.check_arg_value(obj_parsed.scheme, obj_parsed.netloc, str(obj_parsed.port), obj_parsed.path) is False:
             utility.print_message(FAIL, 'Invalid target: {}.'.format(target_info))
         else:
             # Generates feature vector
@@ -50,12 +50,12 @@ if __name__ == "__main__":
             obj_recommend = Recommend(utility)
             for feature_list, target_list in zip(all_feature_list, all_target_list):
                 flt_start = time.time()
-                print('-'*130)
-                print('[*] Target url: {0}\nParameter: {1}'.format(target_list[0], target_list[1]))
-                print('[*] Feature: {0}'.format(feature_list))
+                utility.print_message(NONE, '-'*130)
+                utility.print_message(NOTE, 'Target url: {}\nParameter: {}'.format(target_list[0], target_list[1]))
+                utility.print_message(OK, 'Feature: {}'.format(feature_list))
                 obj_recommend.predict(feature_list)
                 flt_elapsed_time = time.time() - flt_start
-                print('[*] Elapsed time :{0}'.format(flt_elapsed_time) + "[sec]")
+                utility.print_message(OK, 'Elapsed time :{}'.format(flt_elapsed_time) + '[sec]')
 
             utility.print_message(NOTE, 'End {} mode.'.format(sys.argv[1]))
     else:

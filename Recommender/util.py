@@ -4,11 +4,9 @@ import os
 import sys
 import string
 import random
-import socket
-import ipaddress
 import configparser
 from datetime import datetime
-from logging import getLogger, FileHandler, StreamHandler, Formatter
+from logging import getLogger, FileHandler, Formatter
 
 # Printing colors.
 OK_BLUE = '\033[94m'      # [*]
@@ -41,9 +39,10 @@ class Utilty:
             self.banner_delay = float(config['Common']['banner_delay'])
             self.report_date_format = config['Common']['date_format']
             self.con_timeout = float(config['Common']['con_timeout'])
-            self.log_dir = config['Common']['log_path']
-            self.log_file = config['Common']['log_file']
-            self.log_path = os.path.join(os.path.join(full_path, self.log_dir), self.log_file)
+            log_dir = os.path.join(full_path, config['Common']['log_path'])
+            if os.path.exists(log_dir) is False:
+                os.mkdir(log_dir)
+            self.log_path = os.path.join(log_dir, config['Common']['log_file'])
         except Exception as e:
             self.print_message(FAIL, 'Reading config.ini is failure : {}'.format(e))
             sys.exit(1)

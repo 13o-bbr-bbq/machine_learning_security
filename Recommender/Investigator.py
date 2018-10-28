@@ -71,7 +71,7 @@ class Investigate:
         self.delay_time = config['Investigator']['delay_time']
         self.str_target_url = target
         obj_parsed = urlparse(target)
-        self.str_allow_domain = obj_parsed.netloc
+        self.str_allow_domain = str(obj_parsed.netloc).split(':')[0]
         self.obj_signatures = pd.read_csv(self.signature_path, encoding='utf-8').fillna('')
 
         # Dictionary of feature (base).
@@ -266,7 +266,11 @@ class Investigate:
         dict_json = {}
         if os.path.exists(str_result_file):
             with codecs.open(str_result_file, 'r', encoding='utf-8') as fin:
-                dict_json = json.load(fin)
+                target_text = self.utility.delete_ctrl_char(fin.read())
+                if target_text != '':
+                    dict_json = json.loads(target_text)
+                else:
+                    self.utility.print_message(WARNING, '[{}] is empty.'.format(str_result_file))
         lst_target = []
         # Exclude except allowed domains.
         for idx in range(len(dict_json)):
@@ -286,7 +290,8 @@ class Investigate:
         for str_url in lst_target:
             obj_parsed = urlparse(str_url)
             # Checking domains.
-            if self.str_allow_domain != obj_parsed.netloc:
+            if self.str_allow_domain != str(obj_parsed.netloc).split(':')[0]:
+                self.utility.print_message(WARNING, 'Not allow domain: {}'.format(str_url))
                 continue
 
             # Checking parameters (query parameters only).

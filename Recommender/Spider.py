@@ -14,7 +14,10 @@ class SimpleSpider(scrapy.Spider):
         self.allowed_domains = [getattr(self, 'allow_domain', None)]
         self.delay_time = float(getattr(self, 'delay', None))
         self.custom_settings = {
-            "DOWNLOAD_DELAY": self.delay_time,
+            'DEPTH_LIMIT ': 5,
+            'DOWNLOAD_DELAY': self.delay_time,
+            'ROBOTSTXT_OBEY': True,
+            'FEED_EXPORT_ENCODING': 'utf-8'
         }
 
     def start_requests(self):
