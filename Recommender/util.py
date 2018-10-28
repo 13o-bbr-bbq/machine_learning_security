@@ -44,13 +44,12 @@ class Utilty:
             self.log_dir = config['Common']['log_path']
             self.log_file = config['Common']['log_file']
             self.log_path = os.path.join(os.path.join(full_path, self.log_dir), self.log_file)
-            self.modules_dir = config['Common']['module_path']
         except Exception as e:
             self.print_message(FAIL, 'Reading config.ini is failure : {}'.format(e))
             sys.exit(1)
 
         # Setting logger.
-        self.logger = getLogger('GyoiThon')
+        self.logger = getLogger('Recommender')
         self.logger.setLevel(20)
         file_handler = FileHandler(self.log_path)
         self.logger.addHandler(file_handler)
