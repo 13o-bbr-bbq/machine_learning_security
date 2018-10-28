@@ -253,8 +253,12 @@ local@client:~$ python main.py TRAIN
 
 ### Recommend
 ```
-local@client:~$ python main.py "target url of crawling origin."
+local@client:~$ python main.py TEST "target url of crawling origin."
 ```
+
+|NOTE|
+|:---|
+|You must indicate target url that include port number. Example is "http://example.com:80/path/".|
 
 ## Operation check environment
 * Python 3.6.1 (Anaconda3)
