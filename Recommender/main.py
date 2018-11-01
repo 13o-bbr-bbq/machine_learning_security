@@ -17,6 +17,34 @@ FAIL = 'fail'     # [-]
 WARNING = 'warn'  # [!]
 NONE = 'none'     # No label.
 
+
+# Display banner.
+def show_banner(utility):
+    banner = """
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+██████╗ ███████╗ ██████╗ ██████╗ ███╗   ███╗███╗   ███╗███████╗███╗   ██╗██████╗ ███████╗██████╗ 
+██╔══██╗██╔════╝██╔════╝██╔═══██╗████╗ ████║████╗ ████║██╔════╝████╗  ██║██╔══██╗██╔════╝██╔══██╗
+██████╔╝█████╗  ██║     ██║   ██║██╔████╔██║██╔████╔██║█████╗  ██╔██╗ ██║██║  ██║█████╗  ██████╔╝
+██╔══██╗██╔══╝  ██║     ██║   ██║██║╚██╔╝██║██║╚██╔╝██║██╔══╝  ██║╚██╗██║██║  ██║██╔══╝  ██╔══██╗
+██║  ██║███████╗╚██████╗╚██████╔╝██║ ╚═╝ ██║██║ ╚═╝ ██║███████╗██║ ╚████║██████╔╝███████╗██║  ██║
+╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝╚═════╝ ╚══════╝╚═╝  ╚═╝ (beta)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+""" + 'by ' + os.path.basename(__file__)
+    utility.print_message(NONE, banner)
+    show_credit(utility)
+    time.sleep(utility.banner_delay)
+
+
+# Show credit.
+def show_credit(utility):
+    credit = u"""
+       =[ Recommender v0.0.1-beta                                            ]=
++ -- --=[ Author  : Isao Takaesu (@bbr_bbq)                                  ]=--
++ -- --=[ Website : https://github.com/13o-bbr-bbq/machine_learning_security ]=--
+    """
+    utility.print_message(NONE, credit)
+
+
 if __name__ == "__main__":
     file_name = os.path.basename(__file__)
     full_path = os.path.dirname(os.path.abspath(__file__))
@@ -25,6 +53,9 @@ if __name__ == "__main__":
     # Read config.ini.
     config = configparser.ConfigParser()
     config.read(os.path.join(full_path, 'config.ini'))
+
+    # Show banner.
+    show_banner(utility)
 
     if len(sys.argv) == 1:
         utility.print_message(FAIL, 'Invalid parameter "{}"'.format(sys.argv))
