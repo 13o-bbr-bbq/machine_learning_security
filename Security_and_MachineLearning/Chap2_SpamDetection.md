@@ -326,6 +326,7 @@ Web,Normal
 ```
 #!/bin/env python
 # -*- coding: utf-8 -*-
+import os
 import codecs
 import urllib.request
 import nltk
@@ -355,10 +356,10 @@ def get_stopwords():
 
 # Judge Spam.
 def judge_spam(X_train, y_train, stop_words, message, jp_sent_tokenizer, jp_chartype_tokenizer):
-    fout = codecs.open('..\\dataset\\temp.txt', 'w', 'utf-8')
+    fout = codecs.open(os.path.join('../dataset', 'temp.txt'), 'w', 'utf-8')
     fout.write(message)
     fout.close()
-    spam = PlaintextCorpusReader('..\\dataset\\', r'temp.txt', encoding='utf-8',
+    spam = PlaintextCorpusReader('../dataset/', 'temp.txt', encoding='utf-8',
                                  para_block_reader=read_line_block,
                                  sent_tokenizer=jp_sent_tokenizer,
                                  word_tokenizer=jp_chartype_tokenizer)
@@ -398,7 +399,7 @@ def judge_spam(X_train, y_train, stop_words, message, jp_sent_tokenizer, jp_char
 
 if __name__ == '__main__':
     # Load train data.
-    df_data = pd.read_csv('..\\dataset\\train_spam.csv', header=None)
+    df_data = pd.read_csv(os.path.join('../dataset', 'train_spam.csv'), header=None)
     X = [i[0] for i in df_data.iloc[:, [0]].values.tolist()]
     y = [i[0] for i in df_data.iloc[:, [1]].values.tolist()]
 
@@ -412,8 +413,8 @@ if __name__ == '__main__':
     # Get stop words.
     stop_words = get_stopwords()
 
-    # Get inbox data (ex. Mozilla Thunderbird).
-    mail_box = mailbox.mbox('Your mailbox path')
+    # Get inbox data (This example uses Mozilla Thunderbird).
+    mail_box = mailbox.mbox('Your mail box path')
     for idx, key in enumerate(mail_box.keys()[::-1]):
         if idx + 1 > MAX_COUNT:
             break
@@ -453,7 +454,7 @@ if __name__ == '__main__':
             print('This message is empty : message key={}.'.format(key))
 ```
 
-このプログラムは、Thunderbirdのような電子メールクライアントのメールボックスから最新5件（`MAX_COUNT`）のメールを取得してスパム判定します。  
+このプログラムは、Thunderbirdのメールボックスから最新5件（`MAX_COUNT`）のメールを取得してスパム判定します。  
 
 #### 2.3.3.2. コード解説
 今回はナイーブベイズの実装に、機械学習ライブラリの**scikit-learn**を使用しました。  
@@ -585,16 +586,17 @@ print('[Judgement]\nThis mail is <{}>.\n{}: {}%, {}: {}%\n'.format(result,
 #### 2.3.3.3. 実行結果
 上記で作成したテストデータ（スパムメールまたは正常メール）を実際に送信し、スパム判定ができるのか確認します。  
 
+##### 1通目（スパムメール）  
 1通目のメールは以下のとおりです。  
 これは**スパムメール**を想定して用意したテストデータです。  
 
-![スパムメール](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/img/spam_mail.png)
+![スパムメール](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/img/spam_mail1.png)
 
-これに対するスパム検知システムの出力結果は以下のとおりです。  
+スパム検知システムは以下のように判定しました。  
 
  ```
  [Received date]
- - Thu Sat 29 15:14:18 2018
+ - Thu Sep 27 15:14:18 2018
 
  [Message]
  件名: 警告
@@ -609,18 +611,63 @@ print('[Judgement]\nThis mail is <{}>.\n{}: {}%, {}: {}%\n'.format(result,
  Normal: 46.85%, Spam: 53.15%
  ```
 
-各カテゴリの分類確率を見ると、カテゴリ「`Normal`」は**46.85%**、カテゴリ「`Spam`」は**53.15**%であることが分かります。よって、カテゴリ「`Spam`」の確率が上回っているため、1通目のメールは**スパムメール**であると判定されます（`This text is <Spam>`）。  
+判定結果から、カテゴリ「`Normal`」は**46.85%**、カテゴリ「`Spam`」は**53.15**%であることが分かります。  
+よって、1通目のメールは正しく**スパムメール**と判定されました。  
 
+##### 2通目（スパムメール）  
 2通目のメールは以下のとおりです。  
+これは**正常メール**を想定して用意したテストデータです。  
+
+![正常メール](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/img/spam_mail2.png)
+
+スパム検知システムは以下のように判定しました。  
+
+ ```
+ [Received date]
+ - Thu Sep 27 17:34:37 2018
+
+ [Message]
+ 件名: ご協力求む！
+ 友人の竹山さんからのメールを転送しました！
+
+
+ 竹山静です。
+ 突然ですが友達の皆様にご協力頂きたくメールしました。
+ 子猫もらってくれる人いませんか…！
+ 生後三週間、岡山県内(＆隣県)ならどこでもお連れしますんで！
+ もし身近に子猫飼ってくれる人がいたりしたら連絡もらえると助かります！
+ 
+ 白…メス
+ 目の色→ブルー
+ 性格→わんぱく
+ 
+ 茶トラ…オス
+ 目の色→緑がかったグレー
+ 性格→大人しい
+
+ このメールへの返信は不要です。
+ 貰い手に心当たりがある場合だけでいいんで、連絡くださいっ。
+ 一方的メールでマジごめんなさい！
+
+ [Judgement]
+ This mail is <Spam>.
+ Normal: 48.89%, Spam: 51.11%
+ ```
+
+判定結果から、カテゴリ「`Normal`」は**48.89%**、カテゴリ「`Spam`」は**51.11%**であることが分かります。  
+よって、2通目のメールも正しく**スパムメール**と判定されました。  
+
+##### 3通目（正常メール）  
+3通目のメールは以下のとおりです。  
 これは**正常メール**を想定して用意したテストデータです。  
 
 ![正常メール](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/img/normal_mail.png)
 
-これに対するスパム検知システムの出力結果は以下のとおりです。  
+スパム検知システムは以下のように判定しました。  
 
  ```
  [Received date]
- - Thu Sat 29 15:16:12 2018
+ - Thu Sep 27 15:15:12 2018
 
  [Message]
  件名: ログイン情報
@@ -631,17 +678,18 @@ print('[Judgement]\nThis mail is <{}>.\n{}: {}%, {}: {}%\n'.format(result,
  ログインURL：https://www.example.com
  ログインID：cysec.ml.train@gmail.com
  ログインパスワード：password'
-
+ 
  [Judgement]
  This mail is <Normal>.
  Normal: 50.4%, Spam: 49.6%
  ```
 
-各カテゴリの分類確率を見ると、カテゴリ「`Normal`」は**50.4%**、カテゴリ「`Spam`」は**49.6**%であることが分かります。よって、カテゴリ「`Normal`」の確率が上回っているため、2通目のメールは**正常メール**であると判定されます（`This text is <Normal>`）。  
+判定結果から、カテゴリ「`Normal`」は**50.4%**、カテゴリ「`Spam`」は**49.6%**であることが分かります。  
+よって、3通目のメールは正しく**正常メール**と判定されました。
 
 ## 2.4. おわりに
 このように、簡易的な実装であるものの、ナイーブベイズを使うことでスパム検知システムを実装できることが分かりました。  
-本ブログではスパム検知を例にしましたが、Webクローラーの**ページ種別判定エンジン**（詳細は[こちら](https://www.mbsd.jp/blog/20160113.html)）、ニュース記事やブログのジャンル分類、WAFの攻撃検知等に利用することもできます。  
+本ブログではスパム検知を例にしましたが、ナイーブベイズは実装の容易さと処理速度の速さから様々な分野に応用可能です。  
 
 ナイーブベイズは手軽に実装ができ、かつ利用用途も広いため、ご興味を持ちましたら様々なタスクに利用してみる事をお勧めします。  
 
