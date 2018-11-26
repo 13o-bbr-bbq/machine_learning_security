@@ -1,0 +1,68 @@
+apache@*@/server-status@*@Version:.*(Apache/([0-9]+[\.0-9]*[\.0-9]*))
+apache@*@/error/README@*@*
+apache@*@/icons/@*@*
+apache@*@/icons/README@*@*
+apache@*@/icons/small/README.txt@(These icons are provided as)@*
+apache@*@/manual/@(<title>Apache)@*
+apache@*@/manual/images/@(<title>Apache)@*
+apache@*@/manual/style/@(<title>Apache)@*
+wordpress@*@/wp-login.php@*@(ver=([0-9]+[\.0-9]*[\.0-9]*))
+wordpress@*@/wp/wp-login.php@*@(ver=([0-9]+[\.0-9]*[\.0-9]*))
+wordpress@*@/wp-admin/@*@(ver=([0-9]+[\.0-9]*[\.0-9]*))
+wordpress@*@/wp/wp-admin@*@(ver=([0-9]+[\.0-9]*[\.0-9]*))
+wordpress@*@/wp-content/@*@(ver=([0-9]+[\.0-9]*[\.0-9]*))
+wordpress@*@/wp-includes/@*@(ver=([0-9]+[\.0-9]*[\.0-9]*))
+wordpress@*@/wp-json/@*@(ver=([0-9]+[\.0-9]*[\.0-9]*))
+wordpress@*@/wp-json/wp/v2/users@*@(ver=([0-9]+[\.0-9]*[\.0-9]*))
+wordpress@*@/xmlrpc.php@(XML-RPC server accepts POST requests only)*@*
+wordpress@*@/?author=1@.*(/author/).*.@(ver=([0-9]+[\.0-9]*[\.0-9]*))
+drupal@*@/user/login@(/drupal)@*
+drupal@*@/core/misc/drupalSettingsLoader.js@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+drupal@*@/core/misc/drupal.js@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+drupal@*@/core/misc/drupal.init.js@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+drupal@*@/themes/bootstrap/js/drupal.bootstrap.js@*@*
+drupal@*@/drupal/@*@*
+joomla@*@/administrator/@*@*
+joomla@*@/joomla/@*@*
+joomla@*@/templates/joomla/@*@*
+movabletype@*@/mt.cgi@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+movabletype@*@/mt.cgi?__lang=ja@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+movabletype@*@/mt/mt.cgi@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+movabletype@*@/mt/mt.cgi?__lang=ja@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+movabletype@*@/cgi-bin/mt/mt.cgi@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+movabletype@*@/cgi-bin/mt/mt.cgi?__lang=ja@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+movabletype@*@/mt-sp.cgi@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+movabletype@*@/mt/mt-sp.cgi@*@(v=([0-9]+[\.0-9]*[\.0-9]*))
+tikiwiki@*@/tikiwiki/@*@*
+mediawiki@*@/index.php?Special:UserLogin@*@*
+mediawiki@*@/mediawiki/@*@*
+tomcat@*@/tomcat-docs/@*@*
+tomcat@*@/examples/servlets/@*@*
+tomcat@*@/examples/jsp@*@*
+tomcat@*@/examples/jsp/snp/snoop.jsp@*@*
+tomcat@*@/examples/jsp/servlets/@*@*
+tomcat@*@/webdav/@*@*
+tomcat@*@/admin/@.*(Licensed to the Apache Software Foundation).*@*
+tomcat@*@/config.aspx@*@.*(Apache Tomcat/([0-9]).*\- Error report).*
+tomcat@*@/config.jsp@*@.*(Apache Tomcat/([0-9]).*\- Error report).*
+tomcat@*@/config.php@*@.*(Apache Tomcat/([0-9]).*\- Error report).*
+coldfusion@*@/CFIDE/@*@*
+coldfusion@*@/cfdocs/@*@*
+php@*@/?=PHPB8B5F2A0-3C92-11d3-A3A9-4C7B08C10000@*@*
+php@*@/info.php@*@*
+php@*@/phpinfo.php@*@*
+php@*@/test.php@*@*
+squirrelmail@*@/webmail/src/login.php@*@*
+squirrelmail@*@/sqwebmail/@*@*
+squirrelmail@*@/webmail/@*@*
+subversion@*@/svn/@*@*
+subversion@*@/.svn/entries@*@*
+subversion@*@/repos/@*@*
+phpmyadmin@*@/phpmyadmin/@*@.*<title>(phpMyAdmin.*[0-9])</title>.*
+phpmyadmin@*@/phpmyadmin/index.php@*@.*<title>(phpMyAdmin.*[0-9])</title>.*
+phpmyadmin@*@/phpMyAdmin/@*@.*<title>(phpMyAdmin.*[0-9])</title>.*
+phpmyadmin@*@/phpMyAdmin/index.php@*@.*<title>(phpMyAdmin.*[0-9])</title>.*
+awstats@*@/webstat/@*@*
+webmin@*@/webmin/@*@*
+phpbb@*@/phpbb/@*@*
+dwr@*@/dwr/index.html@*@*

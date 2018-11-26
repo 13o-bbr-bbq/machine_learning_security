@@ -1,0 +1,109 @@
+tikiwiki@*@(Powered by TikiWiki)
+wordpress@*@<.*=(.*/wp-).*/.*>
+wordpress@*@(<meta\s+content=[\"']WordPress).*>
+wordpress@*@.*(Powered by WordPress)
+wordpress@*@.*(://.*/xmlrpc.php)
+wordpress@*@.*(WordPress ([0-9]+[\.0-9]*[\.0-9]*)).*
+wordpress@*@.*(WordPress/([0-9]+[\.0-9]*[\.0-9]*)).*
+movabletype@*@.*Movable Type.*(v=([0-9]+[\.0-9]*[\.0-9]*)).*
+movabletype@*@<.*/(mt-.*)/.*>
+movabletype@*@(<.*/mt/.*>)
+movabletype@*@(<meta\s+content=[\"']Movable Type).*>
+movabletype@*@(<meta\s+content=[\"'].*www\.movabletype\.org).*>
+movabletype@*@<center>(Powered by.*Movable Type\s+([0-9]+[\.0-9]*[\.0-9]*)).*</center>
+drupal@*@.*(data-drupal-link-system-path)
+drupal@*@.*(jQuery.extend\(Drupal.settings)
+drupal@*@(<meta name=[\"']Generator[\"'] content=[\"']Drupal).*>
+drupal@*@(<script\s+src=[\"']/core/misc/drupal).*>
+drupal@*@(<script\s+data-drupal-selector=[\"']drupal-).*>
+drupal@*@<script\s+src=[\"'](/core/misc/drupalSettingsLoader\.js\?v=([0-9]+[\.0-9]*[\.0-9]*)).*>
+drupal@*@<script\s+src=[\"'](/core/misc/drupal\.js\?v=([0-9]+[\.0-9]*[\.0-9]*)).*>
+drupal@*@<script\s+src=[\"'](/core/misc/drupal\.init\.js\?v=([0-9]+[\.0-9]*[\.0-9]*)).*>
+drupal@*@<script\s+src=[\"'](/themes/bootstrap/js/drupal\.bootstrap\.js).*>
+drupal@*@.*(X-Drupal-.*Cache: MISS).*
+drupal@*@.*(X-Drupal-Dynamic-.*Cache: MISS).*
+drupal@7.0@.*(X-Generator: Drupal 7).*
+drupal@8.0@.*(X-Generator: Drupal 8).*
+joomla@*@<meta\s+(content=[\"']Joomla).*>
+joomla@*@<script\s+(src=[\"']/templates/joomla/).*>
+joomla@*@Set-Cookie:.*(jfcookie=.*;)
+joomla@*@(X-Content-Encoded-By:\s+Joomla!\s+([0-9]+[\.0-9]*[\.0-9]*)).*
+typo3@*@.*(This website is powered by TYPO3).*>
+typo3@*@.*(href="fileadmin/templates/).*>
+typo3@*@(<meta\s+content=[\"']TYPO3).*>
+typo3@*@(Set-Cookie: .*typo.*=[a-z0-9]{32});
+typo3@*@.*(TYPO[0-9]).*
+oscommerce@*@(Set-Cookie: osCsid=.*);
+tomcat@*@.*(Tomcat/([0-9]+[\.0-9]*[\.0-9]*))
+tomcat@*@.*(Apache Tomcat User Guide)
+tomcat@*@.*(Tomcat\s([0-9])\sServlet/JSP container)
+tomcat@*@.*(Tomcat\sServlet/JSP container)
+tomcat@*@.*(JSP Samples)
+tomcat@*@.*(Servlet Examples with Code)
+tomcat@*@.*(Apache Tomcat User Guide)
+tomcat@*@.*(KNOWN ISSUES IN THIS RELEASE)
+tomcat@*@.*(Tomcat's administration web)
+struts@*@.*(org\.apache\.struts\.taglib\.html\.TOKEN)
+coldfusion@*@Set-Cookie.*(CFID=.*;)
+coldfusion@*@Set-Cookie.*(CFTOKEN=.*;)
+coldfusion@*@.*(ColdFusion Administrator)
+coldfusion@*@.*(ColdFusion Documentation)
+coldfusion@*@.*(what_you_can_do_in_coldfusion_administrator)
+webLogic@*@.*(WebLogic/([0-9]+[\.0-9]*[\.0-9]*))
+jboss@*@X-Powered-By:.*(JBoss-([0-9]+[\.0-9]*[\.0-9]*))
+red_hat@*@Server:.*(\(Red Hat\))
+red_hat@*@Server:.*(\(Red Hat Enterprise linux\))
+ubuntu@*@Server:.*(\(Ubuntu\))
+unix@*@Server:.*(\(unix\))
+windows@*@Server:.*(iis/1\.0)
+windows@*@Server:.*(iis/2\.0)
+windows@*@Server:.*(iis/3\.0)
+windows@*@Server:.*(iis/4\.0)
+windows@*@Server:.*(iis/5\.0)
+windows@*@Server:.*(iis/5\.1)
+windows@*@Server:.*(iis/6\.0)
+windows@*@Server:.*(iis/7\.0)
+windows@*@Server:.*(iis/7\.5)
+windows@*@Server:.*(iis/8\.0)
+windows@*@Server:.*(iis/8\.5)
+windows@*@Server:.*(\(win64\))
+windows@*@Server:.*(\(win32\))
+apache@*@Server:.*(Apache/([0-9]+[\.0-9]*[\.0-9]*))
+apache@*@Server:.*(Apache)[\s\r\n]
+apache@*@.*(Apache/([0-9]+[\.0-9]*[\.0-9]*))
+apache@*@.*(Test Page for Apache)
+apache@*@.*(Apache HTTP Server[^D]*Documentation Project)
+apache@*@.*(<title>Apache Status</title>)
+apache@*@.*(Multi Language Custom Error Documents)
+apache@*@.*(This file is generated from xml source)
+nginx@*@Server:.*(nginx/([0-9]+[\.0-9]*[\.0-9]*))
+nginx@*@Server:.*(nginx)
+nginx@*@.*(nginx/([0-9]+[\.0-9]*[\.0-9]*))
+iis@*@Server:.*(Microsoft-IIS/([0-9]+\.[0-9]+))
+iis@*@Server:.*(IIS/([0-9]+\.[0-9]+))
+iis@*@Server:.*(IIS)
+iis@*@.*(It works).*
+http@*@(http/\d{1,2}\.\d{1,2}\.\d{1,2}|http/\d{1,2}\.\d{1,2}|http).*[\r\n]
+bigip@*@Server:.*(bigip)
+php@*@Server:.*(PHP/([0-9]+[\.0-9]*[\.0-9]*))
+php@*@X-Powered-By:.*(PHP/([0-9]+[\.0-9]*[\.0-9]*))
+php@*@Set-Cookie:.*(PHPSESSID=.*;)
+php@*@.*(PHP Credits)
+php@*@.*(<title>phpinfo\(\))
+php@*@.*(<title>phpinfo\(\)</title>)
+asp@*@.*(X-AspNet-Version:.*([0-9]+[\.0-9]*[\.0-9]*))
+asp@*@.*(X-AspNetMvc-Version:.*([0-9]+[\.0-9]*[\.0-9]*))
+asp@*@Set-Cookie:.*(ASP\.NET_SessionId=.*;)
+asp@*@.*(X-Powered-By:\s+ASP\.NET)
+python@*@(python/\d{1,2}\.\d{1,2}\.\d{1,2}|python/\d{1,2}\.\d{1,2}|python).*[\r\n]
+phpmyadmin@*@.*(phpMyAdmin ([0-9]+[\.0-9]*[\.0-9]*))
+phpmyadmin@*@.*<title>(phpMyAdmin).*
+phpmyadmin@*@.*<title>(phpMyAdmin setup).*
+phpmyadmin@*@.*<title>(phpMyAdmin.*[0-9])</title>.*
+phpmyadmin@*@.*(phpmyadmin.svn.sourceforge.net/svnroot/phpmyadmin/trunk/phpMyAdmin/ChangeLog).*
+phpmyadmin@*@.*(phpMyAdmin - ChangeLog).*
+squirrelmail@*@.*(SquirrelMail version ([0-9]+))
+openssl@*@Server:.*(OpenSSL/([0-9]+\.[0-9]+\.[0-9][a-z]))
+openssl@*@Server:.*(OpenSSL/([0-9]+\.[0-9]+\.[0-9]))
+awstats@*@.*(AWStats for domain).*
+upnp@*@(upnp/\d{1,2}\.\d{1,2}\.\d{1,2}|upnp/\d{1,2}\.\d{1,2}|upnp).*[\r\n]
