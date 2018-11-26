@@ -1,0 +1,6 @@
+joomla@joomla\!@*@(Set-Cookie: [a-z0-9]{32}=.*);
+joomla@joomla\!@*@(Set-Cookie: .*=[a-z0-9]{26,32});
+heartcore@heartcore@*@(Set-Cookie:.*=[A-Z0-9]{32});.*
+heartcore@heartcore@*@(<meta name=["']author["'] content=["']{2}).*
+wordpress@wordpress@*@(X-Pingback):.*xmlrpc.php[\r\n]
+wordpress@wordpress@*@(<body class=["']home ).*

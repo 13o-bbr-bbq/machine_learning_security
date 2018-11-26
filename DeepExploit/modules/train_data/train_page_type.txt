@@ -1,0 +1,4 @@
+Login@.*(<input.*type=[\"']submit[\"'].*value=[\"']LogIn|Log In|Log_In|LogOn|Log On|Log_On|SignIn|Sign In|Sign_In|ログイン|ログオン|サインイン[\"']).*>
+Login@.*(<input.*type=[\"']text[\"'].*name=[\"']user|uid|username|user_name|name[\"']).*>
+Login@.*(<input.*type=[\"']password[\"']).*>
+Login@.*(<input.*type=[\"']text[\"'].*name=[\"']Email|E-mail[\"']).*>
