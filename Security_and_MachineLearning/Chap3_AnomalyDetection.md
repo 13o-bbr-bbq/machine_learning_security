@@ -437,7 +437,7 @@ def watch():
         time.sleep(0.5)
 ```
 
-ディレクトリ`log`を`0.5`(sec)間隔で監視し、クライアントが出力するログ`server_response.csv`のタイムスタンプをチェックします（`file_timestamp = os.stat(target_file)[ST_MTIME]`）。タイムスタンプが更新されていた場合（＝新たなログが書き込まれた）、ログを読み込んだ上で（`content = fin.read()`）、異常検知用のメソッド「`check_logs`」を呼び出します。  
+検証用クライアントが出力するログ`server_response.csv`のタイムスタンプを`0.5`(sec)間隔でチェックします（`file_timestamp = os.stat(target_file)[ST_MTIME]`）。タイムスタンプが更新されていた場合（＝新たなログが書き込まれた）、ログを読み込んだ上で（`content = fin.read()`）、異常検知用のメソッド「`check_logs`」を呼び出します。  
 
 ##### 学習データとテストデータのロード
 ```
