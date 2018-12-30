@@ -4,7 +4,7 @@
 
   1. [侵入検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)  
   2. [スパム検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap2_SpamDetection.md)  
-  3. 異常検知  
+  3. [異常検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap3_AnomalyDetection.md)  
   4. 通信ログ分析による攻撃検知  
   5. 脆弱性のトレンド分析  
   6. スパム検知のBypass/対策  
@@ -29,3 +29,5 @@
 ### CHANGELOG
 2018.09.25(Tue): [1.侵入検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)の初稿を公開。  
 2018.11.15(Thu): [2.スパム検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap2_SpamDetection.md)の初稿を公開。  
+2018.12.30(Sun): [3.異常検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap3_AnomalyDetection.md)の初稿を公開。  
+
