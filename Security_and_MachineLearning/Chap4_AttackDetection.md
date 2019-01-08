@@ -70,9 +70,9 @@ K平均法は、クラスタの平均を使用し、**予め与えられた数�
  7. クラスタリング完了  
  ![収束完了](./img/clustering6.png)  
 
-このように、**重心点の更新とクラスタ作成を繰り返す**というシンプルな計算のみで、データを自動分類することができます。  
+このように、**重心点の更新とクラスタ再作成**というシンプルな計算を繰り返すことで、教師データ無しでデータを自動分類することができます。  
 
-K平均法では、予め与える**Kの数に応じてクラスタ数が決まる**ため、**Kを適切に設定することが重要**となります。また、K平均法ではデータをクラスタ分割するのみであり、**各クラスタの意味**を示すことはできません。よって、クラスタ分割の結果を人間が分析して、その意味を判断する必要があります。  
+なお、K平均法では、Kの数に応じてクラスタ数（＝データ分類のカテゴリ）が決定されるため、**Kを適切に設定することが重要**です。また、K平均法ではデータをクラスタ分割するのみであり、**各クラスタの意味**を示すことはできません。よって、各クラスタの意味は人間が分析して判断する必要があります。  
 
 なお、本例では、2次元のデータを使用しましたが、3次元以上（3つ以上の特徴量）のデータでも分類することは可能です。  
 
@@ -86,14 +86,14 @@ K平均法では、予め与える**Kの数に応じてクラスタ数が決ま�
  2. 各クラスタの成分を可視化可能  
 
 本システムは、通信データを予め決められた数（K）のクラスタに分類します。  
-そして、クラスタの意味を人間が分析し易いように、**各クラスタに含まれるデータの特徴量（以下、成分）をグラフ化**します。  
+そして、**各クラスタに含まれるデータの特徴量（以下、成分）をグラフ化**し、人間が分析し易い形で出力します。  
 
 ### 4.3.1. 分析対象ログの準備
-分析対象のアクセスログを準備します。  
-本来であれば、自社環境で収集したリアルな通信データを使用することが好ましいですが、ここでも[第1章の侵入検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)と同じく「[KDD Cup 1999](http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html)」のデータセットを使用します。  
+先ずは分析対象のアクセスログを準備します。  
 
-上記のサイトから「kddcup.data_10_percent.gz」をダウンロードし、**42カラム目のラベルを全削除**し、かつ**データ量を150件程度に削減**します（計算時間の短縮のため）。  
-すると、以下のようなファイル内容になります。  
+本来であれば自社環境で収集したリアルな通信データを使用することが好ましいですが、ここでも[第1章の侵入検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)と同じく「[KDD Cup 1999](http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html)」のデータセットを使用します。  
+
+KDD Cup 1999から「kddcup.data_10_percent.gz」をダウンロードし、**42カラム目のラベルを全削除**します。そして、計算時間短縮のため、**データ量を150件程度に削減**します。すると、以下のようなファイル内容となります。  
 
 ```
 duration,protocol_type,service,flag,src_bytes,dst_bytes,land,wrong_fragment,urgent,hot,num_failed_logins,logged_in,num_compromised,root_shell,su_attempted,num_root,num_file_creations,num_shells,num_access_files,num_outbound_cmds,is_host_login,is_guest_login,count,srv_count,serror_rate,srv_serror_rate,rerror_rate,srv_rerror_rate,same_srv_rate,diff_srv_rate,srv_diff_host_rate,dst_host_count,dst_host_srv_count,dst_host_same_srv_rate,dst_host_diff_srv_rate,dst_host_same_src_port_rate,dst_host_srv_diff_host_rate,dst_host_serror_rate,dst_host_srv_serror_rate,dst_host_rerror_rate,dst_host_srv_rerror_rate
@@ -116,47 +116,67 @@ duration,protocol_type,service,flag,src_bytes,dst_bytes,land,wrong_fragment,urge
 47,tcp,telnet,SF,2402,3816,0,0,0,3,0,1,2,1,0,0,0,0,0,0,0,0,1,1,0,0,0,0,1,0,0,10,10,1,0,0.1,0,0,0,0.1,0.1
 ```
 
-本ファイルは、各行が1つの通信ログを表しており、「1～41カラム」は各ログの特徴量を表しています。  
-※各特徴量の解説は[こちら](http://kdd.ics.uci.edu/databases/kddcup99/task.html)を参照してください。  
+本ファイルは、各行が1つの通信ログを表しており、カラムはログを構成する成分を表します。例えば、`duration`はホストへの接続時間、`dst_host_serror_rate`はSYNエラー率を表します。  
 
-この状態のファイルを「kddcup.data_small.csv」として保存します。  
+※各特徴量の詳細は[こちら](http://kdd.ics.uci.edu/databases/kddcup99/task.html)を参照してください。  
+
+このファイルを「[kddcup.data_small.csv](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/dataset/kddcup_data_small.csv)」として保存します。  
 
 ### 4.3.2. クラスタ数の決定
-K平均法では、クラスタ数（K）を予め決める必要があります。  
-当然ながらデータを目視するだけでは適切なクラスタ数を求めることは不可能ですので、何らかの方法で目安を付けます。  
-そこで今回は、**シルエット分析**と呼ばれる手法を使用してクラスタ数の目安を付けることにします。  
+ここではクラスタ数（K）を決定します。  
+普通の人間にはデータを目視して適切なクラスタ数を求めることは不可能ですので、何らかの方法で目安を付けます。  
+目安を付ける方法は複数存在しますが、今回は**シルエット分析**と呼ばれる手法を使用します。  
 
 | シルエット分析（Silhouette Analysis）|
 |:--------------------------|
 | クラスタ内のサンプル密度（凝集度）を可視化し、クラスタ間の距離が離れている場合に最適なクラスタ数とする。|
 
-以下はクラスタ数を5に設定してシルエット分析を行った例を示しています。  
+以下はクラスタ数を「5」に設定してシルエット分析を行った例を示しています。  
 
 <img src="./img/cluster_silhouette5.png" height=400 width=400>
 
-横軸の**Silhouette Coefficient**は、データサンプルが近隣のクラスタから離れている度合を示しており、他クラスタから離れるほど1に近づきます。また、シルエットの厚さはクラスタのサイズを示します。  
-このことから、クラスタ数が適切な場合は、各クラスタは**ほぼ同じ厚さ**になり、**Silhouette Coefficientは1に近似**します。  
-※シルエット分析のサンプルコードは[こちら](http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html)をご参照ください。  
+横軸の`**The silhouette coefficient values**`は**データが近隣のクラスタから離れている度合**を示しています。  
+この値は、各クラスタが**上手く分割できていればいるほど1に近似**します（クラスタ数が適切であれば、各クラスタに含まれるデータはある程度離れる事になるため）。  
 
-以下は、今回の分析対象ログ「kddcup.data_small.csv」に対し、クラスタ数を2～6に変化させながら分析した結果を示しています。  
+縦軸の`Cluster label`は**各クラスタのラベル**を示しています。  
+各クラスタラベルの横に描かれている**シルエットの幅はクラスタのデータ数**を示しており、分割したい各種類のデータ数が一様と仮定すると**ほぼ同じ幅**になります。  
+
+ちなみに、シルエット分析はscikit-learnを用いる事で簡単に実装できますので、本ブログではコード解説は割愛します。  
+コード詳細を知りたい方は[こちら](http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html)をご参照ください。  
+
+#### 4.3.2.1. シルエット分析の実行結果
+シルエット分析で適切なクラスタ数を見つけるためには、クラスタ数を少しずつ増やしながら実行結果を観察します。  
+以下は、今回の分析対象のログ「kddcup.data_small.csv」に対し、クラスタ数を2～6に変えながら実行した結果を示しています。  
 
  * クラスタ数=2  
- <img src="./img/cluster_silhouette2.png" height=400 width=400>
+ <img src="./img/cluster_silhouette2.png" height=400 width=400>  
+ `Silhouette coefficient`は1から離れており、シルエットの幅にも大きな差があります。  
+ よって、クラスタ数を2とするのは不適切と思われます。  
 
  * クラスタ数=3  
- <img src="./img/cluster_silhouette3.png" height=400 width=400>
+ <img src="./img/cluster_silhouette3.png" height=400 width=400>  
+ クラスタ1の`Silhouette coefficient`は1に近似していますが、クラスタ0と2は離れています。また、相変わらずシルエットの幅にも大きな差があります。  
+ よって、クラスタ数を3とするのも不適切と思われます。  
 
  * クラスタ数=4  
- <img src="./img/cluster_silhouette4.png" height=400 width=400>
+ <img src="./img/cluster_silhouette4.png" height=400 width=400>  
+ だいぶ良い形になってきました。  
+ しかし、クラスタ0のシルエット幅が大きいため、もう少しクラスタ分割できそうです。  
 
  * クラスタ数=5  
- <img src="./img/cluster_silhouette5.png" height=400 width=400>
+ <img src="./img/cluster_silhouette5.png" height=400 width=400>  
+ 4つのクラスタの`Silhouette coefficient`が1に近似しており、シルエットの幅もほぼ均等になってきました。  
+ 今までで最も良い形を示しています。よって、クラスタ数を5とするのが適切だと思われます。  
 
  * クラスタ数=6  
- <img src="./img/cluster_silhouette6.png" height=400 width=400>
+ <img src="./img/cluster_silhouette6.png" height=400 width=400>  
+ 念のため、クラスタ数を6にしてみます。  
+ `Silhouette coefficient`の変化は少ないですが、クラスタ2が大きく1から離れています。  
+ また、クラスタ2と4のシルエット幅が極端に小さくなっています。  
+ よって、クラスタ数を6にするのは不適切だと思われます。  
 
-この結果から分かるように、クラスタ数が5の場合は、シルエットの厚さはほぼ均等であり、Silhouette Coefficientも1に近似しています。  
-よって、今回は「クラスタ数を5」にしてクラスタリングすると良い結果が出そうです。  
+この結果から、クラスタ数が5の場合は、シルエットの幅はほぼ均等であり、`Silhouette Coefficient`も1に最も近似しています。  
+よって、今回は**クラスタ数を5**にしてクラスタリングを実行すると良い結果が出そうです。  
 
 これで、分析対象ログの準備とクラスタ数が整いました。  
 次節では実際にサンプルコードを実行し、分析対象ログを正しくクラスタリングできるのか検証します。  
@@ -312,31 +332,36 @@ PS C:\Security_and_MachineLearning\src> python k-means.py
 
  <img src="./img/clustering_result.png" height=500>
 
-分析対象ログから**5つのクラスタが作成**され、**各クラスタの特徴量の平均値（以下、成分）が色付きで可視化**されていることが見て取れます。  
-K平均法でできるのはここまでです。各クラスタの意味は人間が分析して推定する必要がありますので、各クラスタを成分を一つずつ見ていきましょう。  
+グラフを見ると、**5つのクラスタが作成**され、**各クラスタに含まれるデータの成分が色付きで表示**されている事が分かります。  
+次に、各クラスタを成分を一つずつ見ながら、各クラスタが何の通信を示しているのか推測していきましょう。  
 
  * cluster1  
- cluster1は紫と青の特徴量、すなわち「root_shell」「duration」の平均値が他クラスタより大きいことが分かります。  
- 「ホストへの接続時間が長い」「root権限が与えられるケースが多い」といった特徴から、このクラスタは**Buffer Overflow**が実行された際の通信ログと推定されます。  
+ `root_shell`（root shellの取得有無）と`duration`（ホストへの接続時間）の成分が他クラスタよりも大きいことが分かります。  
+ 「ホストへの接続時間が長い」「root権限が与えられるケースが多い」といった特徴から、筆者は**Buffer Overflow**のクラスタと推定しました。  
 
  * cluster2  
- cluster2は桃色と茶色の特徴量、すなわち「dst_host_serror_rate」「dst_host_same_src_port_rate」の平均値が他クラスタより大きいことが分かります。  
- 「SYNエラー率が高い」「同一ポートに対する接続割合が多い」といった特徴から、このクラスタは**Nmapによる探索**または**SYN Flood**が実行された際の通信ログと推定されます。  
+ `dst_host_serror_rate`（SYNエラー率）と`dst_host_same_src_port_rate`（同一ポートに対する接続率）の成分が他クラスタよりも大きいことが分かります。  
+ 「SYNエラー率が高い」「同一ポートに対する接続割合が多い」といった特徴から、筆者は**Nmapによる探索**または**SYN Flood**のクラスタと推定しました。  
 
  * cluster3  
- cluster3は灰色と緑色の特徴量、すなわち「dst_host_rerror_rate」「num_failed_logins」の平均値が他クラスタより大きいことが分かります。  
- 「REJエラー率が高い」「ログイン試行の失敗回数が多い」といった特徴から、このクラスタは**パスワード推測**が試行された際の通信ログと推定されます。  
+ `dst_host_rerror_rate`（REJエラー率）と`num_failed_logins`（ログイン試行の失敗回数）の成分が他クラスタよりも大きいことが分かります。  
+ 「REJエラー率が高い」「ログイン試行の失敗回数が多い」といった特徴から、筆者は**パスワード推測**のクラスタと推定しました。  
 
  * cluster4  
- cluster4は橙色の特徴量、すなわち「wrong_fragment」の平均値が他クラスタより大きいことが分かります。  
- 「誤りのあるフラグメント」が多いことから、このクラスタは**Teardrop**が試行された際の通信ログと推定されます。  
+ `wrong_fragment`（誤りのあるfragment数）が他クラスタよりも大きいことが分かります。  
+ 「誤りのあるフラグメント」が多いといった特徴から、筆者は**Teardrop**のクラスタと推定しました。  
 
  * cluster0  
- cluster0には成分の偏りが殆どありません。よって、このクラスタは**正常通信**の際の通信ログと推定されます。  
+ 成分には大きな偏りがありません。  
+ よって、筆者は**正常通信**のクラスタと推定しました。  
+
+今回の分析対象ログ「`kddcup.data_small.csv`」をK平均法で分析した結果、4種類の攻撃（Buffer Overflow, Nmap/SYN Flood, Guess Password, Teardrop）を受けている可能性がある事が分かりました。  
 
 ## 4.4. おわりに
-クラスタリングを実行して結果を可視化することで、膨大な通信ログから**複数の攻撃の痕跡が含まれている可能性**が判明しました。  
-この分析結果を基に、「ログの更なる深堀」や「同時刻に記録された他のログを詳細に分析」することで、攻撃の種類を特定することができるかもしれません。K平均法は手軽に実装ができ、かつ処理速度も速いため、ご興味を持たれた方がおりましたら、身近にある様々なタスクに利用してみる事をお勧めします。  
+クラスタリングを実行し、結果を可視化することで、膨大な通信ログには**攻撃の痕跡が含まれている可能性**がある事が判明しました。  
+この分析結果を基に、「ログの更なる深堀」や「同時刻に記録された他ログの詳細分析」を行うことで、**攻撃の種類を特定**し、適切な対策を講じることができるかもしれません。  
+
+K平均法は手軽に実装できるため、ご興味を持たれた方がおりましたら、身近にある様々なタスクに利用してみる事をお勧めします。  
 
 ### 4.5. 動作条件
  * Python 3.6.1（Anaconda3）
