@@ -1,5 +1,6 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
+import os
 import codecs
 import urllib.request
 import nltk
@@ -29,10 +30,10 @@ def get_stopwords():
 
 # Judge Spam.
 def judge_spam(X_train, y_train, stop_words, message, jp_sent_tokenizer, jp_chartype_tokenizer):
-    fout = codecs.open('..\\dataset\\temp.txt', 'w', 'utf-8')
+    fout = codecs.open(os.path.join('../dataset', 'temp.txt'), 'w', 'utf-8')
     fout.write(message)
     fout.close()
-    spam = PlaintextCorpusReader('..\\dataset\\', r'temp.txt', encoding='utf-8',
+    spam = PlaintextCorpusReader('../dataset/', 'temp.txt', encoding='utf-8',
                                  para_block_reader=read_line_block,
                                  sent_tokenizer=jp_sent_tokenizer,
                                  word_tokenizer=jp_chartype_tokenizer)
@@ -72,7 +73,7 @@ def judge_spam(X_train, y_train, stop_words, message, jp_sent_tokenizer, jp_char
 
 if __name__ == '__main__':
     # Load train data.
-    df_data = pd.read_csv('..\\dataset\\train_spam.csv', header=None)
+    df_data = pd.read_csv(os.path.join('../dataset', 'train_spam.csv'), header=None)
     X = [i[0] for i in df_data.iloc[:, [0]].values.tolist()]
     y = [i[0] for i in df_data.iloc[:, [1]].values.tolist()]
 
@@ -86,8 +87,8 @@ if __name__ == '__main__':
     # Get stop words.
     stop_words = get_stopwords()
 
-    # Get inbox data (ex. Mozilla Thunderbird).
-    mail_box = mailbox.mbox('Your mailbox path')
+    # Get inbox data (This example uses Mozilla Thunderbird).
+    mail_box = mailbox.mbox('Your mail box path')
     for idx, key in enumerate(mail_box.keys()[::-1]):
         if idx + 1 > MAX_COUNT:
             break
