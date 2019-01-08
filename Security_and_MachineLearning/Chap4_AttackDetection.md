@@ -149,29 +149,34 @@ duration,protocol_type,service,flag,src_bytes,dst_bytes,land,wrong_fragment,urge
 
  * クラスタ数=2  
  <img src="./img/cluster_silhouette2.png" height=400 width=400>  
+
  `Silhouette coefficient`は1から離れており、シルエットの幅にも大きな差があります。  
  よって、クラスタ数を2とするのは不適切と思われます。  
 
  * クラスタ数=3  
  <img src="./img/cluster_silhouette3.png" height=400 width=400>  
- クラスタ1の`Silhouette coefficient`は1に近似していますが、クラスタ0と2は離れています。また、相変わらずシルエットの幅にも大きな差があります。  
+
+ cluster1の`Silhouette coefficient`は1に近似していますが、cluster0, 2は離れています。また、相変わらずシルエットの幅にも大きな差があります。  
  よって、クラスタ数を3とするのも不適切と思われます。  
 
  * クラスタ数=4  
  <img src="./img/cluster_silhouette4.png" height=400 width=400>  
+
  だいぶ良い形になってきました。  
- しかし、クラスタ0のシルエット幅が大きいため、もう少しクラスタ分割できそうです。  
+ しかし、cluster0のシルエット幅が大きいため、もう少しクラスタ分割できそうです。  
 
  * クラスタ数=5  
  <img src="./img/cluster_silhouette5.png" height=400 width=400>  
+
  4つのクラスタの`Silhouette coefficient`が1に近似しており、シルエットの幅もほぼ均等になってきました。  
  今までで最も良い形を示しています。よって、クラスタ数を5とするのが適切だと思われます。  
 
  * クラスタ数=6  
  <img src="./img/cluster_silhouette6.png" height=400 width=400>  
+
  念のため、クラスタ数を6にしてみます。  
- `Silhouette coefficient`の変化は少ないですが、クラスタ2が大きく1から離れています。  
- また、クラスタ2と4のシルエット幅が極端に小さくなっています。  
+ `Silhouette coefficient`の変化は少ないですが、cluster2が大きく1から離れています。  
+ また、cluster2, 4のシルエット幅が極端に小さくなっています。  
  よって、クラスタ数を6にするのは不適切だと思われます。  
 
 この結果から、クラスタ数が5の場合は、シルエットの幅はほぼ均等であり、`Silhouette Coefficient`も1に最も近似しています。  
