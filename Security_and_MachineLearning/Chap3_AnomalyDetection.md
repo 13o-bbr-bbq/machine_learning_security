@@ -146,6 +146,7 @@ if __name__ == '__main__':
 ```
 
 ※検証用サーバは簡易的な実装のため、コード解説は割愛します。  
+※本コードは[こちら](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/src/mock_server.py)から入手できます。  
 
 #### 検証用クライアント  
 検証用クライアントは、脆弱性スキャナの役割を果たします。  
@@ -238,6 +239,7 @@ if __name__ == '__main__':
 ```
 
 ※検証用クライアントは簡易的な実装のため、コード解説は割愛します。  
+※本コードは[こちら](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/src/mock_client.py)から入手できます。  
 
 ### 3.2.4. K近傍法による異常検知
 K近傍法では**学習データと新たなデータ（以下、テストデータ）の距離を計算**することでクラス分類します。  
@@ -264,6 +266,8 @@ K近傍法では**学習データと新たなデータ（以下、テストデ�
 ### 3.2.5. サンプルコード及び実行結果
 #### 3.2.5.1. サンプルコード
 本ブログではPython3を使用し、簡易的な異常検知システムを実装しました。  
+※本コードは[こちら](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/src/anomaly_detection.py)から入手できます。  
+
 本システムの大まかな処理フローは以下のとおりです。  
 
  1. ログの監視
