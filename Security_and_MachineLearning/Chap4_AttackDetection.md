@@ -120,7 +120,7 @@ duration,protocol_type,service,flag,src_bytes,dst_bytes,land,wrong_fragment,urge
 
 ※各特徴量の詳細は[こちら](http://kdd.ics.uci.edu/databases/kddcup99/task.html)を参照してください。  
 
-このファイルを「[kddcup.data_small.csv](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/dataset/kddcup_data_small.csv)」として保存します。  
+このファイルを「[kddcup.data_small.csv](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/dataset/kddcup.data_small.csv)」として保存します。  
 
 ### 4.3.2. クラスタ数の決定
 普通の人間にはデータを目視して適切なクラスタ数を求めることは不可能ですので、何らかの方法でクラスタ数の目安を付けます。  
@@ -188,6 +188,8 @@ duration,protocol_type,service,flag,src_bytes,dst_bytes,land,wrong_fragment,urge
 ### 4.3.3. サンプルコード及び実行結果
 #### 4.3.3.1. サンプルコード
 本ブログではPython3を使用し、簡易的な通信ログ・クラスタリングシステムを実装しました。  
+※本コードは[こちら](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/src/k-means.py)から入手できます。  
+
 本システムの大まかな処理フローは以下のとおりです。  
 
  1. 分析対象ログのロード  
@@ -196,6 +198,7 @@ duration,protocol_type,service,flag,src_bytes,dst_bytes,land,wrong_fragment,urge
 
 ```
 # -*- coding: utf-8 -*-
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -204,8 +207,12 @@ from sklearn.cluster import KMeans
 # Cluster number using k-means.
 CLUSTER_NUM = 5
 
+# Dataset path.
+dataset_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../dataset')
+dataset_path = os.path.join(dataset_dir, 'kddcup.data_small.csv')
+
 # Load data.
-df_kddcup = pd.read_csv('.\\dataset\\kddcup.data_small.csv')
+df_kddcup = pd.read_csv(dataset_path)
 df_kddcup = df_kddcup.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]
 
 # Normalization.
@@ -264,8 +271,12 @@ CLUSTER_NUM = 5
 
 ##### 分析対象データのロード
 ```
+# Dataset path.
+dataset_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../dataset')
+dataset_path = os.path.join(dataset_dir, 'kddcup.data_small.csv')
+
 # Load data.
-df_kddcup = pd.read_csv('.\\dataset\\kddcup.data_small.csv')
+df_kddcup = pd.read_csv(dataset_path)
 df_kddcup = df_kddcup.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]
 
 # Normalization.
@@ -274,7 +285,6 @@ df_kddcup = (df_kddcup - df_kddcup.mean()) / df_kddcup.mean()
 
 分析対象ログ「kddcup.data_small.csv」をロードしてデータを取得します（`df_kddcup = df_kddcup.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]`）。  
 分析に使用する特徴量は、[第1章の侵入検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)と同様に以下を使用します。  
-※分析精度を上げるために、各特徴量のデータ値を正規化します（`df_kddcup = (df_kddcup - df_kddcup.mean()) / df_kddcup.mean()`）。  
 
 | Feature | Description |
 |:------------|:------------|
@@ -286,6 +296,8 @@ df_kddcup = (df_kddcup - df_kddcup.mean()) / df_kddcup.mean()
 | root_shell | root shellの取得有無。 |
 | dst_host_rerror_rate | REJエラー率。 |
 | num_failed_logins | ログイン試行の失敗回数。 |
+
+また、分析精度を上げるために、各特徴量のデータ値を正規化します（`df_kddcup = (df_kddcup - df_kddcup.mean()) / df_kddcup.mean()`）。  
 
 ##### データの行列変換
 ```
