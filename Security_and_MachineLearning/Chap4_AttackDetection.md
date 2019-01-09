@@ -301,7 +301,7 @@ df_kddcup = df_kddcup.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]
 df_kddcup = (df_kddcup - df_kddcup.mean()) / df_kddcup.mean()
 ```
 
-分析対象ログ「kddcup.data_small.csv」をロードしてデータを取得します。分析に使用する特徴量は、[第1章の侵入検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)と同じく以下の6つを使用します（`df_kddcup = df_kddcup.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]`）。  
+分析対象ログ「kddcup.data_small.csv」をロードしてデータを取得します。分析に使用する特徴量は、[第1章の侵入検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)と同じく以下の8つを使用します（`df_kddcup = df_kddcup.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]`）。  
 
 | Feature | Description |
 |:------------|:------------|
