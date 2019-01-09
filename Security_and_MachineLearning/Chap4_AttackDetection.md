@@ -394,7 +394,7 @@ PS C:\Security_and_MachineLearning\src> python k-means.py
 
 このようにK平均法は手軽に実装でき、処理速度も速いため、ご興味を持たれた方がおりましたら、身近にある様々なタスクに利用してみる事をお勧めします。  
 
-### 4.5. 動作条件
+## 4.5. 動作条件
  * Python 3.6.1
  * matplotlib 2.0.2
  * numpy 1.13.3
