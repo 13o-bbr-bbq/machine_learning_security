@@ -17,20 +17,21 @@
  * 階層的クラスタリング  
  クラスタリング結果を木構造で出力する手法。  
  縦軸はDepth（＝データの類似度）を示し、**浅いデータほど他データとの類似度が低い**ことを示す。  
- 下図は階層的クラスタリングの代表的な手法である**Ward法**を用いて、[第1章](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)でも登場した[Iris flower dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set)をクラスタリングした結果である。  
+ 下図は階層的クラスタリングの代表的な手法である**Ward法**を用いて、[Iris flower dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set)（3品種のIris「setosa, versicolor, virginica」データが150件含まれたデータセット）をクラスタリングした結果である。  
  
  ![Ward法](./img/clustering_ward.png)  
 
- 紫色の線で示したsetosaは他品種（versicolor, virginia）と比べて特徴が大きく異なるため、完全にクラスタリングされている事が分かる（Depthは**浅い**）。一方、黄緑色の線で示したversicolorとvirginicaは特徴が似ているため、幾つかのデータが混ざり合ってクラスタリングされている事が分かる（Depthは**深い**）。  
+ 紫色の線で示したsetosaは他品種（versicolor, virginia）と比べてデータの特徴が大きく異なるため、完全にクラスタリングされている事が分かる（Depthは**浅い**）。一方、黄緑色の線で示したversicolorとvirginicaはデータの特徴が似ているため、幾つかのデータが混ざり合ってクラスタリングされている事が分かる（Depthは**深い**）。  
 
  * 非階層的クラスタリング  
  データの特徴量を基に、**予め指定された数のクラスタを作成**する手法。  
- 下図は、非階層的クラスタリングの代表的な手法である**K平均法**を用いて、Iris flower datasetを2つの特徴量（petal width, petal length）を基にクラスタリングした結果である。  
+ 下図は、非階層的クラスタリングの代表的な手法である**K平均法**を用いて、Iris flower datasetを2つの特徴量（petal width(花弁の幅)
+ , petal length（花弁の長さ））を基にクラスタリングした結果である。  
  
  ![K平均法](./img/clustering_kmeans.png)  
 
  紫色はsetosa、黄緑色はversicolor、青色はvirginicaのデータを示している。  
- Ward法の結果と同じく、setosaは他品種と比べて特徴が大きく異なるため、完全にクラスタリングされている事が分かる。一方、versicolorとvirginicaは特徴が似ているため、各クラスタの境界が一部被っている事が分かる。  
+ Ward法の結果と同じく、setosaは他品種と比べてデータの特徴が大きく異なるため、完全にクラスタリングされている事が分かる。一方、versicolorとvirginicaはデータの特徴が似ているため、2つのクラスタ境界が一部重複している事が分かる。  
 
 このように、クラスタリングを行うことで、**膨大なログを自動的に分類**することができます。  
 
