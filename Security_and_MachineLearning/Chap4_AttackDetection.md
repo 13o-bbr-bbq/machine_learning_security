@@ -18,7 +18,7 @@
 
  * 階層的クラスタリング  
  クラスタリング結果を木構造で出力する手法。  
- 縦軸は深さ（＝データの類似度）を示し、**深いほど他データとの類似度が低い**ことを示す。  
+ 縦軸は深さ（＝データの類似度）を示し、**下に行くほど他データとの類似度が低い**ことを示す。  
  下図は階層的クラスタリングの代表的な手法である**Ward法**を用いて、[第1章](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)でも登場した[Iris flower dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set)をクラスタリングした結果である。  
  
  ![Ward法](./img/clustering_ward.png)  
