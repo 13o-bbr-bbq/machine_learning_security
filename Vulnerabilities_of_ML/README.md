@@ -30,6 +30,7 @@
 
  * [Black-box Adversarial Attacks with Limited Queries and Information](https://arxiv.org/abs/1804.08598)  
  TBA.  
+ 検証コード: [labsix/limited-blackbox-attacks](https://github.com/labsix/limited-blackbox-attacks/blob/master/attacks.py)  
 
  * [GenAttack: Practical Black-box Attacks with Gradient-Free Optimization](https://arxiv.org/abs/1805.11090)  
  画像のAdversarial example。  
