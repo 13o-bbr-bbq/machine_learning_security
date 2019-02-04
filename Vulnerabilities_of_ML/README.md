@@ -25,6 +25,12 @@
  道路標識に細工を加えることで、画像認識システムの判断を誤らせる手法。  
  参考記事: [標識にシールを貼って自動運転カーを混乱に陥れるハッキング技術「Robust Physical Perturbations(RP2)」](https://gigazine.net/news/20170807-robust-physical-perturbations/)  
 
+ * [Synthesizing Robust Adversarial Examples](https://arxiv.org/abs/1707.07397)  
+ TBA.  
+
+ * [Black-box Adversarial Attacks with Limited Queries and Information](https://arxiv.org/abs/1804.08598)  
+ TBA.  
+
  * [GenAttack: Practical Black-box Attacks with Gradient-Free Optimization](https://arxiv.org/abs/1805.11090)  
  画像のAdversarial example。  
  遺伝的アルゴリズムを使用して効率良くAdversarial exampleを生成する。  
