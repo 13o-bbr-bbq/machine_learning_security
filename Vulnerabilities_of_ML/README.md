@@ -66,6 +66,9 @@
  これまで、認識対象のオブジェクト自体に細工を施す事例は数多く存在するが、画像を取り込むカメラのレンズを細工する事例は珍しいかもしれない。  
  デモ動画：[Adversarial Camera Sticker fooling ResNet-50 model](https://www.youtube.com/watch?v=wUVmL33Fx54)  
 
+ * [Rallying Adversarial Techniques against Deep Learning for Network Security
+](https://arxiv.org/abs/1903.11688)  
+
 ### Decision boundary manipulation  
  訓練データを細工することで、MLモデルのDecision boundary（以下、決定境界）を操作する手法。  
  これにより、機械学習ベースのスパムフィルタや侵入検知等を回避することが可能となる。  
