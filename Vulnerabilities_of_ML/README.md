@@ -60,6 +60,12 @@
  強化学習版のAdversarial example。  
  エージェントへの報酬に細工を加えることで、攻撃者が意図した行動をエージェントに行わせる手法。  
 
+ * [Adversarial camera stickers: A Physical Camera Attack on Deep Learning Classifier](https://arxiv.org/abs/1904.00759)  
+ 画像のAdversarial Examples。  
+ カメラのレンズに特殊な模様を付けたステッカーを貼り付けることで、物体認識モデルの判断を誤らせる手法。  
+ これまで、認識対象のオブジェクト自体に細工を施す事例は数多く存在するが、画像を取り込むカメラのレンズを細工する事例は珍しいかもしれない。  
+ デモ動画：[Adversarial Camera Sticker fooling ResNet-50 model](https://www.youtube.com/watch?v=wUVmL33Fx54)  
+
 ### Decision boundary manipulation  
  訓練データを細工することで、MLモデルのDecision boundary（以下、決定境界）を操作する手法。  
  これにより、機械学習ベースのスパムフィルタや侵入検知等を回避することが可能となる。  
