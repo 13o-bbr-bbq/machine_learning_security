@@ -69,6 +69,9 @@
  * [Rallying Adversarial Techniques against Deep Learning for Network Security
 ](https://arxiv.org/abs/1903.11688)  
 
+ * [Discrete Attacks and Submodular Optimization with Applications to Text Classification
+](https://arxiv.org/abs/1812.00151)  
+
 ### Decision boundary manipulation  
  訓練データを細工することで、MLモデルのDecision boundary（以下、決定境界）を操作する手法。  
  これにより、機械学習ベースのスパムフィルタや侵入検知等を回避することが可能となる。  
