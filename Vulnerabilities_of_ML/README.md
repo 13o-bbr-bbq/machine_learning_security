@@ -72,6 +72,16 @@
  * [Discrete Attacks and Submodular Optimization with Applications to Text Classification
 ](https://arxiv.org/abs/1812.00151)  
 
+ * [Black-box Adversarial Attacks on Video Recognition Models
+](https://arxiv.org/abs/1904.05181)  
+ 動画のAdversarial Examples。  
+ 動画認識モデルに対するブラックボックスのAdversarial Examples Attack。画像のAdversarial Examplesは多いが、動画は初めてみたかもしれない。  
+
+ * [Adversarial Audio: A New Information Hiding Method and Backdoor for DNN-based Speech Recognition Models
+](https://arxiv.org/abs/1904.03829)  
+ 音声のAdversarial Examples。  
+ 元音声に（人間には知覚不能な）別音声を埋め込む手法。専用に訓練した音声認識システム（ASR）は埋め込み音声を認識できるが、他ASRは認識できない。ASRバックドアにも転用できそう。  
+
 ### Decision boundary manipulation  
  訓練データを細工することで、MLモデルのDecision boundary（以下、決定境界）を操作する手法。  
  これにより、機械学習ベースのスパムフィルタや侵入検知等を回避することが可能となる。  
