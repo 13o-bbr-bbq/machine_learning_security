@@ -12,10 +12,10 @@ Source codes about machine learning and security.
  Generate adversarial example against CNN.  
  * [Deep Exploit](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/DeepExploit)  
  Fully automatic penetration test tool using Machine Learning.  
- Deep Exploit was presented at **[Black Hat USA 2018 Arsenal](https://www.blackhat.com/us-18/arsenal/schedule/index.html#deep-exploit-11908)** and **[DEF CON 26! AI Village](https://aivillage.org/posts/accepted-talks/)**.  
+ Deep Exploit was presented at **[Black Hat USA 2018 Arsenal](https://www.blackhat.com/us-18/arsenal/schedule/index.html#deep-exploit-11908)** , **[Black Hat EURO 2018 Arsenal](https://www.blackhat.com/eu-18/arsenal/schedule/index.html#deep-exploit-fully-automatic-penetration-test-tool-using-machine-learning-13320)** and **[DEF CON 26! AI Village](https://aivillage.org/posts/accepted-talks/)**.  
 * [GyoiThon](https://github.com/gyoisamurai/GyoiThon)  
  Next generation penetration test tool.  
- GyoiThon was presented at **[Black Hat ASIA 2018 Arsenal](https://www.blackhat.com/asia-18/arsenal/schedule/index.html#gyoithon-9651)** and **[DEF CON 26! Demo Labs](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html)**.  
+ GyoiThon was presented at **[Black Hat ASIA 2018 Arsenal](https://www.blackhat.com/asia-18/arsenal/schedule/index.html#gyoithon-9651)** , **[Black Hat ASIA 2019 Arsenal](https://www.blackhat.com/asia-19/arsenal/schedule/index.html#gyoithon-penetration-testing-using-machine-learning-14359)** and **[DEF CON 26! Demo Labs](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html)**.  
  * [Generator](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Generator)  
  Fully automatically generate numerous injection codes for web application assessment.
  * [Recommender](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Recommender)  
