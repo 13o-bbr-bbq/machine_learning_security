@@ -151,6 +151,7 @@
  * [StuxNNet:Practical Live Memory Attacks on Machine Learning Systems](https://aivillage.org/material/cn18-norwitz/slides.pdf)  
  実行中のNeural Network（以下、NN）の判断を誤らせる手法。  
  NN実行中のメモリに展開されたNNの重みやバイアスを直接操作し、NNに誤判断を引き起こさせる。  
+ 検証コード：[https://github.com/bryankim96/stux-DNN](bryankim96/stux-DNN)  
 
  * [Practical Fault Attack on Deep Neural Networks](https://arxiv.org/abs/1806.05859)  
  組み込み機器にビルドインされたDNNの判断を誤らせる手法。  
