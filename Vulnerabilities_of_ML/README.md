@@ -135,6 +135,9 @@
  TBA  
  検証コード：[PurduePAML/TrojanNN](https://github.com/PurduePAML/TrojanNN)  
  
+ * [PoTrojan: powerful neural-level trojan designs in deep learning models](https://arxiv.org/abs/1802.03043)  
+ TBA  
+ 
 
 ### Unsafety framework and library
  機械学習フレームワークやライブラリに存在する脆弱性を利用する手法。  
