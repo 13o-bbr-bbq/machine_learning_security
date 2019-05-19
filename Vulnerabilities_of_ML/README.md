@@ -128,6 +128,14 @@
  平時はビデオアプリ等として動作し、（顔画像や音声等で）標的を認識するとランサムウエア化する。  
  ランサムウエアのペイロードを暗号化（ロック）しておき、DNNで標的を認識するとその復号鍵を生成して動作するため、既存のアンチマルウエアでは検知が難しいとの事。  
 
+ * [Programmable Neural Network Trojan for Pre-Trained Feature Extractor](https://arxiv.org/abs/1901.07766)  
+ TBA  
+ 
+ * [Trojaning Attack on Neural Networks](https://github.com/PurduePAML/TrojanNN/blob/master/trojan_nn.pdf)  
+ TBA  
+ 検証コード：[PurduePAML/TrojanNN](https://github.com/PurduePAML/TrojanNN)  
+ 
+
 ### Unsafety framework and library
  機械学習フレームワークやライブラリに存在する脆弱性を利用する手法。  
 
