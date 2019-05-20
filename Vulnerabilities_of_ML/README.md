@@ -132,7 +132,8 @@
  TBA  
  
  * [Trojaning Attack on Neural Networks](https://github.com/PurduePAML/TrojanNN/blob/master/trojan_nn.pdf)  
- TBA  
+ トリガとなるデータを既存モデルに入力することで、モデルに意図した出力を行わせる手法。  
+ 既存モデルの訓練データにアクセスする必要は無く、既存モデルをリバースエンジニアして作成した**Torojan Trigger**と**再訓練用の学習データ**を組み合わせることで、トリガデータを効率良く作成可能。攻撃の成功率も非常に高い。  
  検証コード：[PurduePAML/TrojanNN](https://github.com/PurduePAML/TrojanNN)  
  
  * [PoTrojan: powerful neural-level trojan designs in deep learning models](https://arxiv.org/abs/1802.03043)  
