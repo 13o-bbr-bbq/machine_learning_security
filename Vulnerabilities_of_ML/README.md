@@ -137,8 +137,8 @@
  検証コード：[PurduePAML/TrojanNN](https://github.com/PurduePAML/TrojanNN)  
  
  * [PoTrojan: powerful neural-level trojan designs in deep learning models](https://arxiv.org/abs/1802.03043)  
- TBA  
- 
+ ネットワークの隠れ層に**Triggerノード**と**Payloadノード**を挿入し、モデルに意図した出力を行わせる手法。  
+ 殆どの入力データをモデルは正しく分類する事が可能だが、ある特定のデータに対してのみ（攻撃者が意図した）誤った出力をするため、ステルス性が高い。  
 
 ### Unsafety framework and library
  機械学習フレームワークやライブラリに存在する脆弱性を利用する手法。  
