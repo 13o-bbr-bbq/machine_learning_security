@@ -99,6 +99,9 @@
  線形回帰モデルを標的にしている。  
  訓練データに細工を加えることで、MLモデルの予測結果を操作する手法。  
 
+ * [Data Poisoning Attacks on Stochastic Bandits](https://arxiv.org/abs/1905.06494)  
+ TBA  
+
 ### Stealing model and privacy data
  MLモデルの入出力情報から、モデルの内部ロジックや（機微情報を含む可能性のある）訓練データを復元する手法。  
  モデルが復元されることで、（ユーザにクエリ数で課金してる）クラウドサービスに打撃を与える。  
@@ -139,6 +142,15 @@
  * [PoTrojan: powerful neural-level trojan designs in deep learning models](https://arxiv.org/abs/1802.03043)  
  ネットワークの隠れ層に**Triggerノード**と**Payloadノード**を挿入し、モデルに意図した出力を行わせる手法。  
  殆どの入力データをモデルは正しく分類する事が可能だが、ある特定のデータに対してのみ（攻撃者が意図した）誤った出力をするため、ステルス性が高い。  
+
+ * [STRIP: A Defence Against Trojan Attacks on Deep Neural Networks](https://arxiv.org/abs/1902.06531)  
+ TBA  
+ 
+ * [Detecting Backdoor Attacks on Deep Neural Networks by Activation Clustering](https://arxiv.org/abs/1811.03728)  
+ TBA  
+ 
+ * [TrojDRL: Trojan Attacks on Deep Reinforcement Learning Agents](https://arxiv.org/abs/1903.06638)  
+ TBA  
 
 ### Unsafety framework and library
  機械学習フレームワークやライブラリに存在する脆弱性を利用する手法。  
