@@ -157,6 +157,9 @@
  * [TrojDRL: Trojan Attacks on Deep Reinforcement Learning Agents](https://arxiv.org/abs/1903.06638)  
  TBA  
 
+ * [A backdoor attack against LSTM-based text classification systems](https://arxiv.org/abs/1905.12457)  
+ LSTMベースの文書分類器にTrojanを仕込む方法。  
+
 ### Unsafety framework and library
  機械学習フレームワークやライブラリに存在する脆弱性を利用する手法。  
 
