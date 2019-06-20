@@ -10,8 +10,8 @@
   6. スパム検知のBypass/対策  
   7. 顔認証のBypass/対策  
   8. 音声認識システムを欺く/対策  
-  9. 機械学習を使用した標的型マルウエア/対策  
-  10. 全自動侵入エージェント/対策  
+  9. Neural Trojan/対策  
+  10. 機械学習を使用した標的型マルウエア/対策  
 
 　1~5は機械学習をセキュリティのタスクに利用する例、6～10は機械学習の脆弱性や攻撃への利用例及び対策としています。  
 
@@ -31,3 +31,4 @@
 2018.11.15(Thu): [2.スパム検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap2_SpamDetection.md)の初稿を公開。  
 2018.12.30(Sun): [3.異常検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap3_AnomalyDetection.md)の初稿を公開。  
 2019.01.09(Wed): [4.ログ分析による攻撃検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap4_AttackDetection.md)の初稿を公開。  
+2019.06.20(Thu): コンテンツの一部を変更（「全自動侵入エージェント」から「Neural Trojan」に変更）。  
