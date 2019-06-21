@@ -8,17 +8,14 @@ from sklearn.decomposition import LatentDirichletAllocation
 
 # Parameters of LDA
 n_samples = 100000
-n_features = 100
-n_topics = 10
-n_top_words = 10
-max_df = 0.95
-min_df = 10
+n_topics = 5
+n_top_words = 20
 
 
 # Output topic and topic words
 def print_top_words(model, feature_names):
     for topic_idx, topic in enumerate(model.components_):
-        message = 'Topic #{0}: '.format(topic_idx)
+        message = 'Topic #{}: '.format(topic_idx + 1)
         message += ' '.join([feature_names[i] for i in topic.argsort()[:-n_top_words - 1:-1]])
         print(message)
 
@@ -49,20 +46,15 @@ if __name__ == '__main__':
         lst_bow = []
         for description in lst_cve_description:
             temp_description = ''
-            for word in description.lower().split(' '):
+            for word in description.split(' '):
                 if not word in lst_stop_words:
                     temp_description += word + ' '
             lst_bow.append(temp_description)
 
         # Use tf (raw term count) features for LDA (Latent Dirichlet Allocation).
-        tf_vectorizer = CountVectorizer(max_df=max_df, min_df=min_df,
-                                        max_features=n_features,
-                                        stop_words='english')
+        tf_vectorizer = CountVectorizer(stop_words='english')
         tf = tf_vectorizer.fit_transform(lst_bow)
-        lda = LatentDirichletAllocation(n_components=n_topics, max_iter=5,
-                                        learning_method='online',
-                                        learning_offset=50.,
-                                        random_state=0)
+        lda = LatentDirichletAllocation(n_components=n_topics, max_iter=20)
         lda.fit(tf)
 
         # Output result
