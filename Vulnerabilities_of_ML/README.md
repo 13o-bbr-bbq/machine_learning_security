@@ -121,6 +121,10 @@
  * [Machine Learning with Membership Privacy using Adversarial Regularization](https://arxiv.org/abs/1807.05852)  
  TBA.  
 
+ * [Deep Leakage from Gradients](https://arxiv.org/abs/1906.08935)  
+ 学習時に使用される勾配を基に学習データを復元する手法。  
+ マルチノードで分散学習するMLにおいては、MLモデル間で勾配を共有する事がある。そのようなケースを想定し、他MLから共有された勾配から学習データを復元する。  
+
 ### Trojan
  平時はノーマルなMLモデルとして動作し、特定の値を入力した際に攻撃者の意図した動作を行わせる手法。  
  機械学習版のTrojanのようなもの。  
