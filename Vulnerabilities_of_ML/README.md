@@ -164,6 +164,9 @@
  * [A backdoor attack against LSTM-based text classification systems](https://arxiv.org/abs/1905.12457)  
  LSTMベースの文書分類器にTrojanを仕込む方法。  
 
+ * [Neural Cleanse: Identifying and Mitigating Backdoor Attacks in Neural Networks](https://www.computer.org/csdl/proceedings-article/sp/2019/666000a530/19skfH8dcqc)  
+ スライド：[Neural Cleanse](https://www.ieee-security.org/TC/SP2019/SP19-Slides-pdfs/Bolun_Wang_-MAC_-_08-Bolun_Wang-Neural_Clense_Identifying_and_Mitigating_Backdoor_Attacks_against_Neural_Networks_(1).pdf)  
+
 ### Unsafety framework and library
  機械学習フレームワークやライブラリに存在する脆弱性を利用する手法。  
 
@@ -205,6 +208,13 @@
  機械学習版のMetasploitを目指したツール。  
  更新は止まっているようだが、コンセプト等を参考にしたい。  
  検証コード: [cchio/deep-pwning](https://github.com/cchio/deep-pwning)  
+
+ * [DeepSec](https://www.computer.org/csdl/proceedings-article/sp/2019/666000a398/19skfzVqzGE)  
+ Adversarial Examplesへの耐性をチェックする手法。  
+
+ * [Comprehensive Privacy Analysis of Deep Learning](https://www.computer.org/csdl/proceedings-article/sp/2019/666000b021/19skg8ZskUM)  
+ モデルからの情報漏えいの可能性をチェックする手法。  
+ スライド: [Comprehensive Privacy Analysis of Deep Learning](https://www.ieee-security.org/TC/SP2019/SP19-Slides-pdfs/Milad_Nasr_-_08-Milad_Nasr-Comprehensive_Privacy_Analysis_of_Deep_Learning_(1).pdf)  
 
 ## Other contents
  * [ADVERSARIAL MACHINE LEARNING TUTORIAL](https://aaai18adversarial.github.io/)  
