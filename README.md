@@ -16,8 +16,8 @@ Source codes about machine learning and security.
 * [GyoiThon](https://github.com/gyoisamurai/GyoiThon)  
  Next generation penetration test tool.  
  GyoiThon was presented at **[Black Hat ASIA 2018 Arsenal](https://www.blackhat.com/asia-18/arsenal/schedule/index.html#gyoithon-9651)** , **[Black Hat ASIA 2019 Arsenal](https://www.blackhat.com/asia-19/arsenal/schedule/index.html#gyoithon-penetration-testing-using-machine-learning-14359)** and **[DEF CON 26! Demo Labs](https://www.defcon.org/html/defcon-26/dc-26-demolabs.html)**.  
- * [Generator](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Generator)  
- Fully automatically generate numerous injection codes for web application assessment.
+ * [DeepGenerator](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Generator)  
+ Fully automatically generate numerous injection codes for web application assessment using Genetic Algorithm and Generative Adversarial Networks.  
  * [Recommender](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Recommender)  
  Recommend optimal injection code for detecting web app vulnerabilities.
  * [SAIVS (Spider Artificial Intelligence Vulnerability Scanner)](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Saivs)  
