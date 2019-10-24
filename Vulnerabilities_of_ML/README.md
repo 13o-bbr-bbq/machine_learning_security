@@ -87,6 +87,8 @@
  人間にAdversarial Patchを貼り付ける事で、物体検出器（Personal Detectorを想定）から人間を隠す（検出できなくする）手法。  
  検証コード: [adversarial-yolo](https://gitlab.com/EAVISE/adversarial-yolo)  
 
+ * [Man-in-the-Middle Attacks against Machine Learning Classifiers via Malicious Generative Models](https://arxiv.org/abs/1910.06838)  
+
 ### Decision boundary manipulation  
  訓練データを細工することで、MLモデルのDecision boundary（以下、決定境界）を操作する手法。  
  これにより、機械学習ベースのスパムフィルタや侵入検知等を回避することが可能となる。  
