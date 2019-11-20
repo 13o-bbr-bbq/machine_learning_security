@@ -25,7 +25,7 @@
 
  The offensive part is to learn the vulnerabilities of machine learning model and countermeasures.  
 
- Besides this blog is a **foundamental training course for machine learning**, I don't use mathematical formulas to explain machine learning algorithms. If you want to learn more about the theory, read other blogs/papers. Instead of I use simple sample code. So **you can learn machine learning algorithms with hands-on**.  
+ This blog is a **foundamental training course for machine learning**, I don't use mathematical formulas to explain machine learning algorithms. If you want to learn more about the theory, read other blogs/papers. Instead of I use simple sample code. So **you can learn machine learning algorithms with hands-on**.  
 
 ### CHANGELOG
 None.  
