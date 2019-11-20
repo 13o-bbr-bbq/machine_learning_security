@@ -5,23 +5,25 @@
  **[English version here](./README_en.md)**  
 
 ### Defensive part
- 1. [侵入検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)  
- 2. [スパム検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap2_SpamDetection.md)  
- 3. [異常検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap3_AnomalyDetection.md)  
- 4. [ログ分析による攻撃検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap4_AttackDetection.md)  
- 5. [脆弱性のトレンド分析](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap5_VulnerabilityTrend.md)  
- 6. Webアプリへの攻撃検知  
+ 1. [侵入検知 \(Logistic Regression\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)  
+ 2. [スパム検知 \(Naive Bayes\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap2_SpamDetection.md)  
+ 3. [異常検知 \(K Nearest Neighbor\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap3_AnomalyDetection.md)  
+ 4. [ログ分析による攻撃検知 \(K means Clustering\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap4_AttackDetection.md)  
+ 5. [脆弱性のトレンド分析 \(Topic model\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap5_VulnerabilityTrend.md)  
+
+　Defensive partは「**機械学習をセキュリティのタスクに利用する例**」を通して機械学習の基本を学びます。  
 
 ### Offensive part
- 7. スパム検知のBypass/対策  
- 8. 攻撃検知のBypass/対策  
- 9. 顔認証のBypass（Adversarial Examples）/対策  
- 10. 音声認識を欺く（Audio Adversarial Examples）/対策  
- 11. 機械学習版トロイの木馬（Neural Trojan）/対策  
- 12. 機械学習を使用した標的型マルウエア（DeepLocker）/対策  
+ 1. 機械学習モデルの窃取 (Model extraction)  
+ 2. スパム検知モデルのバイパス (Data poisoning)  
+ 3. 顔認識モデルのバイパス (Adversarial Examples)  
+ 4. 音声認識モデルを欺く (Audio Adversarial Examples)  
+ 5. バックドア (Neural Trojan)  
+ 6. マルウェアの秘匿化 (DeepLocker)  
+ 7. フェイク動画 (DeepFake)  
+ 8. フェイク音声 (Audio DeepFake)  
 
-　1~6はDefensive partと題し、「**機械学習をセキュリティのタスクに利用する例**」を通して機械学習の基本を学びます。  
-　7～12はOffensive partと題し、「**機械学習の脆弱性やサイバー攻撃への利用例および対策**」を学びます。  
+　Offensive partは「**機械学習の脆弱性やサイバー攻撃への利用例および対策**」を学びます。  
 
 　なお、本ブログは、**機械学習入門の入門**の位置付けとなるため、理論（数式）の解説ではなく、実際にコードを動かして**機械学習の利用方法を学ぶ**ことを目的としています。理論からしっかりと学びたい方は、神々が書いたブログや書籍をご参考にして頂ければと思います。  
 
