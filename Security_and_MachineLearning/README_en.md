@@ -2,7 +2,7 @@
 
  Machine learning is used in various services/products, and is also used in cyber security field. The aim of this blog is **for cyber security engineers** to learn machine learning use cases in cyber security field and vulnerabilities of machine learning.  
 
- **[Japanese version here](./README.md)**  
+ **[Japanese version is here](./README.md)**  
 
 ### Defensive part
  1. Intrusion detection (Logistic Regression).  
@@ -14,7 +14,7 @@
  The defensive part is to learn the basics of machine learning using machine learning use cases in the cyber security field.  
 
 ### Offensive part
- 1. Bypassing Intrusion detection.  
+ 1. Stealing model (Model extraction).  
  2. Bypassing Spam detection (Data poisoning).  
  3. Bypassing Face recognition (Adversarial Examples).  
  4. Deceiving Voice recognition (Audio Adversarial Examples).  
