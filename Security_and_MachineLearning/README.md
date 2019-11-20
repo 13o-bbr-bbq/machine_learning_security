@@ -10,6 +10,8 @@
  3. [異常検知 \(K Nearest Neighbor\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap3_AnomalyDetection.md)  
  4. [ログ分析による攻撃検知 \(K means Clustering\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap4_AttackDetection.md)  
  5. [脆弱性のトレンド分析 \(Topic model\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap5_VulnerabilityTrend.md)  
+ 6. 脆弱性検査文字列のレコメンド (Multi-Layer perceptron)  
+ 7. 顔認証 (Convolutional Neural Network)  
 
 　Defensive partは「**機械学習をセキュリティのタスクに利用する例**」を通して機械学習の基本を学びます。  
 
