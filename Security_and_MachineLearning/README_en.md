@@ -2,12 +2,16 @@
 
  Machine learning is used in various services/products, and is also used in cyber security field. The aim of this blog is **for cyber security engineers** to learn machine learning use cases in cyber security field and vulnerabilities of machine learning.  
 
+ **[Japanese version here](./README.md)**  
+
 ### Defensive part
  1. Intrusion detection (Logistic Regression).  
  2. Spam detection (Naive Bayes).  
  3. Anomaly detection (K Nearest Neighbor).  
  4. Attack detection (K means Clustering).  
  5. Trend analysis of vulnerability (Topic model).  
+
+ The defensive part is to learn the basics of machine learning using machine learning use cases in the cyber security field.  
 
 ### Offensive part
  1. Bypassing Intrusion detection.  
@@ -19,8 +23,7 @@
  7. Video scam (DeepFake).  
  8. Voice scam (Audio DeepFake).  
 
-　1~6はDefensive partと題し、「**機械学習をセキュリティのタスクに利用する例**」を通して機械学習の基本を学びます。  
-　7～12はOffensive partと題し、「**機械学習の脆弱性やサイバー攻撃への利用例および対策**」を学びます。  
+ The offensive part is to learn the vulnerabilities of machine learning model and countermeasures.  
 
 　なお、本ブログは、**機械学習入門の入門**の位置付けとなるため、理論（数式）の解説ではなく、実際にコードを動かして**機械学習の利用方法を学ぶ**ことを目的としています。理論からしっかりと学びたい方は、神々が書いたブログや書籍をご参考にして頂ければと思います。  
 
