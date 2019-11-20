@@ -7,7 +7,7 @@
  2. Spam detection (Naive Bayes).  
  3. Anomaly detection (K Nearest Neighbor).  
  4. Attack detection (K means Clustering).  
- 5. Trend analysis of vulnerabilityd (Topic model).  
+ 5. Trend analysis of vulnerability (Topic model).  
 
 ### Offensive part
  1. Bypassing Intrusion detection.  
