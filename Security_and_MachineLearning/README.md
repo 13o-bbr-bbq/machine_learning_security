@@ -2,6 +2,8 @@
 
 　今や機械学習は様々なサービスやプロダクトで利用されており、セキュリティ分野でも利用が広がっています。そこで本ブログでは、これまで機械学習に馴染みが無かった**セキュリティエンジニアを対象**に、下記のコンテンツを通して機械学習の利用例と、機械学習の脆弱性及び対策を学ぶことを目的としています。  
 
+ **[English version here](./README_en.md)**  
+
 ### Defensive part
  1. [侵入検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap1_IntrusionDetection.md)  
  2. [スパム検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap2_SpamDetection.md)  
