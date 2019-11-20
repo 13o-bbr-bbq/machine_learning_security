@@ -10,6 +10,8 @@
  3. Anomaly detection (K Nearest Neighbor).  
  4. Attack detection (K means Clustering).  
  5. Trend analysis of vulnerability (Topic model).  
+ 6. Attack's payload recommendation (Multi-Layer perceptron).  
+ 7. Face authentication (Convolutional Neural Network).  
 
  The defensive part is to learn the basics of machine learning using machine learning use cases in the cyber security field.  
 
