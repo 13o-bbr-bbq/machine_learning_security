@@ -25,14 +25,7 @@
 
  The offensive part is to learn the vulnerabilities of machine learning model and countermeasures.  
 
-　なお、本ブログは、**機械学習入門の入門**の位置付けとなるため、理論（数式）の解説ではなく、実際にコードを動かして**機械学習の利用方法を学ぶ**ことを目的としています。理論からしっかりと学びたい方は、神々が書いたブログや書籍をご参考にして頂ければと思います。  
-
-| Note |
-|:-----|
-| 本ブログのサンプルコードは、機械学習の利用例を分かり易くすることを念頭に置いた簡易的なコードです。実際のサービスやプロダクトの実装コードとは必ずしも一致しないことを予めご了承ください。|
-
-| Note |
-|:-----|
-| 上記1～6はセキュリティのタスクを機械学習で自動化する例になっています。ここで、自動化の手段は機械学習に限りません。必ずしも「自動化＝機械学習」ではありませんので、自動化のタスクに取り組む際は、目的に応じて適切な技術を採用されることを推奨いたします。|
+ Besides this blog is a **foundamental training course for machine learning**, I don't use mathematical formulas to explain machine learning algorithms. If you want to learn more about the theory, read other blogs/papers. Instead of I use simple sample code. So **you can learn machine learning algorithms with hands-on**.  
 
 ### CHANGELOG
+None.  
