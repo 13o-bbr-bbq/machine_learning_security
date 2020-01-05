@@ -47,10 +47,9 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
 本ブログで実装する顔認証システムは、大きく以下の4ステップで認証を行います。  
 
  1. 顔認識モデルの作成  
- 2. Webカメラから画像を取得  
- 3. 取り込んだ画像から顔を抽出  
- 4. 顔認識モデルで顔画像を分類  
- 5. 分類確率と閾値を比較して認証成否を判定    
+ 2. Webカメラから顔画像を取得  
+ 3. 顔認識モデルで顔画像を分類  
+ 4. 分類確率と閾値を比較して認証成否を判定    
 
 ### 7.3.1. 顔認識モデルの作成
 本ブログの顔認証システムは教師あり学習のCNNを使用します。  
@@ -58,21 +57,79 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
 
 #### 7.3.1.1. 学習データの準備
 学習データとして**認証対象とする人物の顔画像**を準備します。  
-身近な人の顔画像を晒すのはプライバシー侵害となるため、本ブログでは一般公開されている顔画像データセット「[VGGFACE2](http://zeus.robots.ox.ac.uk/vgg_face2/)」を使用することにします。  
+身近な人の顔画像を晒すのはプライバシー侵害となるため、本ブログでは一般公開されている顔画像データセット「[VGGFACE2](http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/)」を使用することにします。  
 
 | VGGFACE2|
 |:--------------------------|
-| 米国の軍事ネットワーク環境でシミュレートされた様々な侵入の痕跡を含んだデータセット。本データセットには、探索/侵入行為及び攻撃行為といった異常な通信と正常通信のデータが大量に収録されている。「KDD-99 The Fifth International Conference on Knowledge Discovery and Data Mining」と呼ばれるコンペで使用されたデータ。|
+| 大規模な顔認識データセット。Google画像検索からダウンロードされた**9,000人以上**の人物の顔画像が**330万枚以上**収録されており、年齢・性別・民族・職業・顔の向き・顔の明るさ（照明具合）など、バリエーション豊富である。|
 
-このデータセットには、○○人もの著名人の顔画像が○○枚収録されています。以下に、顔認証システムで認証対象とする人物の一例を示します。  
+以下に、顔認証システムで認証対象とする人物の一例を示します。  
 
  ![学習データ](./img/7-3_dataset.png)  
  学習データの一例（≒認証する人物）  
 
-なお、上図の「Isao Takaesu」と記されている人物は筆者です。当然ながら、筆者の顔画像はVGGFACE2に含まれていないため、ラップトップPCのWebカメラから自撮りすることで収集しました。以下に、Webカメラで画像を収集するサンプルコードを記します。  
+11人中10人はVGGFACE2に収録されている人物とし、これに筆者「Isao Takaesu」を加えています。当然ながら、筆者の顔画像はVGGFACE2に含まれていないため、ラップトップPCのWebカメラで自撮りして収集しました。以下に、Webカメラで画像を収集するサンプルコードを記します。  
 
 ```
-Sample codes.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import os
+import cv2
+
+FILE_NAME = 'your_face'
+CAPTURE_NUM = 10
+
+# Full path of this code.
+full_path = os.path.dirname(os.path.abspath(__file__))
+
+# Set web camera.
+capture = cv2.VideoCapture(0)
+
+# Gather registration your face image.
+save_path = os.path.join(full_path, FILE_NAME)
+
+for idx in range(CAPTURE_NUM):
+    # Read 1 frame from VideoCapture.
+    print('{}/{} Capturing face image.'.format(idx + 1, 10))
+    ret, image = capture.read()
+
+    # Execute detecting face.
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    cascade = cv2.CascadeClassifier(os.path.join(full_path, 'haarcascade_frontalface_default.xml'))
+    faces = cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=2, minSize=(128, 128))
+
+    if len(faces) == 0:
+        print('Face is not found.')
+        continue
+
+    for face in faces:
+        # Extract face information.
+        x, y, width, height = face
+        face_size = image[y:y + height, x:x + width]
+        if face_size.shape[0] < 128:
+            print('This face is too small: {} pixel.'.format(str(face_size.shape[0])))
+            continue
+
+        # Save image.
+        file_name = save_path + '_' + str(idx) + '.jpg'
+        cv2.imwrite(file_name, image)
+
+        # Display raw frame data.
+        cv2.rectangle(image, (x, y), (x + width, y + height), (255, 255, 255), thickness=2)
+
+        # Display raw frame data.
+        msg = 'Captured {}/{}.'.format(idx + 1, CAPTURE_NUM)
+        cv2.putText(image, msg, (0, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        cv2.imshow('Captured your face', image)
+
+    # Waiting for getting key input.
+    k = cv2.waitKey(1)
+    if k == 27:
+        break
+
+# Termination (release capture and close window).
+capture.release()
+cv2.destroyAllWindows()
 ```
 
 このコードは、**OpenCV**を使用することで、○○fps（Frame per Second）の間隔でWebカメラ経由で画像を取り込みます。本コードを実行すると、以下のようにWebカメラに映る人物の画像を収集することができます。  
