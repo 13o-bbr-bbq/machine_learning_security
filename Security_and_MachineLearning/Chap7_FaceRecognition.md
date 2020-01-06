@@ -42,6 +42,8 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
  <figure>
  <img src='./img/7-1_nn.png' alt='NNの説明'><br>
  <figurecaption>Neural Networkは頑健性が低い</figurecaption><br>
+ <br>
+ <br>
  </figure>
  </div>
 
@@ -51,6 +53,7 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
  <figure>
  <img src='./img/7-1_cnn.png' alt='CNNの説明(畳み込み、Poolingなど)'><br>
  <figurecaption>CNNの頑健性</figurecaption><br>
+ <br>
  </figure>
  </div>
 
@@ -77,7 +80,7 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
 
 | VGGFACE2|
 |:--------------------------|
-| 大規模な顔画像データセット。Google画像検索からダウンロードされた**9,000人以上**の人物の顔画像が**330万枚以上**収録されており、年齢・性別・民族・職業・顔の向き・顔の明るさ（照明具合）など、バリエーション豊富である。|
+| 大規模な顔画像データセット。Google画像検索からダウンロードされた**9,000人以上**の人物の顔画像が**330万枚以上**収録されており、年齢・性別・民族・職業・顔の向き・顔の明るさ（照明具合）など、様々なバリエーションの顔画像が存在する。ダウンロードにはアカウントの登録が必要。|
 
 以下に認証対象の人物を示します。  
 
@@ -88,7 +91,7 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
  </figure>
  </div>
 
-なお、当然ながら筆者の顔画像はVGGFACE2に含まれていないため、顔画像収集用のサンプルコード[`record_face.py`](src/chap7/record_face.py)を用いて収集します。このコードを実行すると、**0.5秒間隔**でWebカメラから画像を取り込み、顔を認識して顔部分のみを切り出します。  
+なお、当然ながら筆者の顔画像はVGGFACE2に含まれていないため、顔画像収集用のサンプルコード[`record_face.py`](src/defensive_chap7/record_face.py)を用いて収集します。このコードを実行すると、**0.5秒間隔**でWebカメラから画像を取り込み、顔を認識して顔部分のみを切り出します。  
 
 ```
 your_root_path> python3 record_face.py
@@ -147,7 +150,7 @@ Western-Hagen
 ```
 
 各人の顔画像をVGGFACE2からコピーし、上記で作成した各人のサブディレクトリにペーストします。  
-そして、データセットを生成するサンプルコード「[`create_dataset.py`](src/chap7/create_dataset.py)」を実行します。  
+そして、データセットを生成するサンプルコード「[`create_dataset.py`](src/defensive_chap7/create_dataset.py)」を実行します。  
 
 ```
 your_root_path> python3 create_dataset.py
@@ -157,7 +160,7 @@ your_root_path> python3 create_dataset.py
 
 #### 7.3.1.3 学習の実行
 学習データの準備ができましたので、CNNを用いて認証対象人物の顔を学習します。  
-学習を実行するサンプルコード「[`train.py`](src/chap7/train.py)」を実行します。  
+学習を実行するサンプルコード「[`train.py`](src/defensive_chap7/train.py)」を実行します。  
 
 ```
 your_root_path> python3 train.py
@@ -168,7 +171,7 @@ your_root_path> python3 train.py
 ### 7.3.2. サンプルコード及び実行結果
 #### 7.3.2.1. サンプルコード
 本ブログではPython3を使用し、簡易的な顔認証システムを実装しました。
-※本コードは[こちら](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/src/chap7/face_auth.py)から入手できます。
+※本コードは[こちら](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/src/defensive_chap7/face_auth.py)から入手できます。
 
 本システムの大まかな処理フローは以下のとおりです。
 
