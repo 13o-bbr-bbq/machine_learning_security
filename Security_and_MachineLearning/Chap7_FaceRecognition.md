@@ -270,8 +270,12 @@ for label in label_list:
 このコードは、`original_image`配下の**認証対象人物のサブディレクトリ名をクラス名**とし、データセットのディレクトリ「`dataset`」配下に学習データを格納する「`train`」ディレクトリと、モデル評価用のテストデータを格納する「`test`」ディレクトリを自動生成します。そして、7対3の割合で認証対象人物の顔画像を`train`と`test`に振り分けます。  
 
 #### 7.3.1.3 学習の実行
-学習データの準備ができましたので、CNNで顔を学習します。  
-本ブログでは、CNNの実装にKeras（バックエンドはTensorflow）を使用しました。以下に、学習を行うサンプルコードを記します。  
+学習データの準備ができましたので、CNNを用いて認証対象人物の顔を学習します。  
+学習を実行するサンプルコード「[`train.py`](src/chap7/train.py)」を実行します。  
+
+```
+your_root_path> python3 train.py
+```
 
 ```
 #!/usr/bin/env python
@@ -296,6 +300,10 @@ dataset_path = os.path.join(full_path, 'dataset')
 train_path = os.path.join(dataset_path, 'train')
 test_path = os.path.join(dataset_path, 'test')
 
+# Generate class list.
+classes = os.listdir(test_path)
+nb_classes = len(classes)
+
 print('Start training model.')
 
 # Build VGG16.
@@ -309,7 +317,7 @@ fc = Sequential()
 fc.add(Flatten(input_shape=vgg16.output_shape[1:]))
 fc.add(Dense(256, activation='relu'))
 fc.add(Dropout(0.5))
-fc.add(Dense(self.nb_classes, activation='softmax'))
+fc.add(Dense(nb_classes, activation='softmax'))
 
 # Connect VGG16 and FC.
 print('Connect VGG16 and FC.')
@@ -324,9 +332,6 @@ print('Compile model.')
 model.compile(loss='categorical_crossentropy',
               optimizer=optimizers.SGD(lr=1e-4, momentum=0.9),
               metrics=['accuracy'])
-
-# Generate class list.
-classes = os.listdir(test_path)
 
 # Generate train/test data.
 train_datagen = ImageDataGenerator(
@@ -384,71 +389,156 @@ model.save_weights(model_name)
 print('Finish training model.')
 ```
 
-このコードでは、
+このコードは、`dataset/train`配下の学習データと`dataset/test`配下のテストデータを使用して顔認識モデルを作成します。作成されたモデルは、モデル格納用のディレクトリ「`model`」配下に`cnn_face_auth.h5`というファイル名で保存されます。  
 
-### 1.3.4. サンプルコード及び実行結果
-#### 1.3.4.1. サンプルコード
-本ブログではPython3を使用し、簡易的な侵入検知システムを実装しました。
-※本コードは[こちら](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/src/intrusion_detection.py)から入手できます。
+### 7.3.2. サンプルコード及び実行結果
+#### 7.3.2.1. サンプルコード
+本ブログではPython3を使用し、簡易的な顔認証システムを実装しました。
+※本コードは[こちら](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/src/chap7/face_auth.py)から入手できます。
 
 本システムの大まかな処理フローは以下のとおりです。
 
- 1. 学習データ及びテストデータのロード
- 2. 学習データを使用して学習（モデル作成）
- 3. Webカメラから対象人物の映像を取得
- 4. 取得した映像から顔部分をクリッピング
- 5. クリッピングした顔画像をモデルで分類
- 6. 許容 or 拒否の判定
+ 1. Webカメラから対象人物の映像を取得
+ 2. 取得した映像から顔部分の切り出し
+ 3. 切り出した顔画像を学習済みCNNモデルで分類
+ 4. 閾値を基に許容 or 拒否を判定
 
 ```
 #!/bin/env python
 # -*- coding: utf-8 -*-
-import time
-import pandas as pd
+import os
+import sys
+import configparser
 import numpy as np
-from sklearn import linear_model
-from sklearn import metrics
+from keras.applications.vgg16 import VGG16
+from keras.models import Sequential, Model
+from keras.layers import Input, Dropout, Flatten, Dense
+from keras.preprocessing.image import ImageDataGenerator
+from keras.preprocessing import image
+from keras import optimizers
 
-# Load train data
-df_train = pd.read_csv('..\\dataset\\kddcup_train.csv')
-X_train = df_train.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]  # feature(X)
-X_train = (X_train - X_train.mean()) / X_train.mean()       # normalization
-y_train = df_train.iloc[:, [41]]                            # label(y)
+# Full path of this code.
+full_path = os.path.dirname(os.path.abspath(__file__))
 
-# Load test data
-df_test = pd.read_csv('..\\dataset\\kddcup_test.csv')
-X_test = df_test.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]
-X_test = (X_test - X_test.mean()) / X_test.mean()
-y_test = df_test.iloc[:, [41]]
+# dataset path.
+dataset_path = os.path.join(full_path, 'dataset')
 
-# We create an instance of Logistic Regression Classifier.
-logreg = linear_model.LogisticRegression(C=1e5)
+# Model path.
+model_path = os.path.join(full_path, 'model')
+model_name = os.path.join(model_path, 'cnn_face_auth.h5')
 
-# Fit (Train)
-start = time.perf_counter()
-logreg.fit(X_train, y_train)
-elapsed_time = time.perf_counter() - start
-print('train_time   : {0}'.format(elapsed_time) + ' [sec]')
+MAX_RETRY = 50
+THRESHOLD = 80.0
 
-# Predict for probability and label
-start = time.perf_counter()
-probs = logreg.predict_proba(X_test)
-elapsed_time = time.perf_counter() - start
-print('predict_time : {0}'.format(elapsed_time) + ' [sec]')
-y_pred = logreg.predict(X_test)
+# Generate class list.
+classes = os.listdir(test_path)
+nb_classes = len(classes)
 
-# Evaluation
-print('score : {0}'.format(metrics.accuracy_score(y_test, y_pred)))
+# Prepare model.
+# Build VGG16.
+print('Build VGG16 model.')
+input_tensor = Input(shape=(128, 128, 3))
+vgg16 = VGG16(include_top=False, weights='imagenet', input_tensor=input_tensor)
 
-# Output predict result
-print('-' * 60)
-print('label\tpredict\tprobability')
-idx = 0
-for predict, prob in zip(y_pred, probs):
-    print('{0}\t{1}\t{2}'.format(y_test.iloc[idx, [0]].values[0], predict, np.max(prob)))
-    idx += 1
+# Build FC.
+print('Build FC model.')
+fc = Sequential()
+fc.add(Flatten(input_shape=vgg16.output_shape[1:]))
+fc.add(Dense(256, activation='relu'))
+fc.add(Dropout(0.5))
+fc.add(Dense(nb_classes, activation='softmax'))
 
-print('finish!!')
+# Connect VGG16 and FC.
+print('Connect VGG16 and FC.')
+model = Model(input=vgg16.input, output=fc(vgg16.output))
+
+# Load model.
+print('Load trained model: {}'.format(model_name))
+model.load_weights(model_name)
+
+# Use Loss=categorical_crossentropy.
+print('Compile model.')
+model.compile(loss='categorical_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
+
+# Execute face authentication.
+capture = preparation.create_camera_instance()
+for idx in range(MAX_RETRY):
+    # Read 1 frame from VideoCapture.
+    ret, image = capture.read()
+
+    # Execute detecting face.
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    cascade = cv2.CascadeClassifier(os.path.join(full_path, 'haarcascade_frontalface_default.xml'))
+    faces = cascade.detectMultiScale(gray_image,
+                                     scaleFactor=1.1,
+                                     minNeighbors=2,
+                                     minSize=(128, 128))
+
+    if len(faces) == 0:
+        print('Face is not found.')
+        continue
+
+    for face in faces:
+        # Extract face information.
+        x, y, width, height = face
+        predict_image = image[y:y + height, x:x + width]
+        if predict_image.shape[0] < 128:
+            continue
+        predict_image = cv2.resize(predict_image, (128, 128))
+        predict_image2 = cv2.resize(image, (128, 128))
+
+        # Save image.
+        file_name = os.path.join(dataset_path, 'tmp_face.jpg')
+        cv2.imwrite(file_name, predict_image2)
+
+        # Predict face.
+        # Transform image to 4 dimension tensor.
+        img = image.load_img(file_name, target_size=(128, 128))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        x = x / 255.0
+
+        # Prediction.
+        pred = model.predict(x)[0]
+        top = 1
+        top_indices = pred.argsort()[-top:][::-1]
+        results = [(classes[i], pred[i]) for i in top_indices]
+
+        judge = 'Reject'
+        prob = results[0][1] * 100
+        if prob > THRESHOLD:
+            judge = 'Unlock'
+        print('{} ({:.1f}%). res="{}"'.format(results[0][0], prob, judge))
+
+        # Draw frame to face.
+        cv2.rectangle(image,
+                      (x, y),
+                      (x + width, y + height),
+                      (255, 255, 255),
+                      thickness=2)
+
+        # Get current date.
+        date = datetime.now().strftime('%Y%m%d%H%M%S%f')[:-3]
+        print_date = datetime.strptime(date[:-3], '%Y%m%d%H%M%S').strftime('%Y/%m/%d %H:%M:%S')
+
+        # Display raw frame data.
+        cv2.putText(image, msg, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        cv2.putText(image, print_date, (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        cv2.imshow('Face Authorization', image)
+
+        file_name = os.path.join(dataset_path, 'tmp_face' + str(idx) + '_.jpg')
+        cv2.imwrite(file_name, image)
+
+    # Waiting for getting key input.
+    k = cv2.waitKey(500)
+    if k == 27:
+        break
+
+# Termination (release capture and close window).
+capture.release()
+cv2.destroyAllWindows()
 ```
 
 #### 1.3.4.2. コード解説
