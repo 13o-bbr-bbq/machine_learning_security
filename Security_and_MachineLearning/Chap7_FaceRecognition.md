@@ -57,19 +57,18 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
 
 #### 7.3.1.1. 学習データの準備
 学習データとして**認証対象とする人物の顔画像**を準備します。  
-身近な人の顔画像を晒すのはプライバシー侵害となるため、本ブログでは一般公開されている顔画像データセット「[VGGFACE2](http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/)」を使用することにします。  
+本ブログでは、一般公開されている**顔画像データセット「[VGGFACE2](http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/)」から無作為に選んだ人物**と、**筆者**の計11人を認証対象とします。  
 
 | VGGFACE2|
 |:--------------------------|
 | 大規模な顔画像データセット。Google画像検索からダウンロードされた**9,000人以上**の人物の顔画像が**330万枚以上**収録されており、年齢・性別・民族・職業・顔の向き・顔の明るさ（照明具合）など、バリエーション豊富である。|
 
-以下に、顔認証システムで認証対象とする人物の一例を示します。  
+以下に認証対象の人物を示します。  
 
- ![学習データ](./img/7-3_dataset.png)  
- 学習データの一例（≒認証する人物）  
+ ![認証対象の人物](./img/7-3_dataset.png)  
+ 認証対象の人物  
 
-11人中10人はVGGFACE2に収録されている人物とし、これに筆者「Isao Takaesu」を加えています。  
-当然ながら、筆者の顔画像はVGGFACE2に含まれていないため、ラップトップPCのWebカメラで自撮りして収集しました。  
+なお、当然ながら筆者の顔画像はVGGFACE2に含まれていないため、サンプルコード[`record_face.py`](src/chap7/record_face.py)を用いて収集します。  
 
 以下に、Webカメラで画像を収集するサンプルコードを記します。  
 
@@ -98,7 +97,7 @@ os.makedirs(saved_your_path, exist_ok=True)
 
 for idx in range(CAPTURE_NUM):
     # Read 1 frame from VideoCapture.
-    print('{}/{} Capturing face image.'.format(idx + 1, 10))
+    print('{}/{} Capturing face image.'.format(idx + 1, CAPTURE_NUM))
     ret, image = capture.read()
 
     # Execute detecting face.
@@ -141,11 +140,23 @@ capture.release()
 cv2.destroyAllWindows()
 ```
 
-このコードは**1秒間隔**でWebカメラから画像を取り込み、最大`CAPTURE_NUM`枚の顔画像をファイルに保存します。  
-以下は本コードを実行した際に保存された顔画像ファイルの例を示しています。  
+このコードは**1秒間隔**でWebカメラから画像を取り込み、画像から顔部分を切り出します。  
 
 ```
-your_executation_path\original_image\Isao-Takaesu> ls
+your_root_path> python3 record_face.py
+1/100 Capturing face image.
+2/100 Capturing face image.
+3/100 Capturing face image.
+...snip...
+98/100 Capturing face image.
+99/100 Capturing face image.
+100/100 Capturing face image.
+```
+
+そして、コード実行ディレクトリ配下に、顔画像を格納する「`original_image`」ディレクトリと、サブディレクトリ「`Isao-Takaesu`」を自動生成し、サブディレクトリに切り出した顔画像をJPEG形式で保存します。  
+
+```
+/your_root_path/original_image/Isao-Takaesu> ls
 Isao-Takaesu_1.jpg
 Isao-Takaesu_2.jpg
 Isao-Takaesu_3.jpg
@@ -155,14 +166,37 @@ Isao-Takaesu_99.jpg
 Isao-Takaesu_100.jpg
 ```
 
- ![切り出した筆者の顔画像](./img/7-3_clipped_face.png)   
- 収集した顔画像の一例  
-
-なお、コードの実行ディレクトリ配下にディレクトリ「`original_image`」が自動作成され、その下にディレクトリ「`FILE_NAME`」が作成されます。このディレクトリ名「`FILE_NAME`」が、顔の学習時のラベルとなります。また、保存される顔画像ファイルは`FILE_NAME`にインデックスを付けたファイル名であり、画像形式はJPEGとなります。
-
+なお、サブディレクトリ名「`Isao-Takaesu`」が、**顔認証時のクラス名**となります。  
 もし、あなたが任意の人物を認証対象としたい場合は、コード中の`FILE_NAME`を変更して本コードを実行してください。  
 
 #### 7.3.1.2 データセットの作成
+顔画像の収集が完了しましたので、学習データとモデル評価用のテストデータを作成します。  
+
+`original_image`ディレクトリ配下に、VGGFACE2から選んだ10人の人物のサブディレクトリを作成します。  
+
+```
+your_root_path\original_image> mkdir Carolina-Kluft Carol-Swenson Cris-Judd Frank-de-Boer Junny-Lang-Ping John-Winchester Joumana-Kidd Leo-Sayer Zhang-Xin Western-Hagen
+
+your_root_path\original_image> ls
+Carolina-Kluft
+Carol-Swenson
+Cris-Judd
+Frank-de-Boer
+Isao-Takaesu
+Junny-Lang-Ping
+John-Winchester
+Joumana-Kidd
+Leo-Sayer
+Zhang-Xin
+Western-Hagen
+```
+
+各人の顔画像をVGGFACE2からコピーし、上記で作成した各人のサブディレクトリにペーストします。  
+そして、データセットを生成するサンプルコード「[`create_dataset.py`](src/chap7/create_dataset.py)」を実行します。  
+
+```
+your_root_path> python3 create_dataset.py
+```
 
 ```
 #!/usr/bin/env python
@@ -233,12 +267,121 @@ for label in label_list:
             shutil.move(image, test_label_dir)
 ```
 
+このコードは、`original_image`配下の**認証対象人物のサブディレクトリ名をクラス名**とし、データセットのディレクトリ「`dataset`」配下に学習データを格納する「`train`」ディレクトリと、モデル評価用のテストデータを格納する「`test`」ディレクトリを自動生成します。そして、7対3の割合で認証対象人物の顔画像を`train`と`test`に振り分けます。  
+
 #### 7.3.1.3 学習の実行
 学習データの準備ができましたので、CNNで顔を学習します。  
 本ブログでは、CNNの実装にKeras（バックエンドはTensorflow）を使用しました。以下に、学習を行うサンプルコードを記します。  
 
 ```
-Sample codes.
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import os
+import sys
+import numpy as np
+from keras.applications.vgg16 import VGG16
+from keras.models import Sequential, Model
+from keras.layers import Input, Dropout, Flatten, Dense
+from keras.preprocessing.image import ImageDataGenerator
+from keras.preprocessing import image
+from keras import optimizers
+
+# Full path of this code.
+full_path = os.path.dirname(os.path.abspath(__file__))
+
+# dataset path.
+dataset_path = os.path.join(full_path, 'dataset')
+
+# Train/test data path.
+train_path = os.path.join(dataset_path, 'train')
+test_path = os.path.join(dataset_path, 'test')
+
+print('Start training model.')
+
+# Build VGG16.
+print('Build VGG16 model.')
+input_tensor = Input(shape=(128, 128, 3))
+vgg16 = VGG16(include_top=False, weights='imagenet', input_tensor=input_tensor)
+
+# Build FC.
+print('Build FC model.')
+fc = Sequential()
+fc.add(Flatten(input_shape=vgg16.output_shape[1:]))
+fc.add(Dense(256, activation='relu'))
+fc.add(Dropout(0.5))
+fc.add(Dense(self.nb_classes, activation='softmax'))
+
+# Connect VGG16 and FC.
+print('Connect VGG16 and FC.')
+model = Model(input=vgg16.input, output=fc(vgg16.output))
+
+# Freeze before last layer.
+for layer in model.layers[:15]:
+    layer.trainable = False
+
+# Use Loss=categorical_crossentropy.
+print('Compile model.')
+model.compile(loss='categorical_crossentropy',
+              optimizer=optimizers.SGD(lr=1e-4, momentum=0.9),
+              metrics=['accuracy'])
+
+# Generate class list.
+classes = os.listdir(test_path)
+
+# Generate train/test data.
+train_datagen = ImageDataGenerator(
+    rescale=1.0 / 255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True)
+
+test_datagen = ImageDataGenerator(rescale=1.0 / 255)
+
+train_generator = train_datagen.flow_from_directory(
+    train_path,
+    target_size=(128, 128),
+    color_mode='rgb',
+    classes=classes,
+    class_mode='categorical',
+    batch_size=32,
+    shuffle=True)
+
+validation_generator = test_datagen.flow_from_directory(
+    test_path,
+    target_size=(128, 128),
+    color_mode='rgb',
+    classes=classes,
+    class_mode='categorical',
+    batch_size=32,
+    shuffle=True)
+
+# Count train and test data.
+# Count train data.
+train_count = 0
+for root, dirs, files in os.walk(train_path):
+    train_count += len(files)
+
+# Count test data.
+test_count = 0
+for root, dirs, files in os.walk(test_path):
+    test_count += len(files)
+
+# Fine-tuning.
+print('Execute fine-tuning.')
+history = model.fit_generator(
+    train_generator,
+    samples_per_epoch=train_count,
+    nb_epoch=100,
+    validation_data=validation_generator,
+    nb_val_samples=test_count)
+
+# Save model.
+model_path = os.path.join(full_path, 'model')
+os.makedirs(model_path, exist_ok=True)
+model_name = os.path.join(model_path, 'cnn_face_auth.h5')
+print('Save model to {}'.format(model_name))
+model.save_weights(model_name)
+print('Finish training model.')
 ```
 
 このコードでは、
