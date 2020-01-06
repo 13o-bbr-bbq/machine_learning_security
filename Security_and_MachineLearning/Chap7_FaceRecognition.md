@@ -119,7 +119,7 @@ for idx in range(CAPTURE_NUM):
             continue
 
         # Save image.
-        file_name = FILE_NAME + '_' + str(idx) + '.jpg'
+        file_name = FILE_NAME + '_' + str(idx+1) + '.jpg'
         save_image = cv2.resize(face_size, (128, 128))
         cv2.imwrite(os.path.join(saved_your_path, file_name), save_image)
 
@@ -141,18 +141,97 @@ capture.release()
 cv2.destroyAllWindows()
 ```
 
-このコードは1秒間隔でWebカメラ経由で画像を取り込み、画像に人物が含まれる場合は顔部分を切り出してファイルに保存します。  
-本コードを実行すると、以下のようにWebカメラに映る人物の顔画像を収集することができます。  
+このコードは**1秒間隔**でWebカメラから画像を取り込み、最大`CAPTURE_NUM`枚の顔画像をファイルに保存します。  
+以下は本コードを実行した際に保存された顔画像ファイルの例を示しています。  
+
+```
+your_executation_path\original_image\Isao-Takaesu> ls
+Isao-Takaesu_1.jpg
+Isao-Takaesu_2.jpg
+Isao-Takaesu_3.jpg
+... snip ...
+Isao-Takaesu_98.jpg
+Isao-Takaesu_99.jpg
+Isao-Takaesu_100.jpg
+```
 
  ![切り出した筆者の顔画像](./img/7-3_clipped_face.png)   
- 収集した筆者の顔画像  
+ 収集した顔画像の一例  
 
-なお、ファイル名を変更したい場合は`FILE_NAME`、収集する枚数を変更したい場合は `CAPTURE_NUM`の値を適宜変更してください。  
+なお、コードの実行ディレクトリ配下にディレクトリ「`original_image`」が自動作成され、その下にディレクトリ「`FILE_NAME`」が作成されます。このディレクトリ名「`FILE_NAME`」が、顔の学習時のラベルとなります。また、保存される顔画像ファイルは`FILE_NAME`にインデックスを付けたファイル名であり、画像形式はJPEGとなります。
 
-もし、あなたが任意の人物を認証対象としたい場合は、上記のサンプルコードを使用することで、対象人物の学習データを作成することができます。  
+もし、あなたが任意の人物を認証対象としたい場合は、コード中の`FILE_NAME`を変更して本コードを実行してください。  
 
 #### 7.3.1.2 データセットの作成
 
+```
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import os
+import sys
+import shutil
+import cv2
+import glob
+
+# Separation rate of target images to Train/Test.
+SEP_RATE = 0.7
+
+# Full path of this code.
+full_path = os.path.dirname(os.path.abspath(__file__))
+
+# Original image path.
+original_image_path = os.path.join(full_path, 'original_image')
+
+# Create dataset path.
+dataset_path = os.path.join(full_path, 'dataset')
+os.makedirs(dataset_path, exist_ok=True)
+
+# Create train/test path.
+train_path = os.path.join(dataset_path, 'train')
+os.makedirs(train_path, exist_ok=True)
+test_path = os.path.join(dataset_path, 'test')
+os.makedirs(test_path, exist_ok=True)
+
+# Execute face recognition in saved image.
+label_list = os.listdir(original_image_path)
+for label in label_list:
+    # Extract target image each label.
+    target_dir = os.path.join(original_image_path, label)
+    in_image = glob.glob(os.path.join(target_dir, '*'))
+
+    # Detect face in image.
+    for idx, image in enumerate(in_image):
+        # Read image to OpenCV.
+        cv_image = cv2.imread(image)
+
+        # If image size is smaller than 128, it is excluded.
+        if cv_image.shape[0] < 128:
+            print('This face is too small: {} pixel.'.format(str(cv_image.shape[0])))
+            continue
+        save_image = cv2.resize(cv_image, (128, 128))
+
+        # Save image.
+        file_name = os.path.join(dataset_path, label + '_' + str(idx+1) + '.jpg')
+        cv2.imwrite(file_name, save_image)
+
+# Separate images to train and test.
+for label in label_list:
+    # Define train directory each label.
+    train_label_path = os.path.join(train_path, label)
+    os.makedirs(train_label_path, exist_ok=True)
+
+    # Define test directory each label.
+    test_label_path = os.path.join(test_path, label)
+    os.makedirs(test_label_path, exist_ok=True)
+
+    # Get images of label.
+    in_image = glob.glob(os.path.join(dataset_path, label + '*' + '.jpg'))
+    for idx, image in enumerate(in_image):
+        if idx < len(in_image) * SEP_RATE:
+            shutil.move(image, train_label_dir)
+        else:
+            shutil.move(image, test_label_dir)
+```
 
 #### 7.3.1.3 学習の実行
 学習データの準備ができましたので、CNNで顔を学習します。  
