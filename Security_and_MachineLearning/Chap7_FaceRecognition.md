@@ -61,14 +61,17 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
 
 | VGGFACE2|
 |:--------------------------|
-| 大規模な顔認識データセット。Google画像検索からダウンロードされた**9,000人以上**の人物の顔画像が**330万枚以上**収録されており、年齢・性別・民族・職業・顔の向き・顔の明るさ（照明具合）など、バリエーション豊富である。|
+| 大規模な顔画像データセット。Google画像検索からダウンロードされた**9,000人以上**の人物の顔画像が**330万枚以上**収録されており、年齢・性別・民族・職業・顔の向き・顔の明るさ（照明具合）など、バリエーション豊富である。|
 
 以下に、顔認証システムで認証対象とする人物の一例を示します。  
 
  ![学習データ](./img/7-3_dataset.png)  
  学習データの一例（≒認証する人物）  
 
-11人中10人はVGGFACE2に収録されている人物とし、これに筆者「Isao Takaesu」を加えています。当然ながら、筆者の顔画像はVGGFACE2に含まれていないため、ラップトップPCのWebカメラで自撮りして収集しました。以下に、Webカメラで画像を収集するサンプルコードを記します。  
+11人中10人はVGGFACE2に収録されている人物とし、これに筆者「Isao Takaesu」を加えています。  
+当然ながら、筆者の顔画像はVGGFACE2に含まれていないため、ラップトップPCのWebカメラで自撮りして収集しました。  
+
+以下に、Webカメラで画像を収集するサンプルコードを記します。  
 
 ```
 #!/usr/bin/env python
@@ -76,8 +79,8 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
 import os
 import cv2
 
-FILE_NAME = 'your_face'
-CAPTURE_NUM = 10
+FILE_NAME = 'Isao-Takaesu'
+CAPTURE_NUM = 100
 
 # Full path of this code.
 full_path = os.path.dirname(os.path.abspath(__file__))
@@ -85,8 +88,13 @@ full_path = os.path.dirname(os.path.abspath(__file__))
 # Set web camera.
 capture = cv2.VideoCapture(0)
 
-# Gather registration your face image.
-save_path = os.path.join(full_path, FILE_NAME)
+# Create saved base Path.
+saved_base_path = os.path.join(full_path, 'original_image')
+os.makedirs(saved_base_path, exist_ok=True)
+
+# Create saved path of your face images.
+saved_your_path = os.path.join(saved_base_path, FILE_NAME)
+os.makedirs(saved_your_path, exist_ok=True)
 
 for idx in range(CAPTURE_NUM):
     # Read 1 frame from VideoCapture.
@@ -111,8 +119,9 @@ for idx in range(CAPTURE_NUM):
             continue
 
         # Save image.
-        file_name = save_path + '_' + str(idx) + '.jpg'
-        cv2.imwrite(file_name, image)
+        file_name = FILE_NAME + '_' + str(idx) + '.jpg'
+        save_image = cv2.resize(face_size, (128, 128))
+        cv2.imwrite(os.path.join(saved_your_path, file_name), save_image)
 
         # Display raw frame data.
         cv2.rectangle(image, (x, y), (x + width, y + height), (255, 255, 255), thickness=2)
@@ -132,26 +141,18 @@ capture.release()
 cv2.destroyAllWindows()
 ```
 
-このコードは、**OpenCV**を使用することで、○○fps（Frame per Second）の間隔でWebカメラ経由で画像を取り込みます。本コードを実行すると、以下のようにWebカメラに映る人物の画像を収集することができます。  
+このコードは1秒間隔でWebカメラ経由で画像を取り込み、画像に人物が含まれる場合は顔部分を切り出してファイルに保存します。  
+本コードを実行すると、以下のようにWebカメラに映る人物の顔画像を収集することができます。  
 
- ![収集した筆者の画像](./img/7-3_captured_faces.png)  
- 筆者の顔画像  
+ ![切り出した筆者の顔画像](./img/7-3_clipped_face.png)   
+ 収集した筆者の顔画像  
 
-### 7.3.1.2. 学習データの加工
-前節で収集した筆者の画像には、筆者の身体や背景なども含まれています。顔認証システムでは対象人物の顔を基に認証するため、**収集した画像から顔部分を切り出す**必要があります。以下に、収集した画像から顔部分を切り出すサンプルコードを記します。  
-
-```
-Sample codes.
-```
-
-このコードでは、OpenCVの○○（顔抽出する仕組み）を使用して対象画像から顔を認識し、○○×○○pixelのpngファイルとして保存します。本コードを実行すると、以下のように対象画像から顔を切り出して保存することができます。  
-
- ![切り出した筆者の顔画像](./img/7-3_clipped_face.png)  
-
-このようにして収集した顔画像を学習データに加えます。  
-なお、VGGFACE2に収録されている画像は、既に顔のみの画像になっています。  
+なお、ファイル名を変更したい場合は`FILE_NAME`、収集する枚数を変更したい場合は `CAPTURE_NUM`の値を適宜変更してください。  
 
 もし、あなたが任意の人物を認証対象としたい場合は、上記のサンプルコードを使用することで、対象人物の学習データを作成することができます。  
+
+#### 7.3.1.2 データセットの作成
+
 
 #### 7.3.1.3 学習の実行
 学習データの準備ができましたので、CNNで顔を学習します。  
