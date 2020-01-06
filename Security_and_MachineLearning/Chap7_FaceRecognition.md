@@ -52,7 +52,7 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
  <img src='./img/7-1_cnn.png' alt='CNNの説明(畳み込み、Poolingなど)'><br>
  <figurecaption>CNNの頑健性</figurecaption><br>
  </figure>
- </center>
+ </div>
 
 畳み込みによりCNNは高い頑健性を誇るため、分類対象画像に対する柔軟性を持ち、それ故に高精度の画像分類を実現できます。なお、CNNで構築したモデルを実行すると、出力結果として**分類したクラス**と**分類確率**を得ることができます。また、CNNは教師あり学習であるため、分類を行う前に学習データ（教師データ）を用いて分類対象の特徴を学習させておく必要があります。  
 
@@ -181,7 +181,9 @@ your_root_path> python3 train.py
 #!/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import cv2
 import numpy as np
+from datetime import datetime
 from keras.applications.vgg16 import VGG16
 from keras.models import Sequential, Model
 from keras.layers import Input, Dropout, Flatten, Dense
@@ -191,6 +193,7 @@ full_path = os.path.dirname(os.path.abspath(__file__))
 
 # dataset path.
 dataset_path = os.path.join(full_path, 'dataset')
+test_path = os.path.join(dataset_path, 'test')
 
 # Model path.
 model_path = os.path.join(full_path, 'model')
@@ -232,7 +235,7 @@ model.compile(loss='categorical_crossentropy',
               metrics=['accuracy'])
 
 # Execute face authentication.
-capture = preparation.create_camera_instance()
+capture = cv2.VideoCapture(0)
 for idx in range(MAX_RETRY):
     # Read 1 frame from VideoCapture.
     ret, image = capture.read()
@@ -279,7 +282,8 @@ for idx in range(MAX_RETRY):
         prob = results[0][1] * 100
         if prob > THRESHOLD:
             judge = 'Unlock'
-        print('{} ({:.1f}%). res="{}"'.format(results[0][0], prob, judge))
+        msg = '{} ({:.1f}%). res="{}"'.format(results[0][0], prob, judge)
+        print(msg)
 
         # Draw frame to face.
         cv2.rectangle(image,
