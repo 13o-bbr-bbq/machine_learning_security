@@ -22,21 +22,29 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
 ところで、画像分類における頑健性（ロバスト性）とは何でしょうか？  
 下記の猫画像で考えてみましょう。  
 
- ![cat1](./img/7-1_cat2.png)  
- 猫画像１  
-
- ![cat2](./img/7-1_cat1.png)  
- 猫画像２  
+ <center>
+ <img src='./img/7-1_cat2.png' alt='cat1'><br>
+ <b>猫画像１</b><br>
+ <br> 
+ <img src='./img/7-1_cat1.png' alt='cat2'><br>
+ <b>猫画像２</b><br>
+ </center>
 
 猫画像１は**猫が横を向いている画像**です。一方、猫画像２は**猫が正面を向いている画像**です。この2つの画像はレイアウトが異なるものの、人間はどちらも猫として認識することができます。それは、猫は「耳が尖っている」「ピンと伸びたヒゲがある」「目がまん丸である」「鼻が三角である」といった**猫の特徴**を捉えているからであり、決して単純に認識対象の形状を重ね合わせて認識している訳ではありません。  
 
 これと同じことを（Convolutionが無い）Neural Networkで実現しようとすると、ちょっと困った問題が発生します。Neural Networkは分類対象の画像を**1pixel単位**で受け取るため、分類対象画像のレイアウトが少しでも異なると、入力データの情報が大きく異なってしまいます。このため、上記の猫画像１と２のようにレイアウトが異なる場合、2つを同じ猫として認識することが難しくなります。つまり、頑健性が低いと言えます。  
 
- ![NNの説明](./img/7-1_nn.png)  
+ <center>
+ <img src='./img/7-1_nn.png' alt='NNの説明'><br>
+ <b>Neural Networkは頑健性が低い</b>
+ </center>
 
 一方CNNは、分類対象の画像を**Convolutionで畳み込み**を行って受け取るため、分類対象画像のレイアウトが多少異なる場合でも、その**差異を吸収**することができます。これにより、猫画像１と２のようにレイアウトが異なっている場合でも、同じ猫として認識することができます。つまり、頑健性が高いと言えます。  
 
- ![CNNの説明（畳み込み、Poolingなど）](./img/7-1_cnn.png)  
+ <center>
+ <img src='./img/7-1_cnn.png' alt='CNNの説明(畳み込み、Poolingなど)'><br>
+ <b>CNNの頑健性</b>
+ </center>
 
 畳み込みによりCNNは高い頑健性を誇るため、分類対象画像に対する柔軟性を持ち、それ故に高精度の画像分類を実現できます。なお、CNNで構築したモデルを実行すると、出力結果として**分類したクラス**と**分類確率**を得ることができます。また、CNNは教師あり学習であるため、分類を行う前に学習データ（教師データ）を用いて分類対象の特徴を学習させておく必要があります。  
 
@@ -65,82 +73,12 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
 
 以下に認証対象の人物を示します。  
 
- ![認証対象の人物](./img/7-3_dataset.png)  
- 認証対象の人物  
+ <center>
+ <img src='.img/7-3_dataset.png'><br>
+ <b>認証対象の人物</b>
+ </center>
 
-なお、当然ながら筆者の顔画像はVGGFACE2に含まれていないため、サンプルコード[`record_face.py`](src/chap7/record_face.py)を用いて収集します。  
-
-以下に、Webカメラで画像を収集するサンプルコードを記します。  
-
-```
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-import os
-import cv2
-
-FILE_NAME = 'Isao-Takaesu'
-CAPTURE_NUM = 100
-
-# Full path of this code.
-full_path = os.path.dirname(os.path.abspath(__file__))
-
-# Set web camera.
-capture = cv2.VideoCapture(0)
-
-# Create saved base Path.
-saved_base_path = os.path.join(full_path, 'original_image')
-os.makedirs(saved_base_path, exist_ok=True)
-
-# Create saved path of your face images.
-saved_your_path = os.path.join(saved_base_path, FILE_NAME)
-os.makedirs(saved_your_path, exist_ok=True)
-
-for idx in range(CAPTURE_NUM):
-    # Read 1 frame from VideoCapture.
-    print('{}/{} Capturing face image.'.format(idx + 1, CAPTURE_NUM))
-    ret, image = capture.read()
-
-    # Execute detecting face.
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    cascade = cv2.CascadeClassifier(os.path.join(full_path, 'haarcascade_frontalface_default.xml'))
-    faces = cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=2, minSize=(128, 128))
-
-    if len(faces) == 0:
-        print('Face is not found.')
-        continue
-
-    for face in faces:
-        # Extract face information.
-        x, y, width, height = face
-        face_size = image[y:y + height, x:x + width]
-        if face_size.shape[0] < 128:
-            print('This face is too small: {} pixel.'.format(str(face_size.shape[0])))
-            continue
-
-        # Save image.
-        file_name = FILE_NAME + '_' + str(idx+1) + '.jpg'
-        save_image = cv2.resize(face_size, (128, 128))
-        cv2.imwrite(os.path.join(saved_your_path, file_name), save_image)
-
-        # Display raw frame data.
-        cv2.rectangle(image, (x, y), (x + width, y + height), (255, 255, 255), thickness=2)
-
-        # Display raw frame data.
-        msg = 'Captured {}/{}.'.format(idx + 1, CAPTURE_NUM)
-        cv2.putText(image, msg, (0, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-        cv2.imshow('Captured your face', image)
-
-    # Waiting for getting key input.
-    k = cv2.waitKey(1)
-    if k == 27:
-        break
-
-# Termination (release capture and close window).
-capture.release()
-cv2.destroyAllWindows()
-```
-
-このコードは**1秒間隔**でWebカメラから画像を取り込み、画像から顔部分を切り出します。  
+なお、当然ながら筆者の顔画像はVGGFACE2に含まれていないため、顔画像収集用のサンプルコード[`record_face.py`](src/chap7/record_face.py)を用いて収集します。このコードを実行すると、**0.5秒間隔**でWebカメラから画像を取り込み、顔を認識して顔部分のみを切り出します。  
 
 ```
 your_root_path> python3 record_face.py
@@ -152,6 +90,11 @@ your_root_path> python3 record_face.py
 99/100 Capturing face image.
 100/100 Capturing face image.
 ```
+
+ <center>
+ <img src='./img/7-3_recording_face.png' width=500><br>
+ <b>顔画像を収集している様子</b>
+ </center>
 
 そして、コード実行ディレクトリ配下に、顔画像を格納する「`original_image`」ディレクトリと、サブディレクトリ「`Isao-Takaesu`」を自動生成し、サブディレクトリに切り出した顔画像をJPEG形式で保存します。  
 
