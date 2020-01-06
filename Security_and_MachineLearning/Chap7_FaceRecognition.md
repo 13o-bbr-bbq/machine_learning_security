@@ -25,10 +25,11 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
  <div align="center">
  <figure>
  <img src='./img/7-1_cat2.png' alt='cat1'><br>
- <figcaption>猫画像１</figcaption>
- <br> 
+ <figcaption>猫画像１</figcaption><br>
+ <br>
+ <br>
  <img src='./img/7-1_cat1.png' alt='cat2'><br>
- <figcaption>猫画像２</figcaption>
+ <figcaption>猫画像２</figcaption><br>
  </div>
  </figure>
 
