@@ -45,7 +45,7 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
 2つの画像はレイアウトが全く異なるにも関わらず、なぜ人間は猫として認識できるのでしょうか。それは、無意識のうちに「猫は耳が尖っている」「猫はピンと伸びたヒゲがある」「猫は目がまん丸である」「猫は鼻が三角である」といった**猫の特徴を領域**を捉えているからであり、単純に**認識対象の形状を重ね合わせて認識している訳ではありません**。  
 
 これと同じことを(Convolutionが無い)通常のNeural Networkで実現しようとすると、ちょっと困った問題が発生します。  
-Neural Networkは分類対象の画像を**1pixel単位**で受け取ります。例えば「32×32pixel」の白黒画像の場合、入力データは1024(=32x32)のベクトルとなります(RGBの場合は1024x3=3072のベクトル)。このため、**入力画像のレイアウトが少しでも異なると、入力データのベクトルは大きく異なってしまいます**。これにより、上記のようにレイアウトが異なる画像の場合、(入力データが大きく異なるため)2つを同じ猫として認識することが難しくなります。つまり、頑健性が低いと言えます。  
+Neural Networkは分類対象の画像を**1pixel単位**で受け取ります。例えば「32×32pixel」の白黒画像の場合、入力データは1024(=32x32)のベクトルとなります(RGBの場合は1024x3=3072のベクトル)。このため、**入力画像のレイアウトが少しでも異なると、入力データのベクトルは大きく異なってしまいます**。これにより、下図のようにレイアウトが異なる画像の場合、(入力データが大きく異なるため)2つを同じ猫として認識することが難しくなります。つまり、頑健性が低いと言えます。  
 
  <div align="center">
  <figure>
@@ -333,142 +333,192 @@ cv2.destroyAllWindows()
 今回はCNNの実装に、Deep Learningライブラリの**Keras**を使用しました。  
 Kerasの使用方法は[公式ドキュメント](https://keras.io/ja/)を参照のこと。  
 
-##### パッケージのインポート
+#####  OpenCVのインポート
 ```
-from sklearn import linear_model
-from sklearn import metrics
-```
-
-scikit-learnのロジスティック回帰パッケージ「`linear_model`」をインポートします。
-このパッケージには、ロジスティック回帰を行うための様々なクラスが収録されています。
-
-また、分類精度を評価するためのパッケージ「`metrics`」も併せてインポートします。
-
-##### 学習データのロード
-```
-# Load train data
-df_train = pd.read_csv('..\\dataset\\kddcup_train.csv')
-X_train = df_train.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]  # feature(X)
-X_train = (X_train - X_train.mean()) / X_train.mean()       # normalization
-y_train = df_train.iloc[:, [41]]                            # label(y)
+import cv2
 ```
 
-学習データ「kddcup_train.csv」から、特徴選択した特徴量に紐付くデータとラベルを取得します（```X_train = df_train.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]```、```y_train = df_train.iloc[:, [41]]```）。
-ここで、学習精度を上げるために、各特徴量のデータ値を**正規化**します（```(X_train - X_train.mean()) / X_train.mean()```）。
+Webカメラからの画像取得、および顔部分の切り出しを行うため、コンピュータビジョン向けライブラリ「`cv2`(OpenCV)」をインポートします。  
+このパッケージには、Webカメラの制御や画像の加工、顔認識を行うための様々なクラスが収録されています。  
 
-| 正規化（Normalization）|
+##### CNN用パッケージのインポート
+```
+from keras.applications.vgg16 import VGG16
+from keras.models import Sequential, Model
+from keras.layers import Input, Dropout, Flatten, Dense
+```
+
+KerasでCNNを構築するためのパッケージをインポートします。  
+これらのパッケージを使用することで、CNNを構築することができます。  
+
+##### Pathの定義
+```
+# Model path.
+model_path = os.path.join(full_path, 'model')
+model_name = os.path.join(model_path, 'cnn_face_auth.h5')
+```
+
+前節で作成した学習済みモデル(`cnn_face_auth.h5`)のPathを定義します。  
+
+##### 認証の試行回数と閾値の定義
+```
+MAX_RETRY = 50
+THRESHOLD = 80.0
+```
+
+`MAX_RETRY`は顔認証を試行する最大回数、`THRESHOLD`は認証成功の閾値となります(CNNの分類確率が閾値を超えた場合に認証成功とする)。  
+
+##### CNNモデルアーキテクチャの定義
+```
+# Prepare model.
+# Build VGG16.
+print('Build VGG16 model.')
+input_tensor = Input(shape=(128, 128, 3))
+vgg16 = VGG16(include_top=False, weights='imagenet', input_tensor=input_tensor)
+
+# Build FC.
+print('Build FC model.')
+fc = Sequential()
+fc.add(Flatten(input_shape=vgg16.output_shape[1:]))
+fc.add(Dense(256, activation='relu'))
+fc.add(Dropout(0.5))
+fc.add(Dense(nb_classes, activation='softmax'))
+
+# Connect VGG16 and FC.
+print('Connect VGG16 and FC.')
+model = Model(input=vgg16.input, output=fc(vgg16.output))
+```
+
+本ブログで実装する顔認証システムの入力画像は、128x128pixelのRGB(3channel)の情報を持っているため、CNNの入力層として「`Input(shape=(128, 128, 3))`」を定義します。そして、これを**VGG16**と呼ばれる学習済みの画像認識モデルにバインドします。その後、顔画像の照合を行うアーキテクチャ(`fc`)を定義し、最後にVGG16とFCを結合(`Model()`)することで、顔画像を照合するためのCNNアーキテクチャが完成します。  
+
+なお、今回使用するVGG16は[ImageNet](http://www.image-net.org/)と呼ばれる大規模な画像データセットで事前に学習されています。よって、VGG16とFCを結合することで、VGG16に備わっている高い物体認識能力を享受することが可能となります。  
+
+| ImageNet|
 |:--------------------------|
-| 尺度が異なるデータ値を```0～1```等の一定の範囲に収まるように加工し、各特徴量の尺度を統一する手法。分類結果が数値的に大きな特徴量に大きく左右されることを防ぐ。正規化することで、学習精度が向上する場合がある。|
+| 1,400万枚もの良質な画像が収録されたデータセットであり、各画像にはクラス名が紐づけられている。クラスの種類2万種類以上。Deep Learning技術の発展に大きく貢献している。|
 
-##### テストデータのロード
+##### CNNモデルのロード
 ```
-# Load test data
-df_test = pd.read_csv('..\\dataset\\kddcup_test.csv')
-X_test = df_test.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]
-X_test = (X_test - X_test.mean()) / X_test.mean()
-y_test = df_test.iloc[:, [41]]
-```
+# Load model.
+print('Load trained model: {}'.format(model_name))
+model.load_weights(model_name)
 
-テストデータを学習データと同様に取得します（`X_test`、`y_test`）。
-
-##### モデルの定義
-```
-logreg = linear_model.LogisticRegression(C=1e5)
+# Use Loss=categorical_crossentropy.
+print('Compile model.')
+model.compile(loss='categorical_crossentropy',
+              optimizer='adam',
+              metrics=['accuracy'])
 ```
 
-`linear_model.LogisticRegression`でロジスティック回帰モデルを定義します。
-なお、引数として渡している「`C=1e5`」は**正則化**強度です。
+CNNアーキテクチャを作るのみでは、それは"ただの箱"と同じであり、中身がありません。すなわち、正しく顔画像を照合することはできません。  
+よって、本モデルに認証させたい人々の顔画像を学習させる必要があります。  
 
-| 正則化（Regularization）|
+ここでは、前節で学習した結果(学習済みのモデル)をCNNアーキテクチャにロードして認識モデルを作成しています。学習済みモデルのPathを格納した`model_name`をCNNアーキテクチャにロード「`model.load_weights(model_name)`」することで、CNNモデルは学習した状態、すなわち、顔画像の照合が実行できる状態になります。  
+
+##### Webカメラの定義
+```
+# Execute face authentication.
+capture = cv2.VideoCapture(0)
+```
+
+`cv2.VideoCapture(0)`でWebカメラのインスタンスを作成します。  
+この1行のみでOpenCVを介してWebカメラの制御を取得することができます。なお、`VideoCapture`の引数はカメラの識別IDですが、ラップトップに複数のカメラが接続されていれば、それぞれのカメラにユニークなIDが割り当てられます。今回は1つのWebカメラを使用しますので、引数は`0`となります。  
+
+##### Webカメラからの画像取り込み 
+```
+# Read 1 frame from VideoCapture.
+ret, image = capture.read()
+```
+
+Webカメラのインスタンス`capture`のメソッドである`read()`を呼び出すと、Webカメラで撮影した1フレーム分の画像が戻り値として返されます。なお、画像はBGRの画素値を持った配列になっています(RGBではないことに注意してください)。  
+
+##### 取り込んだ画像から顔の検出
+```
+# Execute detecting face.
+gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+cascade = cv2.CascadeClassifier(os.path.join(full_path, 'haarcascade_frontalface_default.xml'))
+faces = cascade.detectMultiScale(gray_image,
+                                 scaleFactor=1.1,
+                                 minNeighbors=2,
+                                 minSize=(128, 128))
+```
+
+何らかの方法でWebカメラで取り込んだ画像から人物の**顔を抽出**する必要があります。  
+本ブログでは**カスケード分類器**を使用します。  
+
+| カスケード分類器|
 |:--------------------------|
-| 機械学習において過学習を抑えるための手法。|
+| [Paul Viola氏によって提案](https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/viola-cvpr-01.pdf)され、[Rainer Lienhart氏によって改良](http://www.multimedia-computing.de/mediawiki/images/5/52/MRL-TR-May02-revised-Dec02.pdf)された物体検出アルゴリズム。対象の画像を複数の探索ウィンドウ領域に分割し、各探索ウィンドウ領域の画像を学習済み分類器に入力していく。分類器は**N個**用意されており、各分類器はそれぞれ「顔画像である」or「顔画像ではない」と判定していく。そして、1～N個の分類器が一貫して「顔画像である」と判定した場合のみ、当該探索ウィンドウ領域の画像は「顔画像である」と判定する。一方、途中で分類器が「顔画像ではない」と判定すれば処理を終了し、「探索ウィンドウ領域には顔画像はなかった」と判定され、探索ウィンドウは次にスライドしていく。|
 
-##### モデルの作成（学習の実行）
-```
-logreg.fit(X_train, y_train)
-```
+カスケード分類器のフルスクラッチによる実装は少々面倒ですが、OpenCVを使用することで容易にカスケード分類器を実装することが可能です。
+※本ブログではカスケード分類器の詳細な説明は割愛しますが、詳細を知りたい方は「[Haar Feature-based Cascade Classifier for Object Detection](http://opencv.jp/opencv-2.2/c/objdetect_cascade_classification.html)」をご覧いただければと思います。  
 
-`logreg`の`fit`メソッドの引数として、各特徴量「`X_train`」とラベル「`y_train`」を渡すことで、学習が行われます。これにより、ロジスティック回帰モデルが作成されます。
+上記のコードでは、カスケード分類器に画像を入力する前に、画像をグレースケールに変換します(`cv2.cvtColor()`)。これは、カスケード分類器は**顔の輪郭など(色の濃淡)を特徴**として「顔 or 顔ではない」を判定するため、BGRのようなカラー画像よりもグレースケールの方が精度が向上します。  
 
-##### 分類確率の取得
-```
-probs = logreg.predict_proba(X_test)
-```
+次に、カスケード分類器のインスタンスを作成します(`cv2.CascadeClassifier`)。引数の「`haarcascade_frontalface_default.xml`」は、OpenCVプロジェクトが予め用意した「顔の特徴を纏めたデータセット」です。このデータセットを引数として渡すのみで、顔検出が可能なカスケード分類器を作成することができます。  
 
-モデル`logreg`の`predict_proba`メソッドの引数としてテストデータ「`X_test`」を渡すことで、モデルがテストデータの分類を行い、分類確率「`probs`」を返します。
+なお、このデータセットは[OpenCVのGitHubリポジトリ](https://github.com/opencv/opencv/tree/master/data/haarcascades)で公開されています。本ブログでは「顔検出」を行うため、このデータセットのみを使用していますが、リポジトリを見ると分かる通り、「目」「体」「笑顔」等の特徴を纏めたデータセットも配布されています。つまり、このようなデータセットを使うことで、「目の検出」「体の検出」「笑顔の検出」等を実現することも可能です。  
 
-##### 分類結果の取得
-```
-y_pred = logreg.predict(X_test)
-```
+最後に、作成したカスケード分類器のメソッド「`detectMultiScale`」にグレースケールにした画像を渡すと、戻り値として「検出した顔画像部分の座標」が返されます。なお、画像に複数の顔が写っている場合は、複数の座標が配列で返されます。  
 
-モデル`logreg`の`predict`メソッドの引数としてテストデータ「`X_test`」を渡すことで、モデルがテストデータの分類を行い、分類結果「`y_pred`」を返します。
-
-##### モデルの評価
+##### 顔画像の前処理
 ```
-print('score : {0}'.format(metrics.accuracy_score(y_test, y_pred)))
-```
+# Extract face information.
+x, y, width, height = face
+predict_image = image[y:y + height, x:x + width]
+if predict_image.shape[0] < 128:
+    continue
+predict_image = cv2.resize(predict_image, (128, 128))
+predict_image2 = cv2.resize(image, (128, 128))
 
-モデルが分類した結果「`y_pred`」と、予め用意したラベル「`y_test`」を`metrics.accuracy_score`メソッドの引数として渡すことで、モデルの分類結果とラベルの一致度合（分類精度）を計測することができます。
-
-##### 分類結果の出力
-```
-for predict, prob in zip(y_pred, probs):
-    print('{0}\t{1}\t{2}'.format(y_test.iloc[idx, [0]].values[0], predict, np.max(prob)))
-    idx += 1
+# Save image.
+file_name = os.path.join(dataset_path, 'tmp_face.jpg')
+cv2.imwrite(file_name, predict_image2)
 ```
 
-「`y_test`」「`y_pred`」「`probs`」を1件ずつコンソール上に出力します。
+カスケード分類器で検出した**顔画像部分の座標**を使用し、Webカメラから取り込んだ画像(`image`)から**顔画像部分のみを切り出し**ます(`image[y:y + height, x:x + width]`)。`x`、`y`、`width`、`height`は、カスケード分類器で検出した顔部分の座標。そして、切り出した顔画像を`cv2.resize`にて、128x128pixelの画像にリサイズします。  
 
-#### 1.3.4.3. 実行結果
-このサンプルコードを実行すると、以下の結果がコンソール上に出力されます。
+なお、顔画像をリサイズするのは、**CNNに入力する画像は一定のサイズにする必要がある**ためであり、リサイズするサイズは任意です。  
+本ブログでは、CNNアーキテクチャに合わせて`128`に設定しています。  
 
+リサイズされた画像は一時的にローカルファイルとして保存します(`file_name`)。  
+
+##### 入力画像の正規化
 ```
-train_time   : 10.235417526819267 [sec]
-predict_time : 0.023557101303234518 [sec]
-score : 0.8996588708933895
-------------------------------------------------------------
-label             predict         probability
-normal.           normal.         0.9998065736764143
-normal.           normal.         0.9998065736764143
-normal.           normal.         0.9998065736764143
-normal.           normal.         0.9917140229898096
-
-...snip...
-
-nmap.             nmap.           0.695479203
-nmap.             nmap.           0.695479203
-nmap.             nmap.           0.695479203
-nmap.             nmap.           0.695479203
-
-...snip...
-
-buffer_overflow.  normal.         0.999980104
-buffer_overflow.  guess_passwd.   0.333345516
-buffer_overflow.  normal.         0.990855252
-buffer_overflow.  guess_passwd.   0.333334087
-
-...snip...
-
-teardrop.         teardrop.       0.999998379
-teardrop.         teardrop.       0.500005699
-teardrop.         teardrop.       0.500000044
-teardrop.         teardrop.       0.999998157
-
-...snip...
-
-guess_passwd.     guess_passwd.   0.478403815
-guess_passwd.     guess_passwd.   0.499999391
-guess_passwd.     guess_passwd.   0.38504377
-guess_passwd.     normal.         0.999790317
+# Predict face.
+# Transform image to 4 dimension tensor.
+img = image.load_img(file_name, target_size=(128, 128))
+x = image.img_to_array(img)
+x = np.expand_dims(x, axis=0)
+x = x / 255.0
 ```
 
-`score`はモデルの分類精度であり、分類精度は「89.9%」であることを示しています。
-`-----`以下は、通信データ毎の「ラベル、分類結果、分類確率」を出力しています。
+顔画像をベクトル化(`x = image.img_to_array(img)`)した上で、これをを正規化します(`x`)。  
+
+##### 顔画像の照合
+```
+# Prediction.
+pred = model.predict(x)[0]
+top = 1
+top_indices = pred.argsort()[-top:][::-1]
+results = [(classes[i], pred[i]) for i in top_indices]
+
+judge = 'Reject'
+prob = results[0][1] * 100
+if prob > THRESHOLD:
+    judge = 'Unlock'
+```
+
+正規化した顔画像をCNNモデルに入力し(`model.predict(x)[0]`)、照合結果である出力(`pred`)を取得します。`pred`には全てのクラスと予測精度が格納されていますので、**最も予測精度が高いクラス(認証対象人物の名前)と予測精度のセット**を取得します(`results`)。  
+
+最後に、予測精度が閾値(今回は`THRESHOLD = 80.0`)を超えていた場合に、`Unlock`(認証成功)のラベルを返します(認証が成功した後の処理は任意)。  
+
+#### 7.3.2.2. 実行結果
+このサンプルコードを実行した結果を以下に示します。  
 
 この結果から、「normal」や「nmap」「teardrop」「guess_passwd」は概ね正しく分類できていることが分かります。但し、「nmap」や「teardrop」「guess_passwd」の一部分類確率を見ると、「69%、50%、38%」等のように低い数値になっています。これは、今回筆者が主観で選択した特徴量よりも、**もっと適切な特徴量が存在する可能性**を示唆しています。また、「buffer_overflow」は殆ど正しく分類できておらず、「normal」や「guess_passwd」として誤検知していることが分かります。これは、「buffer_overflow」の**特徴量を見直す必要がある**ことを強く示唆しています。
 
-## 1.4. おわりに
+## 7.4. おわりに
 このように、特徴選択の精度によって分類精度が大きく左右されることが分かって頂けたかと思います（笑）。
  本ブログでは、KDD Cup 1999のデータセットを学習データとして使用しましたが、実際に収集したリアルなデータを学習に使用する場合は、侵入検知に**役立つ特徴量を見落とさないように、収集する情報を慎重に検討**する必要があります（ここがエンジニアの腕の見せ所だと思います）。
 
