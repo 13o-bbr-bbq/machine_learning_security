@@ -97,7 +97,7 @@ Neural Networkは分類対象の画像を**1pixel単位**で受け取ります�
 
  <div align="center">
  <figure>
- <img src='.img/7-3_dataset.png'><br>
+ <img src='img/7-3_dataset.png'><br>
  <figurecaption>認証対象の人物</figurecaption><br>
  </figure>
  </div>
