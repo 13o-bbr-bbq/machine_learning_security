@@ -61,7 +61,7 @@ Neural Networkは分類対象の画像を**1pixel単位**で受け取ります�
  <div align="center">
  <figure>
  <img src='./img/7-1_cnn.png' alt='CNNの説明(畳み込み、Poolingなど)'><br>
- <figurecaption>CNNの頑健性</figurecaption><br>
+ <figurecaption>CNNは頑健性が高い</figurecaption><br>
  <br>
  </figure>
  </div>
@@ -119,6 +119,7 @@ your_root_path> python3 record_face.py
  <figure>
  <img src='./img/7-3_recording_face.png' width=500><br>
  <figurecaption>顔画像を収集している様子</figurecaption><br>
+ <br>
  </figure>
  </div>
 
@@ -328,9 +329,9 @@ capture.release()
 cv2.destroyAllWindows()
 ```
 
-#### 1.3.4.2. コード解説
-今回はロジスティック回帰の実装に、機械学習ライブラリの**scikit-learn**を使用しました。
-scikit-learnの使用方法は[公式ドキュメント](http://scikit-learn.org/)を参照のこと。
+#### 7.3.2.2. コード解説
+今回はCNNの実装に、Deep Learningライブラリの**Keras**を使用しました。  
+Kerasの使用方法は[公式ドキュメント](https://keras.io/ja/)を参照のこと。  
 
 ##### パッケージのインポート
 ```
