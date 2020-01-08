@@ -1,6 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import json
 import cv2
 import numpy as np
 from datetime import datetime
@@ -8,6 +9,7 @@ from keras.applications.vgg16 import VGG16
 from keras.models import Sequential, Model
 from keras.layers import Input, Dropout, Flatten, Dense
 from keras.preprocessing import image
+from keras.models import model_from_json
 
 # Full path of this code.
 full_path = os.path.dirname(os.path.abspath(__file__))
@@ -18,7 +20,8 @@ test_path = os.path.join(dataset_path, 'test')
 
 # Model path.
 model_path = os.path.join(full_path, 'model')
-model_name = os.path.join(model_path, 'cnn_face_auth.h5')
+model_weights = os.path.join(model_path, 'cnn_face_auth.h5')
+model_arch = os.path.join(model_path, 'cnn_face_auth.json')
 
 MAX_RETRY = 50
 THRESHOLD = 80.0
@@ -46,8 +49,12 @@ print('Connect VGG16 and FC.')
 model = Model(input=vgg16.input, output=fc(vgg16.output))
 
 # Load model.
-print('Load trained model: {}'.format(model_name))
-model.load_weights(model_name)
+print('Load model architecture: {}'.format(model_arch))
+with open(model_arch, 'r') as fin:
+    model_json = json.load(fin)
+model = model_from_json(model_json)
+print('Load model weights: {}'.format(model_weights))
+model.load_weights(model_weights)
 
 # Use Loss=categorical_crossentropy.
 print('Compile model.')

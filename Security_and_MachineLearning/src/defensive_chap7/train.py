@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
+import json
 from keras.applications.vgg16 import VGG16
 from keras.models import Sequential, Model
 from keras.layers import Input, Dropout, Flatten, Dense
@@ -10,12 +11,18 @@ from keras import optimizers
 # Full path of this code.
 full_path = os.path.dirname(os.path.abspath(__file__))
 
-# dataset path.
+# Dataset path.
 dataset_path = os.path.join(full_path, 'dataset')
 
 # Train/test data path.
 train_path = os.path.join(dataset_path, 'train')
 test_path = os.path.join(dataset_path, 'test')
+
+# Model path.
+model_path = os.path.join(full_path, 'model')
+os.makedirs(model_path, exist_ok=True)
+model_weights = os.path.join(model_path, 'cnn_face_auth.h5')
+model_arch = os.path.join(model_path, 'cnn_face_auth.json')
 
 # Generate class list.
 classes = os.listdir(test_path)
@@ -97,10 +104,11 @@ history = model.fit_generator(
     validation_data=validation_generator,
     nb_val_samples=test_count)
 
-# Save model.
-model_path = os.path.join(full_path, 'model')
-os.makedirs(model_path, exist_ok=True)
-model_name = os.path.join(model_path, 'cnn_face_auth.h5')
-print('Save model to {}'.format(model_name))
-model.save_weights(model_name)
+# Save model (weights and architecture).
+with open(model_arch, 'w') as fout:
+    json.dump(model.to_json(), fout)
+    print('Save model archtecture to {}'.format(model_arch))
+print('Save model weights to {}'.format(model_weights))
+model.save_weights(model_weights)
+
 print('Finish training model.')
