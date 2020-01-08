@@ -202,6 +202,7 @@ from datetime import datetime
 from keras.applications.vgg16 import VGG16
 from keras.models import Sequential, Model
 from keras.layers import Input, Dropout, Flatten, Dense
+from keras.preprocessing import image
 
 # Full path of this code.
 full_path = os.path.dirname(os.path.abspath(__file__))
@@ -253,10 +254,10 @@ model.compile(loss='categorical_crossentropy',
 capture = cv2.VideoCapture(0)
 for idx in range(MAX_RETRY):
     # Read 1 frame from VideoCapture.
-    ret, image = capture.read()
+    ret, captured_image = capture.read()
 
     # Execute detecting face.
-    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray_image = cv2.cvtColor(captured_image, cv2.COLOR_BGR2GRAY)
     cascade = cv2.CascadeClassifier(os.path.join(full_path, 'haarcascade_frontalface_default.xml'))
     faces = cascade.detectMultiScale(gray_image,
                                      scaleFactor=1.1,
@@ -270,29 +271,27 @@ for idx in range(MAX_RETRY):
     for face in faces:
         # Extract face information.
         x, y, width, height = face
-        predict_image = image[y:y + height, x:x + width]
-        if predict_image.shape[0] < 128:
+        face_image = captured_image[y:y + height, x:x + width]
+        if face_image.shape[0] < 128:
             continue
-        predict_image = cv2.resize(predict_image, (128, 128))
-        predict_image2 = cv2.resize(image, (128, 128))
+        resized_face_image = cv2.resize(face_image, (128, 128))
 
         # Save image.
         file_name = os.path.join(dataset_path, 'tmp_face.jpg')
-        cv2.imwrite(file_name, predict_image2)
+        cv2.imwrite(file_name, resized_face_image)
 
-        # Predict face.
         # Transform image to 4 dimension tensor.
         img = image.load_img(file_name, target_size=(128, 128))
-        x = image.img_to_array(img)
-        x = np.expand_dims(x, axis=0)
-        x = x / 255.0
+        array_img = image.img_to_array(img)
+        array_img = np.expand_dims(array_img, axis=0)
+        array_img = array_img / 255.0
 
         # Prediction.
-        pred = model.predict(x)[0]
-        top = 1
-        top_indices = pred.argsort()[-top:][::-1]
+        pred = model.predict(array_img)[0]
+        top_indices = pred.argsort()[-1:][::-1]
         results = [(classes[i], pred[i]) for i in top_indices]
 
+        # Final judgement.
         judge = 'Reject'
         prob = results[0][1] * 100
         if prob > THRESHOLD:
@@ -301,7 +300,7 @@ for idx in range(MAX_RETRY):
         print(msg)
 
         # Draw frame to face.
-        cv2.rectangle(image,
+        cv2.rectangle(captured_image,
                       (x, y),
                       (x + width, y + height),
                       (255, 255, 255),
@@ -312,12 +311,12 @@ for idx in range(MAX_RETRY):
         print_date = datetime.strptime(date[:-3], '%Y%m%d%H%M%S').strftime('%Y/%m/%d %H:%M:%S')
 
         # Display raw frame data.
-        cv2.putText(image, msg, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-        cv2.putText(image, print_date, (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
-        cv2.imshow('Face Authorization', image)
+        cv2.putText(captured_image, msg, (10, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        cv2.putText(captured_image, print_date, (10, 450), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+        cv2.imshow('Face Authorization', captured_image)
 
         file_name = os.path.join(dataset_path, 'tmp_face' + str(idx) + '_.jpg')
-        cv2.imwrite(file_name, image)
+        cv2.imwrite(file_name, captured_image)
 
     # Waiting for getting key input.
     k = cv2.waitKey(500)
