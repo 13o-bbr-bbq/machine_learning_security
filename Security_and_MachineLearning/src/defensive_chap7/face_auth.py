@@ -26,7 +26,7 @@ classes = os.listdir(test_path)
 nb_classes = len(classes)
 
 # Dimensions of training images.
-img_width, img_height = 150, 150
+img_width, img_height = 128, 128
 
 # Load model.
 print('Load trained model: {}'.format(trained_model))
@@ -107,3 +107,5 @@ for idx in range(MAX_RETRY):
 # Termination (release capture and close window).
 capture.release()
 cv2.destroyAllWindows()
+
+print('Finish.')

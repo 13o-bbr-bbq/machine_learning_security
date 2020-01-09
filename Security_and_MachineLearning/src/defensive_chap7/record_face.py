@@ -9,6 +9,9 @@ CAPTURE_NUM = 100
 # Full path of this code.
 full_path = os.path.dirname(os.path.abspath(__file__))
 
+# Dimensions of captured images.
+img_width, img_height = 128, 128
+
 # Set web camera.
 capture = cv2.VideoCapture(0)
 
@@ -28,7 +31,7 @@ for idx in range(CAPTURE_NUM):
     # Execute detecting face.
     gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     cascade = cv2.CascadeClassifier(os.path.join(full_path, 'haarcascade_frontalface_default.xml'))
-    faces = cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=2, minSize=(128, 128))
+    faces = cascade.detectMultiScale(gray_image, scaleFactor=1.1, minNeighbors=2, minSize=(img_width, img_height))
 
     if len(faces) == 0:
         print('Face is not found.')
@@ -38,13 +41,13 @@ for idx in range(CAPTURE_NUM):
         # Extract face information.
         x, y, width, height = face
         face_size = image[y:y + height, x:x + width]
-        if face_size.shape[0] < 128:
+        if face_size.shape[0] < img_width:
             print('This face is too small: {} pixel.'.format(str(face_size.shape[0])))
             continue
 
         # Save image.
         file_name = FILE_NAME + '_' + str(idx+1) + '.jpg'
-        save_image = cv2.resize(face_size, (128, 128))
+        save_image = cv2.resize(face_size, (img_width, img_height))
         cv2.imwrite(os.path.join(saved_your_path, file_name), save_image)
 
         # Display raw frame data.
