@@ -1,15 +1,11 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 import os
-import json
 import cv2
 import numpy as np
 from datetime import datetime
-from keras.applications.vgg16 import VGG16
-from keras.models import Sequential, Model
-from keras.layers import Input, Dropout, Flatten, Dense
 from keras.preprocessing import image
-from keras.models import model_from_json
+from keras.models import load_model
 
 # Full path of this code.
 full_path = os.path.dirname(os.path.abspath(__file__))
@@ -20,8 +16,7 @@ test_path = os.path.join(dataset_path, 'test')
 
 # Model path.
 model_path = os.path.join(full_path, 'model')
-model_weights = os.path.join(model_path, 'cnn_face_auth.h5')
-model_arch = os.path.join(model_path, 'cnn_face_auth.json')
+trained_model_weights = os.path.join(model_path, 'cnn_face_auth.h5')
 
 MAX_RETRY = 50
 THRESHOLD = 80.0
@@ -30,31 +25,9 @@ THRESHOLD = 80.0
 classes = os.listdir(test_path)
 nb_classes = len(classes)
 
-# Prepare model.
-# Build VGG16.
-print('Build VGG16 model.')
-input_tensor = Input(shape=(128, 128, 3))
-vgg16 = VGG16(include_top=False, weights='imagenet', input_tensor=input_tensor)
-
-# Build FC.
-print('Build FC model.')
-fc = Sequential()
-fc.add(Flatten(input_shape=vgg16.output_shape[1:]))
-fc.add(Dense(256, activation='relu'))
-fc.add(Dropout(0.5))
-fc.add(Dense(nb_classes, activation='softmax'))
-
-# Connect VGG16 and FC.
-print('Connect VGG16 and FC.')
-model = Model(input=vgg16.input, output=fc(vgg16.output))
-
 # Load model.
-print('Load model architecture: {}'.format(model_arch))
-with open(model_arch, 'r') as fin:
-    model_json = json.load(fin)
-model = model_from_json(model_json)
-print('Load model weights: {}'.format(model_weights))
-model.load_weights(model_weights)
+print('Load trained model: {}'.format(trained_model_weights))
+model = load_model(trained_model_weights)
 
 # Use Loss=categorical_crossentropy.
 print('Compile model.')

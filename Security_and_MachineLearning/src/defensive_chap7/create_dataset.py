@@ -24,6 +24,9 @@ os.makedirs(train_path, exist_ok=True)
 test_path = os.path.join(dataset_path, 'test')
 os.makedirs(test_path, exist_ok=True)
 
+# Dimensions of training images.
+img_width, img_height = 128, 128
+
 # Execute face recognition in saved image.
 label_list = os.listdir(original_image_path)
 for label in label_list:
@@ -37,10 +40,10 @@ for label in label_list:
         cv_image = cv2.imread(image)
 
         # If image size is smaller than 128, it is excluded.
-        if cv_image.shape[0] < 128:
+        if cv_image.shape[0] < img_width:
             print('This face is too small: {} pixel.'.format(str(cv_image.shape[0])))
             continue
-        save_image = cv2.resize(cv_image, (128, 128))
+        save_image = cv2.resize(cv_image, (img_width, img_height))
 
         # Save image.
         file_name = os.path.join(dataset_path, label + '_' + str(idx+1) + '.jpg')

@@ -1,12 +1,20 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import os
-import json
-from keras.applications.vgg16 import VGG16
-from keras.models import Sequential, Model
-from keras.layers import Input, Dropout, Flatten, Dense
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Activation, Dropout, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
-from keras import optimizers
+from keras import backend as K
+
+
+# Count samples.
+def sample_count(sample_path):
+    sample = 0
+    for root, dirs, files in os.walk(sample_path):
+        sample += len(files)
+    return sample
+
 
 # Full path of this code.
 full_path = os.path.dirname(os.path.abspath(__file__))
@@ -21,94 +29,93 @@ test_path = os.path.join(dataset_path, 'test')
 # Model path.
 model_path = os.path.join(full_path, 'model')
 os.makedirs(model_path, exist_ok=True)
-model_weights = os.path.join(model_path, 'cnn_face_auth.h5')
-model_arch = os.path.join(model_path, 'cnn_face_auth.json')
+trained_model_path = os.path.join(model_path, 'cnn_face_auth.h5')
 
 # Generate class list.
 classes = os.listdir(test_path)
 nb_classes = len(classes)
 
+# Dimensions of training images.
+img_width, img_height = 128, 128
+
+# Hyper parameters.
+epochs = 50
+batch_size = 16
+
+if K.image_data_format() == 'channels_first':
+    input_shape = (3, img_width, img_height)
+else:
+    input_shape = (img_width, img_height, 3)
+
 print('Start training model.')
 
-# Build VGG16.
-print('Build VGG16 model.')
-input_tensor = Input(shape=(128, 128, 3))
-vgg16 = VGG16(include_top=False, weights='imagenet', input_tensor=input_tensor)
+# Build CNN architecture.
+model = Sequential()
+model.add(Conv2D(32, (3, 3), input_shape=input_shape))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 
-# Build FC.
-print('Build FC model.')
-fc = Sequential()
-fc.add(Flatten(input_shape=vgg16.output_shape[1:]))
-fc.add(Dense(256, activation='relu'))
-fc.add(Dropout(0.5))
-fc.add(Dense(nb_classes, activation='softmax'))
+model.add(Conv2D(32, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 
-# Connect VGG16 and FC.
-print('Connect VGG16 and FC.')
-model = Model(input=vgg16.input, output=fc(vgg16.output))
+model.add(Conv2D(64, (3, 3)))
+model.add(Activation('relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 
-# Freeze before last layer.
-for layer in model.layers[:15]:
-    layer.trainable = False
+model.add(Flatten())
+model.add(Dense(64))
+model.add(Activation('relu'))
+model.add(Dropout(0.5))
+model.add(Dense(nb_classes))
+model.add(Activation('sigmoid'))
 
 # Use Loss=categorical_crossentropy.
-print('Compile model.')
 model.compile(loss='categorical_crossentropy',
-              optimizer=optimizers.SGD(lr=1e-4, momentum=0.9),
+              optimizer='rmsprop',
               metrics=['accuracy'])
 
-# Generate train/test data.
+# Generate train data.
 train_datagen = ImageDataGenerator(
     rescale=1.0 / 255,
     shear_range=0.2,
     zoom_range=0.2,
     horizontal_flip=True)
-
-test_datagen = ImageDataGenerator(rescale=1.0 / 255)
-
 train_generator = train_datagen.flow_from_directory(
     train_path,
-    target_size=(128, 128),
+    target_size=(img_width, img_height),
     color_mode='rgb',
     classes=classes,
     class_mode='categorical',
-    batch_size=32,
+    batch_size=batch_size,
     shuffle=True)
 
+# Generate test data.
+test_datagen = ImageDataGenerator(rescale=1.0 / 255)
 validation_generator = test_datagen.flow_from_directory(
     test_path,
-    target_size=(128, 128),
+    target_size=(img_width, img_height),
     color_mode='rgb',
     classes=classes,
     class_mode='categorical',
-    batch_size=32,
+    batch_size=batch_size,
     shuffle=True)
 
-# Count train and test data.
-# Count train data.
-train_count = 0
-for root, dirs, files in os.walk(train_path):
-    train_count += len(files)
+# Count train/test samples.
+train_samples = sample_count(train_path)
+test_samples = sample_count(test_path)
 
-# Count test data.
-test_count = 0
-for root, dirs, files in os.walk(test_path):
-    test_count += len(files)
-
-# Fine-tuning.
-print('Execute fine-tuning.')
-history = model.fit_generator(
+# Training.
+print('Execute training..')
+model.fit_generator(
     train_generator,
-    samples_per_epoch=train_count,
-    nb_epoch=100,
+    steps_per_epoch=train_samples // batch_size,
+    nb_epoch=epochs,
     validation_data=validation_generator,
-    nb_val_samples=test_count)
+    validation_steps=test_samples // batch_size)
 
-# Save model (weights and architecture).
-with open(model_arch, 'w') as fout:
-    json.dump(model.to_json(), fout)
-    print('Save model archtecture to {}'.format(model_arch))
-print('Save model weights to {}'.format(model_weights))
-model.save_weights(model_weights)
+# Save trained model.
+print('Save model weights to {}'.format(trained_model_path))
+model.save(trained_model_path)
 
-print('Finish training model.')
+print('Finish.')
