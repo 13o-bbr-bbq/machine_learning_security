@@ -25,7 +25,7 @@ test_path = os.path.join(dataset_path, 'test')
 os.makedirs(test_path, exist_ok=True)
 
 # Dimensions of training images.
-img_width, img_height = 128, 128
+img_width, img_height = 150, 150
 
 # Execute face recognition in saved image.
 label_list = os.listdir(original_image_path)

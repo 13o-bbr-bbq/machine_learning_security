@@ -5,6 +5,7 @@ from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D
 from keras.layers import Activation, Dropout, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
+from keras.callbacks import EarlyStopping, TensorBoard
 from keras import backend as K
 
 
@@ -36,7 +37,7 @@ classes = os.listdir(test_path)
 nb_classes = len(classes)
 
 # Dimensions of training images.
-img_width, img_height = 128, 128
+img_width, img_height = 150, 150
 
 # Hyper parameters.
 epochs = 50
@@ -104,15 +105,20 @@ validation_generator = test_datagen.flow_from_directory(
 # Count train/test samples.
 train_samples = sample_count(train_path)
 test_samples = sample_count(test_path)
+print('train samples: {}\ntest samples: {}'.format(train_samples, test_samples))
+
+# Early Stopping.
+early_stopping = EarlyStopping(monitor='val_loss', min_delta=0, patience=5, verbose=1, mode='auto')
 
 # Training.
 print('Execute training..')
 model.fit_generator(
     train_generator,
     steps_per_epoch=train_samples // batch_size,
-    nb_epoch=epochs,
+    epochs=epochs,
     validation_data=validation_generator,
-    validation_steps=test_samples // batch_size)
+    validation_steps=test_samples // batch_size,
+    callbacks=[early_stopping])
 
 # Save trained model.
 print('Save model weights to {}'.format(trained_model_path))

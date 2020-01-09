@@ -16,7 +16,7 @@ test_path = os.path.join(dataset_path, 'test')
 
 # Model path.
 model_path = os.path.join(full_path, 'model')
-trained_model_weights = os.path.join(model_path, 'cnn_face_auth.h5')
+trained_model = os.path.join(model_path, 'cnn_face_auth.h5')
 
 MAX_RETRY = 50
 THRESHOLD = 80.0
@@ -25,15 +25,12 @@ THRESHOLD = 80.0
 classes = os.listdir(test_path)
 nb_classes = len(classes)
 
-# Load model.
-print('Load trained model: {}'.format(trained_model_weights))
-model = load_model(trained_model_weights)
+# Dimensions of training images.
+img_width, img_height = 150, 150
 
-# Use Loss=categorical_crossentropy.
-print('Compile model.')
-model.compile(loss='categorical_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
+# Load model.
+print('Load trained model: {}'.format(trained_model))
+model = load_model(trained_model)
 
 # Execute face authentication.
 capture = cv2.VideoCapture(0)
@@ -47,7 +44,7 @@ for idx in range(MAX_RETRY):
     faces = cascade.detectMultiScale(gray_image,
                                      scaleFactor=1.1,
                                      minNeighbors=2,
-                                     minSize=(128, 128))
+                                     minSize=(img_width, img_height))
 
     if len(faces) == 0:
         print('Face is not found.')
@@ -57,31 +54,30 @@ for idx in range(MAX_RETRY):
         # Extract face information.
         x, y, width, height = face
         face_image = captured_image[y:y + height, x:x + width]
-        if face_image.shape[0] < 128:
+        if face_image.shape[0] < img_width:
             continue
-        resized_face_image = cv2.resize(face_image, (128, 128))
+        resized_face_image = cv2.resize(face_image, (img_width, img_height))
 
         # Save image.
         file_name = os.path.join(dataset_path, 'tmp_face.jpg')
         cv2.imwrite(file_name, resized_face_image)
 
         # Transform image to 4 dimension tensor.
-        img = image.load_img(file_name, target_size=(128, 128))
-        array_img = image.img_to_array(img)
-        array_img = np.expand_dims(array_img, axis=0)
-        array_img = array_img / 255.0
+        img = image.img_to_array(image.load_img(file_name, target_size=(img_width, img_height)))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        x = x / 255.0
 
         # Prediction.
-        pred = model.predict(array_img)[0]
-        top_indices = pred.argsort()[-1:][::-1]
-        results = [(classes[i], pred[i]) for i in top_indices]
+        preds = model.predict(x)[0]
+        predict_idx = np.argmax(preds)
 
         # Final judgement.
         judge = 'Reject'
-        prob = results[0][1] * 100
+        prob = preds[predict_idx] * 100
         if prob > THRESHOLD:
             judge = 'Unlock'
-        msg = '{} ({:.1f}%). res="{}"'.format(results[0][0], prob, judge)
+        msg = '{} ({:.1f}%). res="{}"'.format(classes[predict_idx], prob, judge)
         print(msg)
 
         # Draw frame to face.
