@@ -100,12 +100,11 @@ Neural Networkは、入力データを受け取る**入力層**（Input layer）
 | ネットワークの分類精度を向上させるため、ハイパーパラメータの組み合わせを全パターン試行し、最も精度の高いパラメータの組み合わせを探索する手法。ハイパーパラメータにはノード数や層数、活性化関数の種類など、様々なものが存在する。なお、Neural Network以外のアルゴリズムにも適用可能。|
 
 #### 7.3.1.3. Neural Networkの学習
-Neural Networkは教師あり学習のアルゴリズムであるため、画像分類を行う前に学習を行う必要があります。  
+上図では当たり前のように画像分類を行っていましたが、Neural Networkは教師あり学習のアルゴリズムであるため、事前に学習を行う必要があります。  
 
 
 #### 7.3.1.4. Neural Networkによる画像分類の限界
 分類対象の画像を**1pixel単位**で受け取ります。例えば「32×32pixel」の白黒画像の場合、入力データは1024(=32x32)のベクトルとなります(RGBの場合は1024x3=3072のベクトル)。このため、**入力画像のレイアウトが少しでも異なると、入力データのベクトルは大きく異なってしまいます**。これにより、下図のようにレイアウトが異なる画像の場合、(入力データが大きく異なるため)2つを同じ猫として認識することが難しくなります。つまり、頑健性が低いと言えます。  
-
  <div align="center">
  <figure>
  <img src='./img/7-1_nn.png' alt='NNの説明'><br>
@@ -141,18 +140,16 @@ Neural Networkは教師あり学習のアルゴリズムであるため、画像
  4. 分類確率と閾値を比較して認証成否を判定    
 
 ### 7.4.1. 顔認識モデルの作成
-本ブログの顔認証システムは教師あり学習のCNNを使用します。  
-よって、先ずは学習データを用意する必要があります。  
+本ブログで使用するCNNは教師あり学習のため、先ずは学習データを用意します。  
 
 #### 7.4.1.1. 学習データの準備
-学習データとして**認証対象とする人物の顔画像**を準備します。  
-本ブログでは、一般公開されている**顔画像データセット「[VGGFACE2](http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/)」から無作為に選んだ人物**と、**筆者**の計11人を認証対象とします。  
+本ブログでは、著名な顔画像データセットである「[**VGGFACE2**](http://www.robots.ox.ac.uk/~vgg/data/vgg_face2/)」を学習データに使用します。  
 
 | VGGFACE2|
 |:--------------------------|
 | 大規模な顔画像データセット。Google画像検索からダウンロードされた**9,000人以上**の人物の顔画像が**330万枚以上**収録されており、年齢・性別・民族・職業・顔の向き・顔の明るさ（照明具合）など、様々なバリエーションの顔画像が存在する。ダウンロードにはアカウントの登録が必要。|
 
-以下に認証対象の人物を示します。  
+本ブログでは、VGGFACE2から無作為に選んだDilip Vengsarkar氏、Frank Elstner氏、Jasper Cillessen氏、Lang Ping氏の4人と、筆者を学習させることにします。すなわちこの5人が、本ブログで実装する顔認証システムで認証可能な人物となります。  
 
  <div align="center">
  <figure>
@@ -161,83 +158,73 @@ Neural Networkは教師あり学習のアルゴリズムであるため、画像
  </figure>
  </div>
 
-なお、当然ながら筆者の顔画像はVGGFACE2に含まれていないため、顔画像収集用のサンプルコード[`record_face.py`](src/defensive_chap7/record_face.py)を用いて収集します。このコードを実行すると、**0.5秒間隔**でWebカメラから画像を取り込み、顔を認識して顔部分のみを切り出します。  
+当然ながら筆者の顔画像はVGGFACE2に含まれていないため、顔画像収集用のサンプルコード[`record_face.py`](src/defensive_chap7/record_face.py)を用いて収集しました。このコードは、Webカメラから**0.5秒間隔**で画像を取り込み、画像に含まれる顔部分を抽出し、JPEG形式で保存します。  
 
-```
-your_root_path> python3 record_face.py
-1/100 Capturing face image.
-2/100 Capturing face image.
-3/100 Capturing face image.
-...snip...
-98/100 Capturing face image.
-99/100 Capturing face image.
-100/100 Capturing face image.
-```
+ * 顔画像収集プログラムの実行  
+ ```
+ your_root_path> python3 record_face.py
+ 1/100 Capturing face image.
+ 2/100 Capturing face image.
+ 3/100 Capturing face image.
+ ...snip...
+ 98/100 Capturing face image.
+ 99/100 Capturing face image.
+ 100/100 Capturing face image.
+ ```
 
- <div align="center">
- <figure>
- <img src='./img/7-3_recording_face.png' width=500><br>
- <figurecaption>顔画像を収集している様子</figurecaption><br>
- <br>
- </figure>
- </div>
+プログラムの実行が完了すると、自動的に「`original_image`」ディレクトリが作成され、そのサブディレクトリとして「`Isao-Takaesu`」が作成されます。このサブディレクトリ配下に収集した顔画像が保存されます。  
 
-そして、コード実行ディレクトリ配下に、顔画像を格納する「`original_image`」ディレクトリと、サブディレクトリ「`Isao-Takaesu`」を自動生成し、サブディレクトリに切り出した顔画像をJPEG形式で保存します。  
-
-```
-/your_root_path/original_image/Isao-Takaesu> ls
-Isao-Takaesu_1.jpg
-Isao-Takaesu_2.jpg
-Isao-Takaesu_3.jpg
-... snip ...
-Isao-Takaesu_98.jpg
-Isao-Takaesu_99.jpg
-Isao-Takaesu_100.jpg
-```
+ * 収集された顔画像
+ ```
+ /your_root_path/original_image/Isao-Takaesu> ls
+ Isao-Takaesu_1.jpg
+ Isao-Takaesu_2.jpg
+ Isao-Takaesu_3.jpg
+ ... snip ...
+ Isao-Takaesu_98.jpg
+ Isao-Takaesu_99.jpg
+ Isao-Takaesu_100.jpg
+ ```
 
 なお、サブディレクトリ名「`Isao-Takaesu`」が、**顔認証時のクラス名**となります。  
-もし、あなたが任意の人物を認証対象としたい場合は、コード中の`FILE_NAME`を変更して本コードを実行してください。  
+もし、あなたが任意の人物を認証対象としたい場合は、コード中の`FILE_NAME`の値を変更してください。  
 
 #### 7.4.1.2 データセットの作成
-顔画像の収集が完了しましたので、学習データとモデル評価用のテストデータを作成します。  
+顔画像の収集が完了しましたので、データセット生成用のサンプルコード「[`create_dataset.py`](src/defensive_chap7/create_dataset.py)」を用いてCNNの学習データと精度評価用のテストデータを作成します。  
 
-`original_image`ディレクトリ配下に、VGGFACE2から選んだ10人の人物のサブディレクトリを作成します。  
+ここで、コードを実行する前に、VGGFACE2から選んだ4人のサブディレクトリを「`original_image`」配下に作成します(筆者のサブディレクトリは前節で作成済み)。  
 
-```
-your_root_path\original_image> mkdir Carolina-Kluft Carol-Swenson Cris-Judd Frank-de-Boer Junny-Lang-Ping John-Winchester Joumana-Kidd Leo-Sayer Zhang-Xin Western-Hagen
+ * 認証対象人物のサブディレクリを作成  
+ ```
+ your_root_path\original_image> mkdir Dilip-Vengsarkar Frank-Elstner Jasper-Cillessen Lang-Ping
+ your_root_path\original_image> ls
+ Dilip-Vengsarkar
+ Frank-Elstner
+ Isao-Takaesu
+ Jasper-Cillessen
+ Lang-Ping
+ ```
 
-your_root_path\original_image> ls
-Carolina-Kluft
-Carol-Swenson
-Cris-Judd
-Frank-de-Boer
-Isao-Takaesu
-Junny-Lang-Ping
-John-Winchester
-Joumana-Kidd
-Leo-Sayer
-Zhang-Xin
-Western-Hagen
-```
+なお、前節でも述べましたが、これらサブディレクトリ名が、顔認証時のクラス名となります(大事なことなので2回書きます)。  
+そして、4人の顔画像をVGGFACE2からコピーして各サブディレクトリにペーストし、データセット生成用のサンプルコードを実行します。  
 
-各人の顔画像をVGGFACE2からコピーし、上記で作成した各人のサブディレクトリにペーストします。  
-そして、データセットを生成するサンプルコード「[`create_dataset.py`](src/defensive_chap7/create_dataset.py)」を実行します。  
+ * データセット生成用プログラムの実行  
+ ```
+ your_root_path> python3 create_dataset.py
+ ```
 
-```
-your_root_path> python3 create_dataset.py
-```
-
-このコードは、`original_image`配下の**認証対象人物のサブディレクトリ名をクラス名**とし、データセットのディレクトリ「`dataset`」配下に学習データを格納する「`train`」ディレクトリと、モデル評価用のテストデータを格納する「`test`」ディレクトリを自動生成します。そして、7対3の割合で認証対象人物の顔画像を`train`と`test`に振り分けます。  
+プログラムの実行が完了すると、自動的に「`dataset`」ディレクトリが作成され、サブディレクトリとして学習データ格納用の「`train`」ディレクトリと、精度評価用テストデータ格納用の「`test`」ディレクトリが作成されます。各ディレクトリには、「`original_image`」からコピーした画像が「7対3(学習データ：7、テストデータ：3)」の割合で格納されます。  
 
 #### 7.4.1.3 学習の実行
-学習データの準備ができましたので、CNNを用いて認証対象人物の顔を学習します。  
-学習を実行するサンプルコード「[`train.py`](src/defensive_chap7/train.py)」を実行します。  
+学習データの準備ができましたので、学習用するサンプルコード「[`train.py`](src/defensive_chap7/train.py)」を実行します。  
 
-```
-your_root_path> python3 train.py
-```
+ * 学習用プログラムの実行  
+ ```
+ your_root_path> python3 train.py
+ ```
 
-このコードは、`dataset/train`配下の学習データと`dataset/test`配下のテストデータを使用して顔認識モデルを作成します。作成されたモデルは、モデル格納用のディレクトリ「`model`」配下に`cnn_face_auth.h5`というファイル名で保存されます。  
+このコードは、`dataset/train`配下の学習データと`dataset/test`配下のテストデータを使用して顔認識モデルを作成します。  
+プログラムの実行が完了すると、自動的に「`model`」ディレクトリが作成され、その配下に学習済みのモデル「`cnn_face_auth.h5`」が保存されます。  
 
 ### 7.4.2. サンプルコード及び実行結果
 #### 7.4.2.1. サンプルコード
