@@ -61,9 +61,9 @@ Webカメラを使用することで、以下のようにカメラの前にい�
 
 CNNは数年前に発表された技術であり、存在自体もメジャーであるため本ブログでは簡単な仕組みの解説に留めます。詳しく知りたいという方は、日本における機械学習界の大家である@icoxfog417氏のブログ「[Convolutional Neural Networkとは何なのか](https://qiita.com/icoxfog417/items/5fd55fad152231d706c2)」を参照いただければと思います。@icoxfog417氏のブログには、CNNの基礎が丁寧に分かり易く解説されているためお勧めです。  
 
-本ブログでは大きく上記の3ステップの処理を実装し、顔認証システムを実装していきます。  
+本ブログでは、上記の3ステップの処理を実装しながら顔認証システムを実装していきます。  
 
-## 7.3. Convolutional Neural Network（CNN）
+## 7.3. Convolutional Neural Network（CNN）とは
 CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**したものであり、分類対象の画像に対する**高い頑健性（ロバスト性）**を持つという特徴があります。この特徴により、**高精度の画像分類**を実現します。  
 
 ### 7.3.1. CNN入門の入門
@@ -72,7 +72,7 @@ CNNは通常の**Neural NetworkにConvolution（畳み込み）を追加**した
 
  <div align="center">
  <figure>
- <img src='./img/7-1_cat2.png' alt='cat1'><br>
+ <img src='./img/7_nn_normal.png' alt='NeuralNetwork_normal'><br>
  <figcaption>画像その１</figcaption><br>
  <br>
  </figure>
