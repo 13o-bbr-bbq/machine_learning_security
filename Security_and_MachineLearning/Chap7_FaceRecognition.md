@@ -18,20 +18,11 @@ Deep Learningで顔認証を実装するためには、先ずは何らかの**�
 何らかのカメラとは用途によって様々です。先の例で挙げた天網であれば、街中に配置された監視カメラを通じて市民の画像を取り込みますし、顔認証ゲートであれば、ゲートに内蔵されたカメラで出入国者の顔画像を取り込みます。  
 
 本ブログでは実装を容易にするため、ラップトップPCに内蔵されている**Webカメラ**を使用することにします。  
-
- <div align="center">
- <figure>
- <img src='./img/7-1_web_camera.png' alt='cat1'><br>
- <figcaption>Webカメラ</figcaption><br>
- <br>
- </figure>
- </div>
-
 Webカメラを使用することで、以下のようにカメラの前にいる人物の画像を連続で取り込むことができます。  
 
  <div align="center">
  <figure>
- <img src='./img/7-1_captured_man.png' alt='cat1'><br>
+ <img src='./img/7_captured_from_webcamera.png' alt='cat1'><br>
  <figcaption>Webカメラで取り込まれた画像</figcaption><br>
  <br>
  </figure>
