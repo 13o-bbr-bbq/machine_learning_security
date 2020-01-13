@@ -330,10 +330,8 @@ import os
 import cv2
 import numpy as np
 from datetime import datetime
-from keras.applications.vgg16 import VGG16
-from keras.models import Sequential, Model
-from keras.layers import Input, Dropout, Flatten, Dense
 from keras.preprocessing import image
+from keras.models import load_model
 
 # Full path of this code.
 full_path = os.path.dirname(os.path.abspath(__file__))
@@ -344,7 +342,7 @@ test_path = os.path.join(dataset_path, 'test')
 
 # Model path.
 model_path = os.path.join(full_path, 'model')
-model_name = os.path.join(model_path, 'cnn_face_auth.h5')
+trained_model = os.path.join(model_path, 'cnn_face_auth.h5')
 
 MAX_RETRY = 50
 THRESHOLD = 80.0
@@ -353,33 +351,12 @@ THRESHOLD = 80.0
 classes = os.listdir(test_path)
 nb_classes = len(classes)
 
-# Prepare model.
-# Build VGG16.
-print('Build VGG16 model.')
-input_tensor = Input(shape=(128, 128, 3))
-vgg16 = VGG16(include_top=False, weights='imagenet', input_tensor=input_tensor)
-
-# Build FC.
-print('Build FC model.')
-fc = Sequential()
-fc.add(Flatten(input_shape=vgg16.output_shape[1:]))
-fc.add(Dense(256, activation='relu'))
-fc.add(Dropout(0.5))
-fc.add(Dense(nb_classes, activation='softmax'))
-
-# Connect VGG16 and FC.
-print('Connect VGG16 and FC.')
-model = Model(input=vgg16.input, output=fc(vgg16.output))
+# Dimensions of training images.
+img_width, img_height = 128, 128
 
 # Load model.
-print('Load trained model: {}'.format(model_name))
-model.load_weights(model_name)
-
-# Use Loss=categorical_crossentropy.
-print('Compile model.')
-model.compile(loss='categorical_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
+print('Load trained model: {}'.format(trained_model))
+model = load_model(trained_model)
 
 # Execute face authentication.
 capture = cv2.VideoCapture(0)
@@ -393,7 +370,7 @@ for idx in range(MAX_RETRY):
     faces = cascade.detectMultiScale(gray_image,
                                      scaleFactor=1.1,
                                      minNeighbors=2,
-                                     minSize=(128, 128))
+                                     minSize=(img_width, img_height))
 
     if len(faces) == 0:
         print('Face is not found.')
@@ -403,31 +380,30 @@ for idx in range(MAX_RETRY):
         # Extract face information.
         x, y, width, height = face
         face_image = captured_image[y:y + height, x:x + width]
-        if face_image.shape[0] < 128:
+        if face_image.shape[0] < img_width:
             continue
-        resized_face_image = cv2.resize(face_image, (128, 128))
+        resized_face_image = cv2.resize(face_image, (img_width, img_height))
 
         # Save image.
         file_name = os.path.join(dataset_path, 'tmp_face.jpg')
         cv2.imwrite(file_name, resized_face_image)
 
         # Transform image to 4 dimension tensor.
-        img = image.load_img(file_name, target_size=(128, 128))
-        array_img = image.img_to_array(img)
-        array_img = np.expand_dims(array_img, axis=0)
-        array_img = array_img / 255.0
+        img = image.img_to_array(image.load_img(file_name, target_size=(img_width, img_height)))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        x = x / 255.0
 
         # Prediction.
-        pred = model.predict(array_img)[0]
-        top_indices = pred.argsort()[-1:][::-1]
-        results = [(classes[i], pred[i]) for i in top_indices]
+        preds = model.predict(x)[0]
+        predict_idx = np.argmax(preds)
 
         # Final judgement.
         judge = 'Reject'
-        prob = results[0][1] * 100
+        prob = preds[predict_idx] * 100
         if prob > THRESHOLD:
             judge = 'Unlock'
-        msg = '{} ({:.1f}%). res="{}"'.format(results[0][0], prob, judge)
+        msg = '{} ({:.1f}%). res="{}"'.format(classes[predict_idx], prob, judge)
         print(msg)
 
         # Draw frame to face.
@@ -457,6 +433,8 @@ for idx in range(MAX_RETRY):
 # Termination (release capture and close window).
 capture.release()
 cv2.destroyAllWindows()
+
+print('Finish.')
 ```
 
 #### 7.4.2.2. コード解説
@@ -473,19 +451,17 @@ Webカメラからの画像取得、および顔部分の切り出しを行う�
 
 ##### CNN用パッケージのインポート
 ```
-from keras.applications.vgg16 import VGG16
-from keras.models import Sequential, Model
-from keras.layers import Input, Dropout, Flatten, Dense
+from keras.preprocessing import image
+from keras.models import load_model
 ```
 
-KerasでCNNを構築するためのパッケージをインポートします。  
-これらのパッケージを使用することで、CNNを構築することができます。  
+学習済みモデルのロード、および認証対象画像を扱うためのKerasパッケージをインポートします。  
 
 ##### Pathの定義
 ```
 # Model path.
 model_path = os.path.join(full_path, 'model')
-model_name = os.path.join(model_path, 'cnn_face_auth.h5')
+trained_model = os.path.join(model_path, 'cnn_face_auth.h5')
 ```
 
 前節で作成した学習済みモデル(`cnn_face_auth.h5`)のPathを定義します。  
@@ -498,52 +474,15 @@ THRESHOLD = 80.0
 
 `MAX_RETRY`は顔認証を試行する最大回数、`THRESHOLD`は認証成功の閾値となります(CNNの分類確率が閾値を超えた場合に認証成功とする)。  
 
-##### CNNモデルアーキテクチャの定義
-```
-# Prepare model.
-# Build VGG16.
-print('Build VGG16 model.')
-input_tensor = Input(shape=(128, 128, 3))
-vgg16 = VGG16(include_top=False, weights='imagenet', input_tensor=input_tensor)
-
-# Build FC.
-print('Build FC model.')
-fc = Sequential()
-fc.add(Flatten(input_shape=vgg16.output_shape[1:]))
-fc.add(Dense(256, activation='relu'))
-fc.add(Dropout(0.5))
-fc.add(Dense(nb_classes, activation='softmax'))
-
-# Connect VGG16 and FC.
-print('Connect VGG16 and FC.')
-model = Model(input=vgg16.input, output=fc(vgg16.output))
-```
-
-本ブログで実装する顔認証システムの入力画像は、128x128pixelのRGB(3channel)の情報を持っているため、CNNの入力層として「`Input(shape=(128, 128, 3))`」を定義します。そして、これを**VGG16**と呼ばれる学習済みの画像認識モデルにバインドします。その後、顔画像の照合を行うアーキテクチャ(`fc`)を定義し、最後にVGG16とFCを結合(`Model()`)することで、顔画像を照合するためのCNNアーキテクチャが完成します。  
-
-なお、今回使用するVGG16は[ImageNet](http://www.image-net.org/)と呼ばれる大規模な画像データセットで事前に学習されています。よって、VGG16とFCを結合することで、VGG16に備わっている高い物体認識能力を享受することが可能となります。  
-
-| ImageNet|
-|:--------------------------|
-| 1,400万枚もの良質な画像が収録されたデータセットであり、各画像にはクラス名が紐づけられている。クラスの種類2万種類以上。Deep Learning技術の発展に大きく貢献している。|
-
-##### CNNモデルのロード
+##### 学習済みモデルのロード
 ```
 # Load model.
-print('Load trained model: {}'.format(model_name))
-model.load_weights(model_name)
-
-# Use Loss=categorical_crossentropy.
-print('Compile model.')
-model.compile(loss='categorical_crossentropy',
-              optimizer='adam',
-              metrics=['accuracy'])
+print('Load trained model: {}'.format(trained_model))
+model = load_model(trained_model)
 ```
 
-CNNアーキテクチャを作るのみでは、それは"ただの箱"と同じであり、中身がありません。すなわち、正しく顔画像を照合することはできません。  
-よって、本モデルに認証させたい人々の顔画像を学習させる必要があります。  
-
-ここでは、前節で学習した結果(学習済みのモデル)をCNNアーキテクチャにロードして認識モデルを作成しています。学習済みモデルのPathを格納した`model_name`をCNNアーキテクチャにロード「`model.load_weights(model_name)`」することで、CNNモデルは学習した状態、すなわち、顔画像の照合が実行できる状態になります。  
+ここでは、前節で学習した結果(学習済みのモデル)をCNNアーキテクチャにロードして認識モデルを作成しています。  
+これにより、CNNモデルは学習した状態、すなわち、顔画像の照合が実行できる状態になります。  
 
 ##### Webカメラの定義
 ```
@@ -557,7 +496,7 @@ capture = cv2.VideoCapture(0)
 ##### Webカメラからの画像取り込み 
 ```
 # Read 1 frame from VideoCapture.
-ret, image = capture.read()
+ret, captured_image = capture.read()
 ```
 
 Webカメラのインスタンス`capture`のメソッドである`read()`を呼び出すと、Webカメラで撮影した1フレーム分の画像が戻り値として返されます。なお、画像はBGRの画素値を持った配列になっています(RGBではないことに注意してください)。  
@@ -565,7 +504,7 @@ Webカメラのインスタンス`capture`のメソッドである`read()`を呼
 ##### 取り込んだ画像から顔の検出
 ```
 # Execute detecting face.
-gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+gray_image = cv2.cvtColor(captured_image, cv2.COLOR_BGR2GRAY)
 cascade = cv2.CascadeClassifier(os.path.join(full_path, 'haarcascade_frontalface_default.xml'))
 faces = cascade.detectMultiScale(gray_image,
                                  scaleFactor=1.1,
@@ -573,16 +512,7 @@ faces = cascade.detectMultiScale(gray_image,
                                  minSize=(128, 128))
 ```
 
-何らかの方法でWebカメラで取り込んだ画像から人物の**顔を抽出**する必要があります。  
-本ブログでは**カスケード分類器**を使用します。  
-
-| カスケード分類器|
-|:--------------------------|
-| [Paul Viola氏によって提案](https://www.cs.cmu.edu/~efros/courses/LBMV07/Papers/viola-cvpr-01.pdf)され、[Rainer Lienhart氏によって改良](http://www.multimedia-computing.de/mediawiki/images/5/52/MRL-TR-May02-revised-Dec02.pdf)された物体検出アルゴリズム。対象の画像を複数の探索ウィンドウ領域に分割し、各探索ウィンドウ領域の画像を学習済み分類器に入力していく。分類器は**N個**用意されており、各分類器はそれぞれ「顔画像である」or「顔画像ではない」と判定していく。そして、1～N個の分類器が一貫して「顔画像である」と判定した場合のみ、当該探索ウィンドウ領域の画像は「顔画像である」と判定する。一方、途中で分類器が「顔画像ではない」と判定すれば処理を終了し、「探索ウィンドウ領域には顔画像はなかった」と判定され、探索ウィンドウは次にスライドしていく。|
-
-カスケード分類器のフルスクラッチによる実装は少々面倒ですが、OpenCVを使用することで容易にカスケード分類器を実装することが可能です。
-※本ブログではカスケード分類器の詳細な説明は割愛しますが、詳細を知りたい方は「[Haar Feature-based Cascade Classifier for Object Detection](http://opencv.jp/opencv-2.2/c/objdetect_cascade_classification.html)」をご覧いただければと思います。  
-
+OpenCVに備わっているカスケード分類器を使用し、Webカメラで取り込んだ画像から**顔を抽出**します。  
 上記のコードでは、カスケード分類器に画像を入力する前に、画像をグレースケールに変換します(`cv2.cvtColor()`)。これは、カスケード分類器は**顔の輪郭など(色の濃淡)を特徴**として「顔 or 顔ではない」を判定するため、BGRのようなカラー画像よりもグレースケールの方が精度が向上します。  
 
 次に、カスケード分類器のインスタンスを作成します(`cv2.CascadeClassifier`)。引数の「`haarcascade_frontalface_default.xml`」は、OpenCVプロジェクトが予め用意した「顔の特徴を纏めたデータセット」です。このデータセットを引数として渡すのみで、顔検出が可能なカスケード分類器を作成することができます。  
@@ -595,18 +525,17 @@ faces = cascade.detectMultiScale(gray_image,
 ```
 # Extract face information.
 x, y, width, height = face
-predict_image = image[y:y + height, x:x + width]
-if predict_image.shape[0] < 128:
+face_image = captured_image[y:y + height, x:x + width]
+if face_image.shape[0] < img_width:
     continue
-predict_image = cv2.resize(predict_image, (128, 128))
-predict_image2 = cv2.resize(image, (128, 128))
+resized_face_image = cv2.resize(face_image, (img_width, img_height))
 
 # Save image.
 file_name = os.path.join(dataset_path, 'tmp_face.jpg')
-cv2.imwrite(file_name, predict_image2)
+cv2.imwrite(file_name, resized_face_image)
 ```
 
-カスケード分類器で検出した**顔画像部分の座標**を使用し、Webカメラから取り込んだ画像(`image`)から**顔画像部分のみを切り出し**ます(`image[y:y + height, x:x + width]`)。`x`、`y`、`width`、`height`は、カスケード分類器で検出した顔部分の座標。そして、切り出した顔画像を`cv2.resize`にて、128x128pixelの画像にリサイズします。  
+カスケード分類器で検出した**顔画像部分の座標**を使用し、Webカメラから取り込んだ画像(`captured_image`)から**顔画像部分のみを切り出し**ます(`captured_image[y:y + height, x:x + width]`)。`x`、`y`、`width`、`height`は、カスケード分類器で検出した顔部分の座標。そして、切り出した顔画像を`cv2.resize`にて、128x128pixelの画像にリサイズします。  
 
 なお、顔画像をリサイズするのは、**CNNに入力する画像は一定のサイズにする必要がある**ためであり、リサイズするサイズは任意です。  
 本ブログでは、CNNアーキテクチャに合わせて`128`に設定しています。  
@@ -615,50 +544,72 @@ cv2.imwrite(file_name, predict_image2)
 
 ##### 入力画像の正規化
 ```
-# Predict face.
 # Transform image to 4 dimension tensor.
-img = image.load_img(file_name, target_size=(128, 128))
+img = image.img_to_array(image.load_img(file_name, target_size=(img_width, img_height)))
 x = image.img_to_array(img)
 x = np.expand_dims(x, axis=0)
 x = x / 255.0
 ```
 
-顔画像をベクトル化(`x = image.img_to_array(img)`)した上で、これをを正規化します(`x`)。  
+顔画像をベクトル化した上で、これをを正規化します(`x`)。  
 
 ##### 顔画像の照合
 ```
 # Prediction.
-pred = model.predict(x)[0]
-top = 1
-top_indices = pred.argsort()[-top:][::-1]
-results = [(classes[i], pred[i]) for i in top_indices]
+preds = model.predict(x)[0]
+predict_idx = np.argmax(preds)
 
+# Final judgement.
 judge = 'Reject'
-prob = results[0][1] * 100
+prob = preds[predict_idx] * 100
 if prob > THRESHOLD:
     judge = 'Unlock'
 ```
 
-正規化した顔画像をCNNモデルに入力し(`model.predict(x)[0]`)、照合結果である出力(`pred`)を取得します。`pred`には全てのクラスと予測精度が格納されていますので、**最も予測精度が高いクラス(認証対象人物の名前)と予測精度のセット**を取得します(`results`)。  
+正規化した顔画像をCNNモデルに入力し(`model.predict(x)[0]`)、照合結果である出力(`preds`)を取得します。  
+`preds`には全てのクラスと予測精度が格納されていますので、**最も予測精度が高いクラス(認証対象人物の名前)と予測精度のセット**を取得します。  
 
-最後に、予測精度が閾値(今回は`THRESHOLD = 80.0`)を超えていた場合に、`Unlock`(認証成功)のラベルを返します(認証が成功した後の処理は任意)。  
+最後に、予測精度が閾値(今回は`THRESHOLD = 95.0`)を超えていた場合に、`Unlock`(認証成功)のラベルを返します(認証が成功した後の処理は任意)。  
 
 #### 7.4.2.2. 実行結果
-このサンプルコードを実行した結果を以下に示します。  
+それでは、早速作成した顔認証システムを起動してみます。  
 
-この結果から、「normal」や「nmap」「teardrop」「guess_passwd」は概ね正しく分類できていることが分かります。但し、「nmap」や「teardrop」「guess_passwd」の一部分類確率を見ると、「69%、50%、38%」等のように低い数値になっています。これは、今回筆者が主観で選択した特徴量よりも、**もっと適切な特徴量が存在する可能性**を示唆しています。また、「buffer_overflow」は殆ど正しく分類できておらず、「normal」や「guess_passwd」として誤検知していることが分かります。これは、「buffer_overflow」の**特徴量を見直す必要がある**ことを強く示唆しています。
+以下のように、PCのカメラから周りの画像を取り込み、人物の顔を正確に認識していることが見て取れます。  
+以下の場合、識別結果（Unlock）と人物名（Isao Takaesu）、そして認識精度（96.8%）を返しており、Unlockは認証成功を表しています。
+
+ <div align="center">
+ <figure>
+ <img src='./img/7_auth_OK.png' alt='認証成功'><br>
+ <figurecaption>顔認証に成功した様子</figurecaption><br>
+ <br>
+ </figure>
+ </div>
+
+一方、学習していない人物（Brian Austin Green氏）の場合はReject（認証失敗）を返します。  
+また、認識精度も低くなっていることが分かります。
+
+ <div align="center">
+ <figure>
+ <img src='./img/7_auth_NG.png' alt='認証失敗'><br>
+ <figurecaption>顔認証に失敗した様子</figurecaption><br>
+ <br>
+ </figure>
+ </div>
+
+このように、CNNを使用することで（簡易的ではありますが）顔認証システムを実装することができました。  
 
 ## 7.5. おわりに
-このように、特徴選択の精度によって分類精度が大きく左右されることが分かって頂けたかと思います（笑）。
- 本ブログでは、KDD Cup 1999のデータセットを学習データとして使用しましたが、実際に収集したリアルなデータを学習に使用する場合は、侵入検知に**役立つ特徴量を見落とさないように、収集する情報を慎重に検討**する必要があります（ここがエンジニアの腕の見せ所だと思います）。
+本ブログでは、VGGFACE2と自撮りした筆者の顔画像を学習データとして使用して、簡易的な顔認証システムを実装しました。  
+もし、あなたの身の回りの人物を顔認証したい場合は、本ブログで示した顔画像収集用コードを使用して学習データを収集し、CNNで学習させることでこれを実現することができます。  
 
-本ブログを読んでロジスティック回帰にご興味を持たれた方は、ご自身で特徴選択を行ってコードを実行し、検知精度がどのように変化するのかを確認しながら理解を深める事を推奨致します。
+本ブログを読んでCNNにご興味を持たれた方は、ご自身で学習データを収集し、お手製の顔認証システムを作成しながらCNNの理解を深める事を推奨致します。  
 
 ## 7.6. 動作条件
- * Python 3.6.1
- * pandas 0.23.4
- * numpy 1.15.1
- * scikit-learn 0.19.2
+ * Python 3.6.8
+ * Keras 2.2.5
+ * opencv-python 4.1.2.30
+ * matplotlib 3.0.3
+ * numpy 1.16.1
 
 ### CHANGE LOG
-* 2020.01.xx : 編集中
+* 2020.01.14 : 初稿
