@@ -4,7 +4,7 @@
 
  <div align="center">
  <figure>
- <img src='./img/7_face_auth.png' alt='顔認証システム' width=600><br>
+ <img src='./img/7_face_auth.png' alt='顔認証システム' width=400><br>
  <figurecaption>本ブログで実装する顔認証システム</figurecaption><br>
  <br>
  </figure>
