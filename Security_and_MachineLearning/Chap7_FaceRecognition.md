@@ -22,7 +22,7 @@ Webカメラを使用することで、以下のようにカメラの前にい�
 
  <div align="center">
  <figure>
- <img src='./img/7_captured_from_webcamera.png' alt='captured_images' ><br>
+ <img src='./img/7_captured_from_webcamera.png' alt='captured_images' width=800><br>
  <figcaption>Webカメラで取り込まれた画像</figcaption><br>
  <br>
  </figure>
@@ -67,7 +67,7 @@ Neural Networkは複数の**層**(Layer)と**ノード**(Node)から構成され
 
  <div align="center">
  <figure>
- <img src='./img/7_nn_normal.png' alt='NeuralNetwork_normal'><br>
+ <img src='./img/7_nn_normal.png' alt='NeuralNetwork_normal' width=800><br>
  <figcaption>Neural Networkで画像分類を行っている様子</figcaption><br>
  <br>
  </figure>
@@ -94,7 +94,7 @@ Neural Networkでは、「入力層から受け取ったデータが複数の隠
 
  <div align="center">
  <figure>
- <img src='./img/7_activation_func.png' alt='Activation_function'><br>
+ <img src='./img/7_activation_func.png' alt='Activation_function' width=800><br>
  <figcaption>信号がノードを伝搬するイメージ</figcaption><br>
  <br>
  </figure>
