@@ -11,7 +11,7 @@
  4. [ログ分析による攻撃検知 \(K means Clustering\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap4_AttackDetection.md)  
  5. [脆弱性のトレンド分析 \(Topic model\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap5_VulnerabilityTrend.md)  
  6. 脆弱性検査文字列のレコメンド (Multi-Layer perceptron)  
- 7. 顔認証 (Convolutional Neural Network)  
+ 7. [顔認証 \(Convolutional Neural Network\)](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap7_FaceRecognition.md)  
 
 　Defensive partは「**機械学習をセキュリティのタスクに利用する例**」を通して機械学習の基本を学びます。  
 
@@ -44,4 +44,5 @@
 2019.01.09(Wed): [4.ログ分析による攻撃検知](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap4_AttackDetection.md)の初稿を公開。  
 2019.06.20(Thu): コンテンツの一部を変更（「全自動侵入エージェント」から「Neural Trojan」に変更）。  
 2019.06.24(Mon): コンテンツに「Webアプリへの攻撃検知」と「攻撃検知のBypass/対策」を追加。  
-2019.10.03(Thu): [5.脆弱性のトレンド分析](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap5_VulnerabilityTrend.md)の初稿を公開。  
+2019.10.03(Thu): [5.脆弱性のトレンド分析](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap5_VulnerabilityTrend.md)の初稿を公開。 
+2020.01.13(Sun): [7.顔認証](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Security_and_MachineLearning/Chap7_FaceRecognition.md)の初稿を公開。  
