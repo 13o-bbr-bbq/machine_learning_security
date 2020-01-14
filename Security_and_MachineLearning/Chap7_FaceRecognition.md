@@ -89,8 +89,28 @@ Neural Networkは**層**（Layer）と**ノード**（Node）から構成され�
  ところで、画像のベクトル化とは何でしょうか？画像は**pixel値の集合**であるため、画像の**pixel値を1pixelずつ抽出**して並べていくと、ベクトルとして 表現することができます（通常は各pixel値を正規化した上で並べる）。例えば、**128x128pixelのRGB画像**の場合は、**49,152**（=128x128x3）個の要素を持つベクトルとして表現できます。ベクトル化された入力画像（以下、信号）は入力層の各ノードに入力され、ネットワークで連結された**隠れ層の各ノードに伝搬**していきます。  
 
  * 隠れ層  
- 隠れ層はNeural Networkの表現力に伝搬された信号は**活性化**された上で、次の層に伝搬していきます。  
- 具体的な活性化の様子を、以下の図を使って見ていきましょう。  
+ 隠れ層はNeural Networkの表現力を高める役割を持ちます。  
+ ところで、この表現力とは何でしょうか？仮に隠れ層がないネットワーク（**単純パーセプトロン**と呼ぶ）を考えてみましょう。単純パーセプトロンは入力層と出力層のみで構成されるため、入力データを1本の直線（Desision Boundary）で分類します。下図のようにデータを1本の直線で綺麗に分類できることを、**線形分離可能**と言います。  
+
+ <div align="center">
+ <figure>
+ <img src='./img/7_linear_divide_possible.png' alt='linear devide possible' width=800><br>
+ <figcaption>線形分離可能</figcaption><br>
+ <br>
+ </figure>
+ </div>
+
+ では、下図のように4クラスの入力データの場合はどうでしょうか？  
+
+ <div align="center">
+ <figure>
+ <img src='./img/7_linear_divide_impossible.png' alt='linear devide impossible' width=800><br>
+ <figcaption>線形分離不可能</figcaption><br>
+ <br>
+ </figure>
+ </div>
+
+具体的な活性化の様子を、以下の図を使って見ていきましょう。  
 
  <div align="center">
  <figure>
