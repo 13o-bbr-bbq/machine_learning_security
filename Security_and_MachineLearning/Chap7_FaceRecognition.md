@@ -112,6 +112,15 @@ Neural Networkは**層**（Layer）と**ノード**（Node）から構成され�
  </div>
 
  このように、単純パーセプトロンは2クラスの分類しかできないため、表現力が低いと言えます。  
+ この問題を解決するためには、**複数回の線形分離**に相当する判定を行えば良いと考えられます。その役割を担うのが隠れ層であり、1つ以上の隠れ層を入力層と出力層の間に入れることで、以下のように**複数クラスの入力データを分類することが可能**となります（Neural Networkの**表現力が高い**）。  
+
+ <div align="center">
+ <figure>
+ <img src='./img/7_multiclass_divide_possible.png' alt='multiclass devide possible' width=300><br>
+ <figcaption>Neural Networkの表現力が高い様子</figcaption><br>
+ <br>
+ </figure>
+ </div>
 
 具体的な活性化の様子を、以下の図を使って見ていきましょう。  
 
