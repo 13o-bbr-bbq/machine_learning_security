@@ -94,7 +94,7 @@ Neural Networkは**層**（Layer）と**ノード**（Node）から構成され�
 
  <div align="center">
  <figure>
- <img src='./img/7_linear_divide_possible.png' alt='linear devide possible' width=800><br>
+ <img src='./img/7_linear_divide_possible.png' alt='linear devide possible' width=500><br>
  <figcaption>線形分離可能</figcaption><br>
  <br>
  </figure>
@@ -104,7 +104,7 @@ Neural Networkは**層**（Layer）と**ノード**（Node）から構成され�
 
  <div align="center">
  <figure>
- <img src='./img/7_linear_divide_impossible.png' alt='linear devide impossible' width=800><br>
+ <img src='./img/7_linear_divide_impossible.png' alt='linear devide impossible' width=500><br>
  <figcaption>線形分離不可能</figcaption><br>
  <br>
  </figure>
