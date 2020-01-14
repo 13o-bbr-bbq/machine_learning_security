@@ -68,7 +68,7 @@ model.add(Dense(64))
 model.add(Activation('relu'))
 model.add(Dropout(0.5))
 model.add(Dense(nb_classes))
-model.add(Activation('sigmoid'))
+model.add(Activation('softmax'))
 
 # Use Loss=categorical_crossentropy.
 model.compile(loss='categorical_crossentropy',
