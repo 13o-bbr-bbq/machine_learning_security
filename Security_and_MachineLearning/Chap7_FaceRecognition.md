@@ -167,7 +167,7 @@ Neural Networkに入力された信号は、単純に左から右に流すので
 
  <div align="center">
  <figure>
- <img src='./img/7_active_func_sigmoid.png' alt='sigmoid function' width=300><br>
+ <img src='./img/7_active_func_sigmoid.png' alt='sigmoid function' width=600><br>
  <figcaption>信号がノードを伝搬するイメージ</figcaption><br>
  <br>
  </figure>
