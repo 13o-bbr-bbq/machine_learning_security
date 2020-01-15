@@ -163,16 +163,31 @@ Neural Networkに入力された信号は、単純に左から右に流すので
 ここで、上述した「信号を活性化関数で整えて」とはどういうことでしょうか？  
 これを理解するために、代表的な活性化関数の入出力値を見てみましょう。  
 
-* シグモイド（Sigmoid function）  
+* シグモイド関数（Sigmoid function）  
+シグモイド関数はNeural Networkの隠れ層で使用される活性化関数です。  
+下図のように、入力値（Input）を**0.0～1.0の範囲**の値に変換して出力（Output）します。  
 
  <div align="center">
  <figure>
  <img src='./img/7_active_func_sigmoid.png' alt='sigmoid function' width=600><br>
- <figcaption>信号がノードを伝搬するイメージ</figcaption><br>
+ <figcaption>シグモイド関数</figcaption><br>
  <br>
  </figure>
  </div>
 
+ シグモイド関数は古くからNeural Networkの隠れ層で使われてきましたが、高い表現力を得るために隠れ層の数を増やしていくと、**勾配消失問題**と呼ばれるNeural Networkの学習が進まなくなる問題が発生します。このため、最近ではあまり使われなくなっています（勾配消失問題は次節で解説します）。  
+
+ * ランプ関数（ReLU）  
+ ReLUはNeural Networkの隠れ層で使用される活性化関数です。  
+ 下図のように、
+ 
+ <div align="center">
+ <figure>
+ <img src='./img/7_active_func_relu.png' alt='relu function' width=600><br>
+ <figcaption>ReLU</figcaption><br>
+ <br>
+ </figure>
+ </div>
 
 次に、上図の右側の吹き出しを見てみましょう。  
 この吹き出しは出力層の3番目ノードを表しており、隠れ層から伝搬される信号を「X」、ノード間の重みを「W」、ノードのバイアスを「b」で表しています。また、信号を活性化する活性化関数を「h」で表し、出力層から出力される信号を「O」で表しています。  
@@ -210,6 +225,10 @@ Neural Networkの学習でも、これまで本シリーズで登場した教師
 | 損失関数（Loss Function）|
 |:--------------------------|
 | Neural Networkの**精度の悪さ**を数値化する関数。誤差関数とも呼ばれる。この関数を使用することで、Neural Networkが学習データに対して**どれだけ適合していないか**を知ることができる。Neural Networkでは、この誤差関数の値を最小化するように重みの最適化を行う。2乗和誤差、クロスエントロピー誤差など、様々な誤差関数が存在する。|
+
+| 勾配消失問題（Vanishing gradient problem）|
+|:--------------------------|
+| 勾配が消失することで学習が進まなくなる問題。Neural Networkの学習では、Neural Networkの予測値と実際の答えの誤差を最小化するために**勾配**（gradient）とよばれる|
 
 このようにして、Neural Networkの重みが最適化されていきます。  
 
