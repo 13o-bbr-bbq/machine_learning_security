@@ -248,7 +248,7 @@ Neural Networkに入力された信号は、単純に左から右に流すので
 
  <div align="center">
  <figure>
- <img src='./img/7_error_func_cross.png' alt='Cross entropy error function' width=600><br>
+ <img src='./img/7_error_func_cross.png' alt='Cross entropy error function' width=400><br>
  <figcaption>クロスエントロピー誤差関数</figcaption><br>
  <br>
  </figure>
