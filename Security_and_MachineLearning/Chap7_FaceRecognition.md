@@ -269,41 +269,47 @@ Neural Networkに入力された信号は、単純に左から右に流すので
  </figure>
  </div>
 
-これは、上記の画像分類例で示したNeural Networkの学習データとなります。学習に使用するデータ（顔画像）とそれに対応するクラス（答え）がペアになっています。クラスは名前になっていますが、これは人間にとって分かり易くしているためであり、Neural Networkの学習ではこれを**ベクトル化**する必要があります。  
+これは、上記の画像分類例で示したNeural Networkの学習データとなります。学習に使用するデータ（顔画像）とそれに対応するクラス（答え）がペアになっています。この学習データではクラスは各人の名前になっていますが、これは人間が扱い易くしているためであり、Neural Networkの学習ではこれを**ベクトル化**する必要があります。  
 
-例えば、クラスの並びが`['Dilip-Vengsarkar', 'Frank-Elstner', 'Isao-Takaesu', 'Jasper-Cillessen', 'Lang-Ping']`になっているとします。この時、`Isao-Takaesu`のある学習データのクラスをベクトルで表すと`[0, 0, 1, 0, 0]`となります。また、`Dilip-Vengsarkar`のクラスをベクトルで表すと、`[1, 0, 0, 0, 0]`となります。このように、学習データに対応する部分は`1`、それ以外は`0`になるようなベクトルを**one-hot-vector**と呼び、one-hot-vector化することを**one-hot-encoding**と呼びます。  
+例えば、クラスの並びが`['Dilip-Vengsarkar', 'Frank-Elstner', 'Isao-Takaesu', 'Jasper-Cillessen', 'Lang-Ping']`の場合、`Isao-Takaesu`のとある学習データの正解クラスをベクトルで表すと`[0, 0, 1, 0, 0]`となります。また、`Dilip-Vengsarkar`の正解クラスをベクトルで表すと、`[1, 0, 0, 0, 0]`となります。このように、学習データに対応する部分は`1`、それ以外は`0`になるように正解クラスをベクトル化したものを**one-hot-vector**と呼び、one-hot-vector化することを**one-hot-encoding**と呼びます。  
 
  <div align="center">
  <figure>
  <img src='./img/7_one-hot-vector.png' alt='One-hot-vector' width=300><br>
- <figcaption>one-hot-vectorで表現したクラス</figcaption><br>
+ <figcaption>one-hot-vectorで表現した正解クラス</figcaption><br>
  <br>
  </figure>
  </div>
 
-
-```
- Output layer | Output  | t | Class
-------------------------------------------------
-    node[0]   | 0.63640 | 0 | Dilip-Vengsarkar
-    node[1]   | 0.03168 | 0 | Frank-Elstner 
-    node[2]   | 0.08612 | 1 | Isao-Takaesu
-    node[3]   | 0.23412 | 0 | Jasper-Cillessen
-    node[4]   | 0.01165 | 0 | Lang-Ping
-------------------------------------------------
-```
-
-例えば、学習データの画像（Isao Takaesu）を、Neural Networkは「Dilip-Vengsarkar」と認識したとします。しかし、この画像のクラスは「Isao-Takaesu」であるため、当然ながらこれは誤った判断になります。  
+なぜone-hot-vectorがNeural Networkの学習に役立つのでしょうか。それは、誤差を求める上で不可欠だからです。  
+例えば、Neural Networkの学習時において、以下の画像（`Isao-Takaesu`）を学習するとしましょう。  
 
  <div align="center">
  <figure>
- <img src='./img/7_train_Isao-Takaesu.png' alt='CNNの構造'><br>
+ <img src='./img/7_train_Isao-Takaesu.png' alt='Isao-Takaesuの学習データ'><br>
  <figurecaption>Isao-Takaesuの学習データ</figurecaption><br>
  <br>
  </figure>
  </div>
 
-そこで、Neural Networkの出力と実際のクラスの誤差を誤差関数で計算し、その誤差を補正するように**勾配法**と呼ばれる重みを最適化する手法を用いて**重みの値を更新**します。この処理を学習データを使用して繰り返していき、誤差が最小になるまで続けます。  
+上述した通り、この学習データの正解クラスをone-hot-vectorで表すと`[0, 0, 1, 0, 0]`となります。  
+この時、Neural Networkは以下の答え（`Output`）を出したとします（答えはソフトマックス関数で活性化、出力層（`Output layer`）の各ノード（`node[0] ~ node[4]`）はそれぞれ「`Dilip-Vengsarkar, Frank-Elstner, Isao-Takaesu, Jasper-Cillessen, Lang-Ping`」に紐づいているとする）。  
+
+```
+ Output layer | Output  | t | y_kc     | cross entropy error
+-------------------------------------------------------------
+    node[0]   | 0.43641 | 0 |  0       |  0
+    node[1]   | 0.03168 | 0 |  0       |  0
+    node[2]   | 0.18613 | 1 |  0.18613 |  1.6813099246718954
+    node[3]   | 0.23412 | 0 |  0       |  0
+    node[4]   | 0.11166 | 0 |  0       |  0
+-------------------------------------------------------------
+```
+
+正解ラベルを`t`とすると、`t`と`Output`を乗算することで学習データ「`Isao-Takaesu`」に対応するNeural Networkの答え「`y_kc`」が得られます。そして、この`y_kc`をクロスエントロピー誤差関数に入力すると、学習データ「`Isao-Takaesu`」に対するNeural Networkの誤差「`1.6813099246718954`」を求めることができます（他の学習データも同じ要領で誤差を求めていきます）。  
+
+このようにNeural Networkの答えに対する誤差を数値化することができました。  
+次に、この誤差を最小化するために、**勾配法**と呼ばれる手法を用いて**重みの値を最適化**していきます。  
 
 | 勾配消失問題（Vanishing gradient problem）|
 |:--------------------------|
