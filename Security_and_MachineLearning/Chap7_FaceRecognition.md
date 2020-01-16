@@ -180,7 +180,7 @@ Neural Networkに入力された信号は、単純に左から右に流すので
 
  シグモイド関数は古くからNeural Networkの隠れ層で使われてきましたが、高い表現力を得るために隠れ層を増やしていくと、**勾配消失問題**と呼ばれるNeural Networkの学習が進まなくなる問題が発生します。このため、最近ではあまり使われなくなってきています（勾配消失問題は次節で解説します）。  
 
- * ランプ関数（ReLU）  
+ * ReLU  
  ReLUはNeural Networkの**隠れ層で使用される活性化関数**です。  
  下図のように、入力値（Input）が**0を超えた**場合は入力値をそのまま出力（Output）し、入力値が**0以下**の場合は0を出力します。  
  
@@ -238,25 +238,60 @@ Neural Networkに入力された信号は、単純に左から右に流すので
 ここでは、Neural Networkの学習について簡単に説明します。  
 
 前節の「重み」でも述べたように、Neural Networkの学習では学習データを基に**重みの値を最適化**します。  
-重みを最適化する上で重要になるのが、**誤差関数**です。  
+この「重みを最適化」する上で重要になるのが、**誤差関数**です。  
 
 | 誤差関数（Loss Function）|
 |:--------------------------|
 | Neural Networkの**精度の悪さ**を数値化する関数。損失関数とも呼ばれる。学習時に誤差関数を使用することで、Neural Networkが学習データに対して**どれだけ適合していないか**を知ることができる。Neural Networkでは、この誤差関数の値を最小化するように重みの最適化を行う。2乗和誤差、クロスエントロピー誤差など、様々な誤差関数が存在する。|
 
-誤差関数はNeural Networkの出力（答え）を入力に取り、その答えの精度の悪さを数値に変換します。なお、誤差関数には様々な種類が存在しますが、本ブログでは複数クラスの分類を行う際に使用される**クロスエントロピー誤差関数**を見ていきます。  
+誤差関数はNeural Networkの出力（答え）を**精度の悪さを示す数値**に変換します。このことから、Neural Networkの学習は「誤差関数の出力値を最小化するように重みを更新する」と言い換えることができます。誤差関数には様々な種類が存在しますが、本ブログではマルチクラス分類で使用される**クロスエントロピー誤差関数**を見ていきます。  
 
-下図は、Neural Networkの出力（`y_kc`）に対するクロスエントロピー誤差関数の出力値（`Cross Entropy Error`）です。  
+クロスエントロピー誤差関数の出力値をグラフ化したものを以下に示します。  
 
  <div align="center">
  <figure>
  <img src='./img/7_error_func_cross.png' alt='Cross entropy error function' width=400><br>
- <figcaption>クロスエントロピー誤差関数</figcaption><br>
+ <figcaption>クロスエントロピー誤差関数の出力</figcaption><br>
  <br>
  </figure>
  </div>
 
-横軸「`y_kc`」は、**Neural Networkの答えが実際のクラスである確率**を表しており、縦軸はそれに対するクロスエントロピー誤差を表しています。`y_kc`が小さいほどクロスエントロピー誤差は大きくなり、`y_kc`が大きいほどクロスエントロピー誤差は小さくなります。このように、誤差関数を使用することで、Neural Networkの分類精度を数値化することができます。  
+横軸「`y_kc`」は、**学習データのラベルに対応するNeural Networkの出力値**、縦軸は`y_kc`に対するクロスエントロピー誤差を表しています。`y_kc`が小さいほどクロスエントロピー誤差は大きくなり、`y_kc`が大きいほどクロスエントロピー誤差は小さくなることが分かります。  
+
+ところで、「学習データのラベルに対応するNeural Networkの出力値（`y_kc`）」とは何でしょうか？  
+以下のような学習データで考えてみましょう。  
+
+ <div align="center">
+ <figure>
+ <img src='./img/7_train_data.png' alt='Training data' width=800><br>
+ <figcaption>学習データの一例</figcaption><br>
+ <br>
+ </figure>
+ </div>
+
+これは、上記の画像分類例で示したNeural Networkの学習データとなります。学習に使用するデータ（顔画像）とそれに対応するクラス（答え）がペアになっています。クラスは名前になっていますが、これは人間にとって分かり易くしているためであり、Neural Networkの学習ではこれを**ベクトル化**する必要があります。  
+
+例えば、クラスの並びが`['Dilip-Vengsarkar', 'Frank-Elstner', 'Isao-Takaesu', 'Jasper-Cillessen', 'Lang-Ping']`になっているとします。この時、`Isao-Takaesu`のある学習データのクラスをベクトルで表すと`[0, 0, 1, 0, 0]`となります。また、`Dilip-Vengsarkar`のクラスをベクトルで表すと、`[1, 0, 0, 0, 0]`となります。このように、学習データに対応する部分は`1`、それ以外は`0`になるようなベクトルを**one-hot-vector**と呼び、one-hot-vector化することを**one-hot-encoding**と呼びます。  
+
+ <div align="center">
+ <figure>
+ <img src='./img/7_one-hot-vector.png' alt='One-hot-vector' width=300><br>
+ <figcaption>one-hot-vectorで表現したクラス</figcaption><br>
+ <br>
+ </figure>
+ </div>
+
+
+```
+ Output layer | Output  | t | Class
+------------------------------------------------
+    node[0]   | 0.63640 | 0 | Dilip-Vengsarkar
+    node[1]   | 0.03168 | 0 | Frank-Elstner 
+    node[2]   | 0.08612 | 1 | Isao-Takaesu
+    node[3]   | 0.23412 | 0 | Jasper-Cillessen
+    node[4]   | 0.01165 | 0 | Lang-Ping
+------------------------------------------------
+```
 
 例えば、学習データの画像（Isao Takaesu）を、Neural Networkは「Dilip-Vengsarkar」と認識したとします。しかし、この画像のクラスは「Isao-Takaesu」であるため、当然ながらこれは誤った判断になります。  
 
