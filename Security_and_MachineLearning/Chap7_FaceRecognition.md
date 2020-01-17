@@ -387,6 +387,14 @@ Neural Networkに入力された信号は、単純に左から右に流すので
 #### 7.3.3.3. 誤差逆伝搬法（Back Propagation）
 誤差逆伝搬法を理解するためには、**連鎖律**（Chain rule）と呼ばれる原理を理解する必要があります。  
 
+ <div align="center">
+ <figure>
+ <img src='./img/7_backpropagation.png' alt='Back Propagation' width=800><br>
+ <figcaption>とあるNeural Network</figcaption><br>
+ <br>
+ </figure>
+ </div>
+
 | 連鎖律（Chain rule）|
 |:--------------------------|
 | 連鎖律とは、複数の関数が合成された関数（合成関数）の微分値は、合成関数を構成する**それぞれの関数の微分値の積**で求まるという関係式のこと。|
