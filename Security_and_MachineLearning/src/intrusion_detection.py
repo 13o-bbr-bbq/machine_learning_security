@@ -9,13 +9,13 @@ from sklearn import metrics
 # Load train data
 df_train = pd.read_csv('..\\dataset\\kddcup_train.csv')
 X_train = df_train.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]  # feature(X)
-X_train = (X_train - X_train.mean()) / X_train.mean()       # normalization
+X_train = (X_train - X_train.mean()) / X_train.std()        # normalization
 y_train = df_train.iloc[:, [41]]                            # label(y)
 
 # Load test data
 df_test = pd.read_csv('..\\dataset\\kddcup_test.csv')
 X_test = df_test.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]
-X_test = (X_test - X_test.mean()) / X_test.mean()
+X_test = (X_test - X_test.mean()) / X_test.std()
 y_test = df_test.iloc[:, [41]]
 
 # We create an instance of Logistic Regression Classifier.
