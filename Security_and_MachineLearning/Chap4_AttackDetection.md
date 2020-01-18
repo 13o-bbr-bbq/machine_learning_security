@@ -238,7 +238,7 @@ df_kddcup = pd.read_csv(dataset_path)
 df_kddcup = df_kddcup.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]
 
 # Normalization.
-df_kddcup = (df_kddcup - df_kddcup.mean()) / df_kddcup.mean()
+df_kddcup = (df_kddcup - df_kddcup.mean()) / df_kddcup.std()
 
 # Transpose of matrix.
 kddcup_array = np.array([df_kddcup['duration'].tolist(),
