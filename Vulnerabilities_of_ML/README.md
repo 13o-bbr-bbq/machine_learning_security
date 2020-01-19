@@ -171,6 +171,10 @@
 
  * [Neural Cleanse: Identifying and Mitigating Backdoor Attacks in Neural Networks](https://www.computer.org/csdl/proceedings-article/sp/2019/666000a530/19skfH8dcqc)  
  スライド：[Neural Cleanse](https://www.ieee-security.org/TC/SP2019/SP19-Slides-pdfs/Bolun_Wang_-MAC_-_08-Bolun_Wang-Neural_Clense_Identifying_and_Mitigating_Backdoor_Attacks_against_Neural_Networks_(1).pdf)  
+ 
+ * [Transferable Clean-Label Poisoning Attacks on Deep Neural Nets](https://arxiv.org/abs/1905.05897)  
+ 正しくラベル付けされたポイズニング画像が注入された学習データで学習を行うことで、画像認識モデルにバックドアを仕込む手法。  
+ 対象モデルの出力、ネットワーク構造、学習データにアクセスせずに攻撃を行うことが可能。  
 
 ### Unsafety framework and library
  機械学習フレームワークやライブラリに存在する脆弱性を利用する手法。  
