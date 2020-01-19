@@ -934,7 +934,9 @@ if prob > THRESHOLD:
  * opencv-python 4.1.2.30
  * matplotlib 3.0.3
  * numpy 1.16.1
+ * tensorflow-gpu 1.12.0
 
 ### CHANGE LOG
 * 2020.01.14 : 初稿  
 * 2020.01.15 : 更新（説明を追加）  
+* 2020.01.19 : 更新（説明を追加）  
