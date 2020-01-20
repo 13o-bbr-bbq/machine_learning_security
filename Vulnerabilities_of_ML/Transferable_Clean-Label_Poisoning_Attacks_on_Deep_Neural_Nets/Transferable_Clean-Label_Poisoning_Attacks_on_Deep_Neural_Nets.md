@@ -1,5 +1,5 @@
 # Transferable Clean-Label Poisoning Attacks on Deep Neural Nets
-[arxiv](https://arxiv.org/abs/1905.05897)  
+[original paper](https://arxiv.org/abs/1905.05897)  
 
 ## Abstract
 Clean-label poisoning attacks inject innocuous looking (and “correctly” labeled) poison images into training data, causing a model to misclassify a targeted image after being trained on this data. We consider transferable poisoning attacks that succeed without access to the victim network’s outputs, architecture, or (in some cases) training data. To achieve this, we propose a new “polytope attack” in which poison images are designed to surround the targeted image in feature space. We also demonstrate that using Dropout during poison creation helps to enhance transferability of this attack. We achieve transferable attack success rates of over 50% while poisoning only 1% of the training set.
@@ -32,12 +32,12 @@ Targeted poisoning attacks are more difficult to pull off than targeted evasion 
 
 Targeted poisoning attacks, however, face a more challenging problem. The attacker needs to get the victim to classify the target sample xt into the alternative target class `y˜t` after being trained on the modified data distribution. One simple approach is to select the poisons from class `y˜t`, and make the poisons as close to xt as possible in the feature space. A rational victim will usually overfit the training set, since it is observed in practice that generalization keeps improving even after training loss saturates (Zhang et al., 2016). As a result, when the poisons are close to the target in the feature space, a rational victim is likely to classify xt into `y˜t` since the space near the poisons are classified as `y˜t`. However, as shown in Figure 1, smaller distance to the target does not always lead to a successful attack. In fact, being close to the target might be too restrictive for successful attacks. Indeed, there exists conditions where the poisons can be farther away from the target, but the attack is more successful.
 
+![Figure1](./img/Fig1.png)
+
 ### 3.2. Feature Collision Attack
 Feature collision attacks, as originally proposed in (Shafahi et al., 2018), are a reliable way of producing targeted cleanlabel poisons on white-box models. The attacker selects a base example `xb` from the targeted class for crafting the poisons `xp`, and tries to make `xp` become the same as the target `xt` in the feature space by adding small adversarial perturbations to `xb`. Specifically, the attacker solves the following optimization problem (1) to craft the poisons:
 
-```
-xp = argmin||x - x_b||^2 + µ||φ(x) − φ(x_t)||^2, (1)
-```
+![Formula1](./img/Formula1.png)
 
 where `φ` is a pre-trained neural feature extractor. The first term enforces the poison to lie near the base in input space, and therefore maintains the same label as `xb` to a human labeler. The second term forces the feature representation of the poison to collide with the feature representation of the target. The hyperparameter `µ > 0` trades off the balance between these terms.
 
@@ -49,29 +49,25 @@ Fortunately, the results in (Tramer et al., 2017) have demonstrated that for eac
 
 With such observation, the most obvious approach to forge a black-box attack is to optimize a set of poisons `{x_p^(j)}_j=1^k` to produce feature collisions for an ensemble of models `{φ^(i)}_i=1^m`, where m is the number of models in the ensemble. Such a technique was also used in black-box evasion attacks (Liu et al., 2016). Because different extractors produce feature vectors with different dimensions and magnitudes, we use the following normalized feature distance to prevent any one network from dominating the objective due to such biases:
 
-```
-Formula (2)
-```
+![Figure2](./img/Fig2.png)
 
 ### 3.3. Convex Polytope Attack
 One problem with the feature collision attack is the emergence of obvious patterns of the target in the crafted perturbations. Unlike prevalent objectives for evasion attacks which maximize single-entry losses like cross entropy, feature collision (Shafahi et al., 2018) enforces each entry of the poison’s feature vector `φ(xp)` to be close to `φ(xt)`, which usually results in hundreds to thousands of constraints on each poison image xp. What is worse, in the black-box setting as Eq.2, the poisoning objective forces a collision over an ensemble of m networks, which further increases the number of constraints on the poison images. With such a large number of constraints, the optimizer often resorts to pushing the poison images in a direction where obvious patterns of the target will occur, therefore making `xp` look like the target class. As a result, human workers will notice the difference and take actions. Figure 9 shows a qualitative example in the process of crafting poisons from images of hook to attack a fish image with Eq.2. Elements of the target image that are evident in the poison images include the fish’s tail in the top image and almost a whole fish in the bottom image in column 3.
+
+![Figure2](./img/Fig2.png)
 
 Another problem with Feature Collision Attack is its lack of transferability. Feature Collision Attack tends to fail in the black-box setting because it is difficult to make the poisons close to `xt` for every model in the feature space. The feature space of different feature extractors should be very different, since neural networks are using one linear classifier to separate the deep features `φ(x)`, which has a unique solution if `φ(x)` is given, but different networks usually have different accuracies. Therefore, even if the poisons xp collide with `xt` in the feature space of the substitute models, they probably do not collide with `xt` in the unknown target model, due to the generalization error. As demonstrated by Figure 1, the attack is likely to fail even when `xp` has smaller distance to `xt` than its intra-class samples. It is also impractical to ensemble too many substitute models to reduce such error. We provide experimental results with the ensemble Feature Collision Attack defined by Eq.2 to show it can be ineffective.
 
 We therefore seek a looser constraint on the poisons, so that the patterns of the target are not obvious in the poison images and the requirements on generalization are reduced. Noticing (Shafahi et al., 2018) usually use multiple poisons to attack one target, we start by deriving the necessary and sufficient conditions on the set of poison features `{φ(x_p^(j))}_j=1^k` such that the target xt will be classified into the poison’s class.
 
  * Proposition 1. The following statements are equivalent:  
- ```
- Processing flow.
- ```
+ ![Proposition](./img/Proposition.png)
 
 The proof of Proposition 1 is given in the supplementary material. In words, a set of poisons from the same class  is guaranteed to alter the class label of a target into theirs  if that target’s feature vector lies in the convex polytope of  the poison feature vectors. We emphasize that this is a far  more relaxed condition than enforcing a feature collision— it enables the poisons to lie much farther away from the  target while altering the labels on a much larger region of  space. As long as xt lives inside this region in the unknown target model, and `{x_p^(j)}` are classified as expected, xt will be classified as the same label as `{x_p^(j)}`.
 
 With this observation, we optimize the set of poisons towards forming a convex polytope in the feature space such that the target’s feature vector will lie within or at least close to the convex polytope. Specifically, we solve the following optimization problem:
 
-```
-Formula (3)
-```
+![Figure3](./img/Fig3.png)
 
 where `x_b^(j)` is the clean image of the j-th poison, and `ε` is the maximum allowable perturbation such that the perturbations are not immediately perceptible.
 
@@ -82,15 +78,11 @@ The most important benefit brought by the convex polytope objective is the impro
 ### 3.4. An Efficient Algorithm for Convex Polytope Attack
 We optimize the non-convex and constrained problem (3) using an alternating method that side-steps the difficulties posed by the complexity of `{φ^(i)}` and the convex polytope constraints on `{c^(i)}`. Given `{x_p^(j)}_j=1^k`, we use forwardbackward splitting (Goldstein et al., 2014) to find the the optimal sets of coefficients `{c^(i)}`. This step takes much less computation than back-propagation through the neural network, since the dimension of `c^(i)` is usually small (in our case a typical value is 5). Then, given the optimal `{c^(i)}` with respect to `{x_p^(j)}`, we take one gradient step to optimize `{x_p^(j)}`, since back-propagation through the m networks is relatively expensive. Finally, we project the poison images to be within `ε` units of the clean base image so that the perturbation is not obvious, which is implemented as a clip operation. We repeat this process to find the optimal set of poisons and coefficients, as shown in Algorithm 1.
 
-```
-Furmula
-```
+![Formula](./img/Formula.png)
 
 In our experiments, we find that after the first iteration, initializing `{c^(i)}` to the value from the last iteration accelerates its convergence. We also find the loss in the target network to bear high variance without momentum optimizers. Therefore, we choose Adam (Kingma & Ba, 2014) as the optimizer for the perturbations as it converges more reliably than SGD in our case. Although the constraint on the perturbation is `ℓ∞` norm, in contrast to (Dong et al., 2018) and the common practices for crafting adversarial perturbations such as FGSM (Kurakin et al., 2016), we do not take the sign of the gradient, which further reduces the variance caused by the flipping of signs when the update step is already small.
 
-```
-Algorithm (1)
-```
+![Algorithm1](./img/Algorithm1.png)
 
 ### 3.5. Multi-Layer Convex Polytope Attack
 When the victim trains its feature extractor `φ` in addition to the classifier (last layer), enforcing Convex Polytope Attack only on the feature space of `φ^(i)` is not enough for a successful attack as we will show in experiments. In this setting, the change in feature space caused by a model trained on the poisoned data will also make the polytope more difficult to transfer.
@@ -99,9 +91,7 @@ Unlike linear classifiers, deep neural networks have much better generalization 
 
 One strategy to increase transferability to models trained end-to-end on the poisoned dataset is to jointly apply Convex Polytope Attack to multiple layers of the network. The deep network is broken into shallow networks `φ1, ..., φ_n` by depth, and the objective now becomes
 
-```
-Furmula (4)
-```
+![Formula4](./img/Formula4.png)
 
 where `φ_1:l^(i)` is the concatenation from `φ_l^(i)` to `φ_l^(i)`. Networks similar to ResNet are broken into blocks separated by pooling layers, and we let `φ_l^(i)` be the l-th layer of such blocks. The optimal linear classifier trained with the features up to `φ1:l (l < n)` will have worse generalization than the optimal linear classifier trained with features of `φ`, and therefore the feature of xt should have higher chance to deviate from the features of the same class after training, which is a necessary condition for a successful attack. Meanwhile, with such an objective, the perturbation is optimized towards fooling models with different depths, which further increases the variety of the substitute models and adds to the transferability.
 
@@ -109,6 +99,10 @@ where `φ_1:l^(i)` is the concatenation from `φ_l^(i)` to `φ_l^(i)`. Networks 
 Even when trained on the same dataset, different models have different accuracy and therefore different distributions of the samples in the feature space. Ideally, if we craft the poisons with arbitrarily many networks from the function class of the target network then we should be able effectively minimize Eq. 3 in the target network. It is, however, impractical to ensemble a large number of networks due to memory constraints.
 
 To avoid ensembling too many models, we randomize the networks with Dropout (Srivastava et al., 2014), turning it on when crafting the poisons. In each iteration, each substitute network `φ^(i)` is randomly sampled from its function class by shutting off each neuron with probability p, and multiplying all the “on” neurons with `1/(1 − p)` to keep the expectation unchanged. In this way, we can get an exponential (in depth) number of different networks for free in terms of memory. Such randomized networks increase transferability in our experiments. One qualititative example is given in Figure 3.
+
+![Figure3](./img/Fig3.png)
+
+![Figure4](./img/Fig4.png)
 
 ## 4. Experiments
 In the following, we will use CP and FC as abbreviations for Convex Polytope Attacks and Feature Collision attacks respectively. The code for the experiments is available at [our github](https://github.com/zhuchen03/ConvexPolytopePosioning).
@@ -132,13 +126,19 @@ For the victim, we choose its hyperparameters during finetuning such that it ove
 ### 4.1. Comparison with Feature Collision
 We first compare the transferability of poisons generated by FC and CP in the transfer learning training context. The results are shown in Figure 5. We use set S1 of substitute architectures. FC never achieves a success rate higher than 0.5, while CP achieves success rates higher or close to 0.5 in most cases. A qualitative example of the poisons crafted by the two approaches is shown in Figure 4.
 
+![Figure5](./img/Fig5.png)
+
 ### 4.2. Importance of Training Set
 Despite being much more successful than FC, questions remain about how reliable CP will be when we have no knowledge of the victim’s training set. In the last section, we trained the substitute models on the same training set as the victim. In Figure 6 we provide results for when the substitute models’ training sets are similar to (but mostly different from) that of the victim. Such a setting is sometimes more realistic than the setting where no knowledge of the victim’s training set is required, but query access to the victim model is needed (Papernot et al., 2017), since query access is not available for scenarios like surveillance. We use the less ideal S2, which has 12 substitute models from 4 different architectures. Results are evaluated in the transfer learning setting. Even with no data overlap, CP can still transfer to models with very different structure than the substitute models in the black-box setting. In the 0% overlap setting, the poisons transfer better to models with higher capacity like DPN92 and DenseNet121 than to lowcapacity ones like SENet18 and MobileNetV2, probably because high capacity models overfit more to their training set. Overall, we see that CP may remain powerful without access to the training data in the transfer learning setting, as long as the victim’s model has good generalization.
+
+![Figure6](./img/Fig6.png)
 
 ### 4.3. End-to-End Training
 A more challenging setting is when the victim adopts endto-end training. Unlike the transfer learning setting where models with better generalization turn out to be more vulnerable, here good generalization may help such models classify the target correctly despite the poisons. As shown in Figure 7, CP attacks on the last layer’s feature is not enough for transferability, leading to almost zero successful attacks. It is interesting to see that the success rate on ResNet50 is 0, which is an architecture in the substitute models, while the success rate on ResNet18 is the highest, which is not an architecture in the substitute models but should have worse generalization.
 
 Therefore, we enforce CP in multiple layers of the substitute models, which breaks the models into lower capacitie ones and leads to much better results. In the gray-box setting, all of the attacks achieved more than 0.6 success rates. However, it remains very difficult to transfer to GoogLeNet, which has a more different architecture than the substitute models. It is therefore more difficult to find a direction to make the convex polytope survive end-to-end training.
+
+![Figure7](./img/Fig7.png)
 
 ## 5. Conclusion
 In summary, we have demonstrated an approach to enhance the transferability of clean-labeled targeted poisoning attacks. The main contribution is a new objective which constructs a convex polytope around the target image in feature space, so that a linear classifier which overfits the poisoned dataset is guaranteed to classify the target into the poisons’ class. We provided two practical ways to further improve transferability. First, turn on Dropout while crafting poisons, so that the objective samples from a variety (i.e. ensemble) of networks with different structures. Second, enforce the convex polytope objective in multiple layers, which enables attack success even in end-to-end learning contexts. Additionally, we found that transferability can depend on the data distribution used to train the substitute model.
