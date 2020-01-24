@@ -295,3 +295,12 @@ Both the target fish image and the five hook images used for crafting poisons co
  <br>
  </figure>
  </div>
+
+ <div align="center">
+ <figure>
+ <img src='./img/Fig9.png' alt='Figure9'><br>
+ <figurecaption>Figure 9.  All the 5 poison images.
+ </figurecaption><br>
+ <br>
+ </figure>
+ </div>
