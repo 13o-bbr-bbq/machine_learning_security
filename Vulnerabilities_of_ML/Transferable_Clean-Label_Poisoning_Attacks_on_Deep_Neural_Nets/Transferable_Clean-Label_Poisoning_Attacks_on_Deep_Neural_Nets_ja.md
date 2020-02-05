@@ -2,7 +2,7 @@
 [original paper](https://arxiv.org/abs/1905.05897)  
 
 ## Abstract
-Clean-label poisoning attacks inject innocuous looking (and “correctly” labeled) poison images into training data, causing a model to misclassify a targeted image after being trained on this data. We consider transferable poisoning attacks that succeed without access to the victim network’s outputs, architecture, or (in some cases) training data. To achieve this, we propose a new “polytope attack” in which poison images are designed to surround the targeted image in feature space. We also demonstrate that using Dropout during poison creation helps to enhance transferability of this attack. We achieve transferable attack success rates of over 50% while poisoning only 1% of the training set.  
+Clean-label poisoning攻撃は、一見すると無害に見える**汚染画像**を学習データに注入し、この学習データで作成されたモデルに**特定の画像を攻撃者の意図したクラスに誤分類**させることができる。本論文では、標的となるモデルの出力、ネットワーク構造、そして学習データにアクセスせずに攻撃を行うことが可能な手法を検討する。 この目標を達成するために、我々は**Polytope攻撃**と呼ぶ新たなpoisoning攻撃を提案する。この攻撃では、標的とするベース画像を特徴空間で囲むように汚染画像が設計される。また、汚染画像の作成中にDropoutを使用することで、この攻撃の汎用性（様々なモデルに対して攻撃が成功する）が向上することを示す。本手法の成功率は**50％**以上であるが、この時の学習データの汚染率は僅か**1％**である。  
 
 ## 1. Introduction
 Deep neural networks require large datasets for training and hyper-parameter tuning. As a result, many practitioners turn to the web as a source for data, where one can automatically scrape large datasets with little human oversight. Unfortunately, recent results have demonstrated that these data acquisition processes can lead to security vulnerabilities. In particular, retrieving data from untrusted sources makes models vulnerable to data poisoning attacks wherein an attacker injects maliciously crafted examples into the training set in order to hijack the model and control its behavior.  
