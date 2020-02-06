@@ -34,9 +34,11 @@ Shafahiらののpoisoning攻撃のように、我々が想定する攻撃者は�
 ## 3. Transferable Targeted Poisoning Attacks
 ### 3.1. Difficulties of Targeted Poisoning Attacks
 標的型poisoning攻撃は標的型Evasion攻撃よりも実現困難である。  
-画像分類のタスクにおいて、標的型Evasion攻撃は攻撃対象モデルに汚染画像を特定のクラスに誤分類させるのみである。攻撃対象モデルは摂動に適応しないため、攻撃者は制約付き最適化問題を解くことで、決定境界への最短の摂動Pathを見つけるだけで済む。例えば、norm-boundedのホワイトボックス設定では、攻撃者は`δ`を直接最適化するために`δt =  argmin||δ||∞≤ε LCE`をProjected勾配降下法で解き、ターゲットラベル`yt`のクロスエントロピー損失`LCE(xt +δ, yt)`を最小化することができる。クエリアクセスを使用したnorm-boundedのブラックボックス設定では、攻撃者は代替モデルをトレーニングし、蒸留を介して攻撃対象モデルの挙動をシミュレートし、代替モデルに対して同じ最適化を実行して、汎用的な`δ`を見つけることができる。  
+画像分類のタスクにおいて、標的型Evasion攻撃は攻撃対象モデルに汚染画像を特定のクラスに誤分類させるのみである。攻撃対象モデルは摂動に適応しないため、攻撃者は制約付き最適化問題を解くことで、決定境界への最短の摂動Pathを見つけるだけで済む。例えば、norm-boundedのホワイトボックス設定では、攻撃者は`δ`を直接最適化するために`δt =  argmin||δ||∞≤ε LCE`をProjected勾配降下法で解き、ターゲットラベル`yt`のクロスエントロピー損失`LCE(xt+δ, yt)`を最小化することができる。クエリアクセスを使用したnorm-boundedのブラックボックス設定では、攻撃者は代替モデルをトレーニングし、蒸留を介して攻撃対象モデルの挙動をシミュレートし、代替モデルに対して同じ最適化を実行して、汎用的な`δ`を見つけることができる。  
 
 Targeted poisoning attacks, however, face a more challenging problem. The attacker needs to get the victim to classify the target sample xt into the alternative target class `y˜t` after being trained on the modified data distribution. One simple approach is to select the poisons from class `y˜t`, and make the poisons as close to xt as possible in the feature space. A rational victim will usually overfit the training set, since it is observed in practice that generalization keeps improving even after training loss saturates (Zhang et al., 2016). As a result, when the poisons are close to the target in the feature space, a rational victim is likely to classify xt into `y˜t` since the space near the poisons are classified as `y˜t`. However, as shown in Figure 1, smaller distance to the target does not always lead to a successful attack. In fact, being close to the target might be too restrictive for successful attacks. Indeed, there exists conditions where the poisons can be farther away from the target, but the attack is more successful.  
+
+一方、標的型poisoning攻撃にはより困難な問題がある。攻撃者は変更されたデータ分布で学習を行った後、ターゲットのベース画像`xt`を代替の標的クラス`y~t`に分類するような攻撃対象モデルを取得する必要がある。 1つの簡単なアプローチは、クラス`y~t`から汚染画像を選択し、特徴空間で汚染画像をできるだけ`xt`に近づけることである。学習時において損失が飽和した後でも汎化は改善し続けることが実際に観察されているため、攻撃対象モデルは通常はデータセットにオーバーフィットする。結果として、汚染画像が特徴空間内の標的画像に近い場合、汚染画像の近くの空間は`y~t`として分類されるため、攻撃対象モデルは`xt`を`y~t`に分類する可能性が高くなる。しかし、図1に示すように、汚染画像と標的画像の距離が短くても攻撃が成功するとは限らない。実際、標的に近づけることは、攻撃を成功させるには制限が多すぎる可能性がある。確かに、汚染画像を標的画像からより遠くに離すことができる条件は存在しますが、その場合攻撃はより成功する。  
 
  <div align="center">
  <figure>
