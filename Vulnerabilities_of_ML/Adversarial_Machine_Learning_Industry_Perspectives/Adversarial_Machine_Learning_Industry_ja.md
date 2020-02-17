@@ -26,9 +26,37 @@ We interviewed 28 organizations spanning Fortune 500, small-and-medium businesse
 
 22 out of the 28, were in security sensitive fields such as finance, consulting, cybersecurity, healthcare, government. The other 6 organizations represented social media analytics, publishing, agriculture, urban planning, food processing and translation services (See Table II for distribution).  
 
+**TABLE I. Organization size**  
+|rganization size|Cunt|
+|:---:|:---:|
+|Large Organizations (> 1,000 employees)|18|
+|Small-and-Medium size Businesses|10|  
+
+**TABLE II. Organization types**  
+|Organization|Count|
+|:---:|:---:|
+|Cybersecurity|10|
+|Healthcare|5|
+|Government|4|
+|Consulting|2|
+|Banking|2|
+|Social Media Analytics|1|
+|Publishing|1|
+|Agriculture|1|
+|Urban Planning|1|
+|Food Processing|1|
+|Translation|1|
+
 At each organization, we interviewed two personas: the developer in charge of building machine models in the organization, and the security personnel who was on point for securing the organizations infrastructure. Depending on the size of the organization, these two personas were either in different teams, the same team or even the same person. All organizations we spoke to were familiar with the Security Development Lifecycle as pertaining to traditional software engineering, though the degree to which they executed varied larger corporations that had a more formal, documented process than small and medium sized corporations. We also limited to organizations had relatively mature machine learning investments, with a few of them centering their business around AI.  
 
 These organizations executed on their ML strategy in a variety of ways: most of them used ML toolkits such a Keras, TensorFlow or PyTorch to build ML models; 10 organizations relied on Machine Learning as a Service such as Microsofts Cognitive API [14], Amazon AI Services [15], Google CloudAI [16]; Only 2 organizations built ML systems from scratch and not relying on either existing toolkits/ML platforms (See Table III).  
+
+**TABLE III. ML STRATEGY**  
+|How do you build ML Systems|Count|
+|:---:|:---:|
+|Using ML Frameworks|16|
+|Using ML as a Service|10|
+|Building ML Systems from scratch|2|
 
 ### Limitations of Study:
 Our sample size of 28 may not represent the entire population industries employing machine learning. For instance, the study does not include startups and has a pre-ponderance of security-sensitive organizations.  
@@ -40,7 +68,28 @@ We also do not account for geographic distribution most of the organizations ope
 
  2. Lack of adversarial ML know-how: Organizations seem lack the tactical knowledge to secure machine learning systems in production. As one of them put it, Traditional software attacks are a known unknown. Attacks on our ML models are unknown unknown. 22 out of the 25 (3 government organizations abstained from answering this question satisfactorily) organizations said that they dont have the right tools in place to secure their ML systems and are explicitly looking for guidance. Also, security engineers mostly do not have the ability to detect and respond to attacks on ML systems (See Table IV).  
 
+**TABLE IV. STATE OF ADVERSARIAL ML**  
+|Do you secure your ML systems today|Count|
+|:---:|:---:|
+|Yes|3|
+|No|22|
+
  3. We walked through the list of attacks as outlined in [21]  and asked them to pick the top attack that would affect  their businesses(See Table V). Note: respondents were  allowed to pick only one threat as opposed to stack rank  them all. The result were as follows:  
+
+**TABLE V. TOP ATTACK**  
+|Which attack would affect your org the most?|Distribution|
+|:---:|:---:|
+|Poisoning (e.g: [22])|10|
+|Model Stealing (e.g: [23])|6|
+|Model Inversion (e.g: [24])|4|
+|Backdoored ML (e.g: [25])|4|
+|Membership Inference (e.g: [26])|3|
+|Adversarial Examples (e.g: [27])|2|
+|Reprogramming ML System (e.g: [28])|0|
+|Adversarial Example in Physical Domain (e.g: [5])|0|
+|Malicious ML provider recovering training data (e.g: [29])|0|
+|Attacking the ML supply chain (e.g: [25])|0|
+|Exploit Software Dependencies (e.g: [30])|0|
 
   * Data poisoning has caught the attention of enterprises, perhaps because of the cultural significance of Tay. A medium sized financial tech put it thus,  We use ML systems to suggest tips and financial products for our users. The integrity of our ML system matters a lot. Worried about inappropriate recommendation like attack on Tay.
 
@@ -55,6 +104,13 @@ We also do not account for geographic distribution most of the organizations ope
  5. Finally, security analysts and developers do not know what to expect when systems get attacked. As one of the ML engineers put it, I dont expect any system to be immune from spoofing, but I need to know confidence levels and expected performance; as well as potential failure modes. If system is spoofed, what is the worst possible outcome?  
 
 In the following sections of the paper, summarized in Fig.1, we elaborate the gaps in current SDL process when building ML systems, as they are prepped for deployment and when the ML system is under attack. For each gap, we outline existing methods in traditional software development and sketch future research agenda.  
+
+ <div align="center">
+ <figure>
+ <img src='./img/Fig1.png' alt='Figure1'><br>
+ <br>
+ </figure>
+ </div>
 
 ## 3. ABOUT SDL
 In July 2001, Microsoft was affected by CodeRed, a computer worm that affected Internet Information Server (IIS) 4.0 and 5.0 [31]. This happened because of a single line error in code running by default in IIS4 and IIS5 systems, enabling a buffer overflow attack. In Jan 2002, Microsoft halted developing any new software for 2 months to fix all known security bugs in its system, pairing security experts with developers. Out of this close interaction, a systematic process of providing security guidance evolved, helping engineers look for software defects and implementation flaws. This set of practices has now come to be called the Secure Development Lifecycle (SDL). While SDL does not eliminate all software bugs, they do help to catch software vulnerabilities that could later be exploited, before it reaches the hands of a customer. For instance, after SDL was introduced in Microsoft, the number of reported vulnerabilities between Windows XP and Windows Vista, reduced by 45%, and number of vulnerabilities between SQL Server 2000 and SQL Server 2005, reduced by 91% [32]. Currently SDL, in some form, is a de-facto process in industrygrade software development adopted by 122 organizations [33], including Google [34], IBM [35], Facebook [36] and Netflix [37].  
