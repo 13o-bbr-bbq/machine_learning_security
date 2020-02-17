@@ -124,8 +124,6 @@ MLシステムへの攻撃は学術分野では盛り上がっているが[39]�
 ### B. Adversarial ML specific secure coding practices:
 従来のソフトウェア設定では、開発者はセキュアコーディングを実践することでプログラムの脆弱性を削減し、他のエンジニアによるソースコードレビューを可能にする。例えば、Python[40]、Java、C、およびC++[41]は、メモリ破壊などの従来のソフトウェアバグに対するセキュアなコーディング方法を明確に定義している。機械学習の設定では、ML固有のセキュリティガイダンスはまばらである。殆どのフレームワークはベストプラクティス（TensorFlow[42]、Pytorch[43]、Keras[44]）を提供する。その中でもTensorFlowは、従来のソフトウェア攻撃[45]とMLシステム特有の攻撃[46]をテストするツールへのガイダンスを提供する、唯一のフレームワークである。  
 
-We think future work in adversarial ML should focus on providing best practices to eliminate undefined program behaviors and exploitable vulnerabilities. We acknowledge it is difficult to provide concrete guidance because the field is protean [47]. Perhaps one direction, would be to enumerate guidance based on security consequence. Viewing the world through SDL allows for imperfect solutions to exist. For instance, in traditional software security, the outdated cryptgenradnom [48] function should not be used to generate random seeds for secret sharing protocols which are of higher security consequence), but can be used to generate process IDs in an operating system (which is of lower security consequence). Instead of thinking of secure coding practice as underwriting a strong security guarantee, a good start would be to provide examples of security-compliant and non-compliant code examples.  
-
 MLシステム特有の攻撃に対する今後の作業は、脆弱性を排除するためのベストプラクティスの提供に焦点を当てることであると考えている。ベストプラクティスを提供する業界は様々であるため、具体的なガイダンスを提供することは難しい[47]。おそらく1つの方向性は、セキュリティの結果に基づいてガイダンスを列挙することである。例えば、セキュリティに準拠したコード例と準拠していないコード例を提供することから始めるのが良いと考える。  
 
 ### C. Static Analysis and Dynamic Analysis of ML Systems
@@ -157,175 +155,105 @@ MLセキュリティにおいては、将来のトランスペアレンシーセ
 
 ## VI GAPS WHEN AN ML SYSTEM IS UNDER ATTACK
 ### A. Tracking and Scoring ML Vulnerabilities
-In traditional software security, when a researcher finds a vulnerability in a system, it is first assigned a unique identification number and registered in a database called Common Vulnerabilities and Exposure [65]. Accompanying these vulnerabilities are severity ratings calculated by using Common Vulnerability Scoring System [66]. For instance, in the recent zero day found against Internet Explorer that allowed for remote code execution [67] the vulnerability was referred to as ”CVE-2020-0674” and had assigned a base CVSS score 7.5 out of 10 [68], roughly indicating the seriousness of the bug. This enables the entire industry to refer to the problem using the same tongue.  
+従来のソフトウェアセキュリティでは、研究者がシステムの脆弱性を見つけると、一意の識別番号（CVE番号）が割り当てられ、Common Vulnerabilities and Exposure[65]と呼ばれるデータベースに登録される。これらの脆弱性には、Common Vulnerability Scoring System[66]（CVSS）を使用して計算された重大度の評価が付与される。例えば、リモートコード実行を許可するInternet Explorerのゼロデイ脆弱性[67]は「CVE-2020-0674」と呼ばれ、7.5のCVSSスコア[68]が割り当てられた。これにより、業界全体が同じ尺度で脆弱性の重大度を知ることができる。  
 
-In an ML context, we ask the adversarial ML research community to register vulnerabilities (especially affecting large groups of consumers) in a trackable system like CVE to ensure that industry manufacturers are alerted. It is not clear how ML vulnerabilities should be scored accounting for risk and impact. Finally, When a security analyst sees news about an attack, the bottom line is mostly Is my organization affected by the attack? and today, organizations lack the ability to scan an ML environment for known adversarial ML specific vulnerabilities.  
+MLセキュリティでは、MLセキュリティの研究コミュニティにCVEのような脆弱性を識別する番号を登録し、メーカーに警告するように依頼する。しかし、MLシステムの脆弱性の重大度がどのようにスコアリングされるべきかは明確ではない。セキュリティアナリストがMLシステムへの攻撃に関するニュースを見た場合、「私の組織は攻撃の影響を受けるだろうか？」と思うのみであり、今現在では組織はMLシステムの既知の脆弱性について、MLシステムの環境をスキャンする能力を欠いている。  
 
 ### B. Incident Response
-When a security engineer receives a notification that an ML system is under attack, and triages that the attack is relevant to the business, there are two important steps ascertaining blast radius and preparing for containment. For instance, in the case of ransomware, a traditional software attack, the blast radius would be to determine other machines connected to the infected machine, and containment would be to remove the machines from the network for forensic analysis.  
+セキュリティエンジニアが「MLシステムが攻撃を受けている」という連絡を受けてトリアージを行う場合、影響範囲を確認して封じ込めの準備を行う2つの重要な手順がある。例えばランサムウェアの場合、「影響範囲の確認は感染したマシンに接続されている他マシンを特定」することであり、「封じ込めはフォレンジック分析のためにネットワークからマシンを切り離す」ことである。  
 
-Both steps are difficult, because ML systems are highly integrated in a production setting where a failure of one can lead to unintended consequences [69]. One interesting line of research is to identify whether, if it is possible to container-ize ML systems so as to quarantine uncompromised ML systems from the impact of a compromised ML system, just as anti virus systems would quarantine an infected file.  
+MLシステムは、一つの障害が意図しない結果に繋がる可能性のある本番環境に統合されているため、上記で挙げた2つの手順を取ることは困難である[69]。興味深い研究の一つは、アンチウイルスソフトウェアが感染したファイルを隔離するように、侵害されたMLシステムの影響が侵害されていないMLシステムを波及するのを防ぐために、MLシステムをコンテナ化できるかどうかを特定することである。  
 
 ### C. Forensics
 In traditional software security, once the machine is contained, it is prepared for forensics to ascertain root cause. There are a lot of open questions in this area so as to meaningfully interrogate ML systems under attack to ascertain the root cause of failure:  
 
- 1. What are the artifacts that should be analyzed for every ML attack? Model file? The queries that were scored? Training data? Architecture? Telemetry? Hardware? All the software applications running on the attacked system? How can we leverage work data provenance and model provenance for forensics?  
+従来のソフトウェアセキュリティでは、システムが隔離されるとフォレンジックの準備が整う。攻撃の対象となるMLシステムを十分に調査し、障害の根本原因を確認するために、この分野には多くの未解決の課題がある：  
 
- 2. How should these artifacts be collected? For instance, for ML models developed on the end point or Internet of Things vs. organizations using ML as a Service, the artifacts available for analysis and acquisition methodology will be different. We posit that ML forensics methodology is dependent on ML frameworks (like PyTorch vs. TensorFlow), ML paradigms (e.g: reinforcement learning vs. supervised learning) and ML environment. (running on host vs cloud vs edge).  
+ 1. MLシステムに対する攻撃毎に分析する必要があるコンポーネントは何ですか？MLモデル？クエリに対するスコアは？学習データ？アーキテクチャ？テレメトリ？ハードウェア？攻撃されたシステムで実行されている全てのアプリケーション？フォレンジックのために、作業データとモデルのソースをどのように活用できるか？  
 
- 3. An orthogonal step that may be carried out is cyberthreat attribution, wherein the security analyst is able to determine the actor responsible for the attack. In traditional software, this is done by analyzing the forensic evidence such as infrastructure used to mount the attack, threat intelligence and ascertaining the attackers tools, tactics and procedures using established rubrics called analytic trade craft [70]. It is unclear how this would be amended in the adversarial ML age.  
+ 2. これらのコンポーネントをどのようにして収集すべきか？例えば、エンドポイントまたはIoTで開発されたMLモデルと、ML-as-a-Serviceを使用している組織では、コンポーネントの取得と分析方法は異なる。MLフォレンジックの手法は、MLフレームワーク（PyTorch、TensorFlowなど）、MLパラダイム（強化学習、教師あり学習）、およびMLの実行環境に依存していると仮定する。  
+
+ 3. 実行される可能性のある直交ステップはサイバー脅威の属性であり、セキュリティアナリストは攻撃の原因となる攻撃者を決定することができる。従来のソフトウェアでは、これは攻撃手法が確立された攻撃ツール、戦略、手順の確認などのフォレンジック的な証拠を分析することで行われる[70]。MLセキュリティの時代にこれがどのように修正されるかは不明である。  
 
 ### D. Remediation
-In traditional software security. Tuesday is often synonymous with Patch Tuesday. This is when companies like Microsoft, SAS, and Adobe release patches for vulnerabilities in their software, which are then installed based on an organization’s patching policy.  
+従来のソフトウェアセキュリティでは、火曜日は「パッチ火曜日」と同義である。これは、Microsoft、SAS、Adobeなどの企業が脆弱性パッチをリリースする日であり、組織のパッチポリシーに基づいてこれらがインストールされるからである。  
 
-In an ML context, when Tay was compromised because of poisoning attack, it was suspended by Microsoft. This may not be possible for all ML systems, especially those that have been deployed on the edge. It is not clear what the guidelines are for patching a system, that is vulnerable to model . On the same lines, it is not clear how one would validate if the patched ML model will perform as well as the previous one, but not be subject to the same vulnerabilities based on Papernot et. als [71] transferability result.
+MLセキュリティでは、データ汚染攻撃によってMicrosoftのチャットボット「Tay」が侵害されたとき、TayはMicrosoftによって緊急停止された。これは、全てのMLシステム、特にエッジデバイスに展開されたMLシステムでは不可能な場合がある。また、MLシステムに対する脆弱性パッチを適用するガイドラインが定まっていない。脆弱性パッチを適用したMLシステムがパッチ適用前と同じように機能するが、転移可能性の結果（Papernotらの研究[71]）に基づく同じ脆弱性の影響を受けない場合、どのように検証するのか明確ではない。  
 
 ## VII CONCLUSION
-In a keynote in 2019, Nicholas Carlini [72] likened the adversarial ML field to crypto pre-Shannon based on the ease with which defenses are broken. We extend Carlinis metaphor beyond just attacks and defenses: through a study over 28 organizations, we conclude that most ML engineers and security incident responders are unequipped to secure industry-grade ML systems against adversarial attacks. We also enumerate how researchers can contribute to Security Development Lifecyle (SDL), the de facto process for building reliable software, in the era of adversarial ML. We conclude similar that if Machine learning is Software is 2.0 [73], it also needs to inherit the structured process of developing about security from traditional software 1.0 development process.  
+2019年の基調講演でニコラス・カーリーニ[72]は、MLセキュリティの分野を防御が容易に破られることに基づき「暗号化前のシャノン」に例えた。我々は、カーリーニの比喩を単なる攻撃と防御を超えて拡張する。28の組織の調査を通じて、殆どのMLエンジニアとIR担当者は、攻撃者による攻撃からMLシステムを保護する準備ができていないと結論付けた。また、MLセキュリティの時代に、研究者が信頼性の高いソフトウェアを構築するための事実上のプロセスである「セキュア開発ライフサイクル（SDL）」に貢献する方法を列挙する。同様に、機械学習ソフトウェアが2.0の場合[73]、従来のソフトウェア1.0開発プロセスから、セキュリティに関する開発の構造化プロセスを継承する必要もあると結論付ける。  
 
 ## REFERENCES
 [1] “Responsible AI Practices.” [Online]. Available: https://ai.google/responsibilities/responsible-ai-practices/?category=security  
-
 [2] “Securing the Future of AI and ML at Microsoft.” [Online]. Available: https://docs.microsoft.com/en-us/security/securing-artificial-intelligence-machine-learning  
-
 [3] “Adversarial Machine Learning,” Jul 2016. [Online]. Available: https://ibm.co/36fhajg  
-
 [4] S. A. Gartner Inc, “Anticipate Data Manipulation Security Risks to AI Pipelines.” [Online]. Available: https://www.gartner.com/doc/3899783  
-
 [5] A. Athalye, L. Engstrom, A. Ilyas, and K. Kwok, “Synthesizing robust adversarial examples,” arXiv preprint arXiv:1707.07397, 2017.
-
 [6] J. Li, S. Qu, X. Li, J. Szurley, J. Z. Kolter, and F. Metze, “Adversarial Music: Real World Audio Adversary Against Wake-word Detection System,” in Advances in Neural Information Processing Systems, 2019, pp. 11 908–11 918.  
-
 [7] P. L. Microsoft, “Learning from Tay’s introduction,” Mar 2016. [Online]. Available: https://blogs.microsoft.com/blog/2016/03/25/learning-tays-introduction/  
-
 [8] “Experimental Security Research of Tesla Autopilot,” Tech. Rep. [Online]. Available: https://bit.ly/37oGdla  
-
 [9] “ISO/IEC JTC 1/SC 42 Artificial Intelligence,” Jan 2019. [Online]. Available: https://www.iso.org/committee/6794475.html  
-
 [10] “AI Standards.” [Online]. Available: https://www.nist.gov/topics/artificial-intelligence/ai-standards,  
-
 [11] R. Von Solms, “Information security management: why standards are important,” Information Management & Computer Security, vol. 7, no. 1, pp. 50–58, 1999.  
-
 [12] “Ethics guidelines for trustworthy ai,” Nov 2019. [Online]. Available: https://ec.europa.eu/digital-single-market/en/news/ethics-guidelines-trustworthy-ai  
-
 [13] “2018 AI predictions 8 insights to shape business strategy,” Tech. Rep. [Online]. Available: https://www.pwc.com/us/en/advisory-services/assets/ai-predictions-2018-report.pdf  
-
 [14] [Online]. Available: https://azure.microsoft.com/en-us/services/cognitive-services/  
-
 [15] [Online]. Available: https://aws.amazon.com/machine-learning/ai-services/  
-
 [16] [Online]. Available: https://cloud.google.com/products/ai/  
-
 [17] D. Hendrycks and T. Dietterich, “Benchmarking neural network robustness to common corruptions and perturbations,” arXiv preprint arXiv:1903.12261, 2019.  
-
 [18] D. Amodei, C. Olah, J. Steinhardt, P. Christiano, J. Schulman, and D. Mane, “Concrete problems in ai safety,” ´ arXiv preprint arXiv:1606.06565, 2016.  
-
 [19] J. Leike, M. Martic, V. Krakovna, P. A. Ortega, T. Everitt, A. Lefrancq, L. Orseau, and S. Legg, “Ai safety gridworlds,” arXiv preprint arXiv:1711.09883, 2017.  
-
 [20] J. Gilmer, R. P. Adams, I. Goodfellow, D. Andersen, and G. E. Dahl, “Motivating the rules of the game for adversarial example research,” arXiv preprint arXiv:1807.06732, 2018.  
-
 [21] R. S. S. Kumar, D. O. Brien, K. Albert, S. Viljoen, and J. Snover, “Failure modes in machine learning systems,” arXiv preprint arXiv:1911.11034, 2019.  
-
 [22] M. Jagielski, A. Oprea, B. Biggio, C. Liu, C. Nita-Rotaru, and B. Li, “Manipulating machine learning: Poisoning attacks and countermeasures for regression learning,” in 2018 IEEE Symposium on Security and Privacy (SP). IEEE, 2018, pp. 19–35.  
-
 [23] F. Tramer, F. Zhang, A. Juels, M. K. Reiter, and T. Ristenpart, “Stealing machine learning models via prediction apis,” in 25th {USENIX} Security Symposium ({USENIX} Security 16), 2016, pp. 601–618.  
-
 [24] M. Fredrikson, S. Jha, and T. Ristenpart, “Model inversion attacks that exploit confidence information and basic countermeasures,” in Proceedings of the 22nd ACM SIGSAC Conference on Computer and Communications Security, 2015, pp. 1322–1333.  
-
 [25] T. Gu, B. Dolan-Gavitt, and S. Garg, “Badnets: Identifying vulnerabilities in the machine learning model supply chain,” arXiv preprint arXiv:1708.06733, 2017.  
-
 [26] R. Shokri, M. Stronati, C. Song, and V. Shmatikov, “Membership inference attacks against machine learning models,” in 2017 IEEE Symposium on Security and Privacy (SP). IEEE, 2017, pp. 3–18.  
-
 [27] I. J. Goodfellow, J. Shlens, and C. Szegedy, “Explaining and harnessing adversarial examples,” arXiv preprint arXiv:1412.6572, 2014.  
-
 [28] G. F. Elsayed, I. Goodfellow, and J. Sohl-Dickstein, “Adversarial reprogramming of neural networks,” arXiv preprint arXiv:1806.11146, 2018.  
-
 [29] M. Sharif, S. Bhagavatula, L. Bauer, and M. K. Reiter, “Adversarial generative nets: Neural network attacks on state-of-the-art face recognition,” arXiv preprint arXiv:1801.00349, pp. 1556–6013, 2017.  
-
 [30] Q. Xiao, K. Li, D. Zhang, and W. Xu, “Security risks in deep learning implementations,” in 2018 IEEE Security and Privacy Workshops (SPW). IEEE, 2018, pp. 123–128.  
-
 [31] C. C. Zou, W. Gong, and D. Towsley, “Code red worm propagation modeling and analysis,” in Proceedings of the 9th ACM conference on Computer and communications security. ACM, 2002, pp. 138–147.  
-
 [32] [Online]. Available: https://bit.ly/2G4NaMv  
-
 [33] [Online]. Available: https://www.bsimm.com/  
-
 [34] [Online]. Available: https://cloud.google.com/security/overview/whitepaper  
-
 [35] [Online]. Available: https://www.ibm.com/security/secure-engineering/  
-
 [36] [Online]. Available: https://about.fb.com/news/2019/01/designing-security-for-billions/  
-
 [37] [Online]. Available: https://medium.com/@NetflixTechBlog/scaling-appsec-at-netflix-6a13d7ab6043  
-
 [38] [Online]. Available: https://about.fb.com/news/2019/01/designing-security-for-billions/  
-
 [39] N. Carlini. [Online]. Available: https://nicholas.carlini.com/writing/2019/all-adversarial-example-papers.html  
-
 [40] [Online]. Available: http://www.pythonsecurity.org/  
-
 [41] [Online]. Available: https://wiki.sei.cmu.edu/confluence/display/seccode  
-
 [42] [Online]. Available: https://bit.ly/2RDl3cm  
-
 [43] [Online]. Available: https://pytorch.org/docs/stable/notes/multiprocessing.html  
-
 [44] [Online]. Available: https://keras.io/why-use-keras/  
-
 [45] [Online]. Available: https://github.com/tensorflow/tensorflow/blob/master/SECURITY.md  
-
 [46] N. Papernot, F. Faghri, N. Carlini, I. Goodfellow, R. Feinman, A. Kurakin, C. Xie, Y. Sharma, T. Brown, A. Roy, A. Matyasko, V. Behzadan, K. Hambardzumyan, Z. Zhang, Y.-L. Juang, Z. Li, R. Sheatsley, A. Garg, J. Uesato, W. Gierke, Y. Dong, D. Berthelot, P. Hendricks, J. Rauber, and R. Long, “Technical report on the cleverhans v2.1.0 adversarial examples library,” arXiv preprint arXiv:1610.00768, 2018.  
-
 [47] N. Carlini and D. Wagner, “Adversarial examples are not easily detected: Bypassing ten detection methods,” in Proceedings of the 10th ACM Workshop on Artificial Intelligence and Security. ACM, 2017, pp. 3–14.  
-
 [48] [Online]. Available: https://docs.microsoft.com/en-us/windows/win32/api/wincrypt/nf-wincrypt-cryptgenrandom  
-
 [49] [Online]. Available: https://github.com/python-security/pyt  
-
 [50] M. Melis, A. Demontis, M. Pintor, A. Sotgiu, and B. Biggio, “secml: A Python Library for Secure and Explainable Machine Learning,” arXiv preprint arXiv:1912.10013, 2019.  
-
 [51] M.-I. Nicolae, M. Sinn, M. N. Tran, B. Buesser, A. Rawat, M. Wistuba, V. Zantedeschi, N. Baracaldo, B. Chen, H. Ludwig, I. Molloy, and B. Edwards, “Adversarial Robustness Toolbox v1.1.0,” CoRR, vol. 1807.01069, 2018. [Online]. Available: https://arxiv.org/pdf/1807.01069  
-
 [52] G. Gharibi, R. Tripathi, and Y. Lee, “Code2graph automatic generation of static call graphs for python source code,” in Proceedings of the 33rd ACM/IEEE International Conference on Automated Software Engineering. ACM, 2018, pp. 880–883.  
-
 [53] J. Twycross, U. Aickelin, and A. Whitbrook, “Detecting anomalous process behaviour using second generation artificial immune systems,” arXiv preprint arXiv:1006.3654, 2010.  
-
 [54] W. M. Van der Aalst and A. K. A. de Medeiros, “Process mining and security: Detecting anomalous process executions and checking process conformance,” Electronic Notes in Theoretical Computer Science, vol. 121, pp. 3–21, 2005.  
-
 [55] N. Papernot, “A marauder’s map of security and privacy in machine learning,” arXiv preprint arXiv:1811.01134, 2018.  
-
 [56] F. Roth, “Sigma.” [Online]. Available: https://github.com/Neo23x0/sigma  
-
 [57] N. Papernot, P. McDaniel, A. Sinha, and M. Wellman, “Towards the science of security and privacy in machine learning,” arXiv preprint arXiv:1611.03814, 2016.  
-
 [58] “Nvd.” [Online]. Available: https://nvd.nist.gov/800-53/Rev4/control/CA-8  
-
 [59] B. Dolhansky, R. Howes, B. Pflaum, N. Baram, and C. C. Ferrer, “The deepfake detection challenge (dfdc) preview dataset,” arXiv preprint arXiv:1910.08854, 2019.  
-
 [60] [Online]. Available: https://docs.microsoft.com/en-us/security/gsp/contenttransparencycenters  
-
 [61] [Online]. Available: https://bit.ly/2v89frf  
-
 [62] [Online]. Available: https://www.huawei.com/en/about-huawei/trust-center/transparency/huawei-cyber-security-transparency-centre-brochure  
-
 [63] G. Katz, C. Barrett, D. L. Dill, K. Julian, and M. J. Kochenderfer, “Reluplex: An efficient Smt solver for verifying deep neural networks,” in International Conference on Computer Aided Verification. Springer, 2017, pp. 97–117.  
-
 [64] T.-W. Weng, H. Zhang, H. Chen, Z. Song, C.-J. Hsieh, D. Boning, I. S. Dhillon, and L. Daniel, “Towards fast computation of certified robustness for relu networks,” arXiv preprint arXiv:1804.09699, 2018.  
-
 [65] “Common Vulnerabilities and Exposures (CVE).” [Online]. Available: https://cve.mitre.org/  
-
 [66] “Common Vulnerability Scoring System (CVSS).” [Online]. Available: https://www.first.org/cvss/specification-document  
-
 [67] [Online]. Available: https://portal.msrc.microsoft.com/en-us/security-guidance/advisory/ADV200001  
-
 [68] “CVE-2020-0674.” [Online]. Available: https://kb.cert.org/vuls/id/338824/  
-
 [69] D. Sculley, G. Holt, D. Golovin, E. Davydov, T. Phillips, D. Ebner, V. Chaudhary, and M. Young, “Machine Learning: The High interest Credit Card of Technical Debt,” in SE4ML: Software Engineering for Machine Learning (NIPS 2014 Workshop), 2014.  
-
 [70] “A Guide to Cyber Attribution,” 2018. [Online]. Available: https://bit.ly/2G50UXB  
-
 [71] N. Papernot, P. McDaniel, and I. Goodfellow, “Transferability in machine learning: from phenomena to black-box attacks using adversarial samples,” arXiv preprint arXiv:1605.07277, 2016.  
-
 [72] [Online]. Available: https://youtu.be/-p2il-V-0fk?t=1574  
-
 [73] “Software 2.0,” 2017. [Online]. Available: https://medium.com/@karpathy/software-2-0-a64152b37c35  
