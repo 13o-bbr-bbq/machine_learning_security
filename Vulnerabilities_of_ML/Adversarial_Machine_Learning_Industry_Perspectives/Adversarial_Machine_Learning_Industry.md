@@ -4,7 +4,7 @@
 ## Abstract
 Based on interviews with 28 organizations, we found that industry practitioners are not equipped with tactical and strategic tools to protect, detect and respond to attacks on their Machine Learning (ML) systems. We leverage the insights from the interviews and we enumerate the gaps in perspective in securing machine learning systems when viewed in the context of traditional software security development. We write this paper from the perspective of two personas: developers/ML engineers and security incident responders who are tasked with securing ML systems as they are designed, developed and deployed ML systems. The goal of this paper is to engage researchers to revise and amend the Security Development Lifecycle for industrialgrade software in the adversarial ML era.  
 
-## 1. Introduction
+## I Introduction
 Adversarial Machine Learning is now having a moment in the software industry - For instance, Google [1], Microsoft [2] and IBM [3] have signaled, separate from their commitment to securing their traditional software systems, initiatives to secure their ML systems. In Feb 2019, Gartner, the leading industry market research firm, published its first report on adversarial machine learning [4] advising that Application leaders must anticipate and prepare to mitigate potential risks of data corruption, model theft, and adversarial samples. The motivation for this paper is to understand the extent to which organizations across different industries are protecting their ML systems from attacks, detecting adversarial manipulation and to responding to attacks on their ML systems.  
 
 There are many reasons why organizations may already be ahead of the curve in systematically securing their ML assets. Firstly, in the last three years, companies heavily investing in machine learning themselves - Google , Amazon , Microsoft , Tesla faced some degree of adversarial attacks [5]–[8]; a bellwether of the rise of adversarial machine learning. Secondly, standards organizations like ISO [9] and NIST [10] are forming certification rubrics to assess security of ML systems and whose endorsements have been historically sought after in the industry [11]. Also, governments are showing signs that industries will have to build ML systems securely, with EU releasing a complete checklist to assess trustworthiness of ML systems, potentially snowballing into regulations [12] Finally, machine learning is rapidly becoming core to organizations’ value proposition (with a projected Annual Growth Rate of 39% for machine learning investments in 2020 [13]) and it is only natural that organizations invest in protecting their crown jewels.  
@@ -19,9 +19,7 @@ This paper is a compendium of pain points and gaps in  securing machine learning
 
 This paper has two parts: The first part outlines the survey  methodology and findings. The second part comprises gaps in  securing machine learning in three phases: when ML systems  are designed and developed; when the said system is prepped  for deployment and it is under attack.  
 
-
-
-# 2. INDUSTRY SURVEY ABOUT ADVERSARIAL ML
+# II INDUSTRY SURVEY ABOUT ADVERSARIAL ML
 We interviewed 28 organizations spanning Fortune 500, small-and-medium businesses, non-profits, and government organizations to understand how they secure their machine learning systems from adversarial attacks (See Table I and Table II).   
 
 22 out of the 28, were in security sensitive fields such as finance, consulting, cybersecurity, healthcare, government. The other 6 organizations represented social media analytics, publishing, agriculture, urban planning, food processing and translation services (See Table II for distribution).  
@@ -112,12 +110,12 @@ In the following sections of the paper, summarized in Fig.1, we elaborate the ga
  </figure>
  </div>
 
-## 3. ABOUT SDL
+## III ABOUT SDL
 In July 2001, Microsoft was affected by CodeRed, a computer worm that affected Internet Information Server (IIS) 4.0 and 5.0 [31]. This happened because of a single line error in code running by default in IIS4 and IIS5 systems, enabling a buffer overflow attack. In Jan 2002, Microsoft halted developing any new software for 2 months to fix all known security bugs in its system, pairing security experts with developers. Out of this close interaction, a systematic process of providing security guidance evolved, helping engineers look for software defects and implementation flaws. This set of practices has now come to be called the Secure Development Lifecycle (SDL). While SDL does not eliminate all software bugs, they do help to catch software vulnerabilities that could later be exploited, before it reaches the hands of a customer. For instance, after SDL was introduced in Microsoft, the number of reported vulnerabilities between Windows XP and Windows Vista, reduced by 45%, and number of vulnerabilities between SQL Server 2000 and SQL Server 2005, reduced by 91% [32]. Currently SDL, in some form, is a de-facto process in industrygrade software development adopted by 122 organizations [33], including Google [34], IBM [35], Facebook [36] and Netflix [37].  
 
 The primary inquiry is amending and revising the SDL process used in securing traditional software, to secure ML systems against adversarial attacks.  
 
-## 4. GAPS DURING DEVELOPMENT OF ML SOLUTION
+## IV GAPS DURING DEVELOPMENT OF ML SOLUTION
 ### A. Curated repository of attacks
 In traditional software security, attacks are decomposed into shareable tactics and procedures and are collectively organized in the MITRE ATT&CK framework [38]. This provides a search-able attack repository comprising, attacks by researchers as well as nation state attackers. For every attack, there is a description of the technique, which advanced persistent threat is known to use it, detection ideas as well as reference to publications with further context.  
 
@@ -141,7 +139,7 @@ Auditing in ML systems was initially pointed by Papernot [55] with solution sket
 ### E. Detection and Monitoring of ML systems
 Currently, ML environments are illegible to security analysts as they have no operational insights. There has been insightful working pointing to the brittleness of current adversarial detection mechanisms [47] and how to make them better [20]. In addition, we propose that detection methods are written so that they are easily shared among security analysts. For instance, in traditional software security, detection logic is written in a common format, the most popular of which is Sigma [56]. Where MITRE ATT&CK provides a great repository of insight in techniques used by adversaries, Sigma can turn one analyst’s insights into defensive action for many, by providing a way to self-documented concrete logic for detecting an attacker’s techniques.  
 
-## 5. GAPS WHEN PREPARING FOR DEPLOYMENT OF ML
+## V GAPS WHEN PREPARING FOR DEPLOYMENT OF ML
 ### A. Automating Tools in Deployment Pipeline
 In a typical traditional software setting, after a developer as the developer completes small chunks of the assigned task, the following sequence of steps generally follow: first, the code is committed to source control and Continuous Integration triggers application build and unit tests; once these are passed, Continuous Deployment triggers an automated deployment into testing and then production wherein it reaches the customer. At each step of the build, security tools are integrated.  
 
@@ -155,7 +153,7 @@ In traditional security, large organizations such as Microsoft [60], Kaspersky [
 
 In adversarial ML context, future transparency centers may need to attest over 3 modalities: that the ML platform is implemented in a secure fashion; that the MLaaS is implemented meeting basic security objectives and finally, that the ML model embedded in an edge device (such as models on mobile phones, for instance) meets basic security objectives. An interesting direction for future research is to providing tools/test harnesses to advance security assurance of products building on top of formal verification such as [63], [64] to extend to large scale ML models used in industry.  
 
-## 6. GAPS WHEN AN ML SYSTEM IS UNDER ATTACK
+## VI GAPS WHEN AN ML SYSTEM IS UNDER ATTACK
 ### A. Tracking and Scoring ML Vulnerabilities
 In traditional software security, when a researcher finds a vulnerability in a system, it is first assigned a unique identification number and registered in a database called Common Vulnerabilities and Exposure [65]. Accompanying these vulnerabilities are severity ratings calculated by using Common Vulnerability Scoring System [66]. For instance, in the recent zero day found against Internet Explorer that allowed for remote code execution [67] the vulnerability was referred to as ”CVE-2020-0674” and had assigned a base CVSS score 7.5 out of 10 [68], roughly indicating the seriousness of the bug. This enables the entire industry to refer to the problem using the same tongue.  
 
@@ -180,7 +178,7 @@ In traditional software security. Tuesday is often synonymous with Patch Tuesday
 
 In an ML context, when Tay was compromised because of poisoning attack, it was suspended by Microsoft. This may not be possible for all ML systems, especially those that have been deployed on the edge. It is not clear what the guidelines are for patching a system, that is vulnerable to model . On the same lines, it is not clear how one would validate if the patched ML model will perform as well as the previous one, but not be subject to the same vulnerabilities based on Papernot et. als [71] transferability result.
 
-## 7. CONCLUSION
+## VII CONCLUSION
 In a keynote in 2019, Nicholas Carlini [72] likened the adversarial ML field to crypto pre-Shannon based on the ease with which defenses are broken. We extend Carlinis metaphor beyond just attacks and defenses: through a study over 28 organizations, we conclude that most ML engineers and security incident responders are unequipped to secure industry-grade ML systems against adversarial attacks. We also enumerate how researchers can contribute to Security Development Lifecyle (SDL), the de facto process for building reliable software, in the era of adversarial ML. We conclude similar that if Machine learning is Software is 2.0 [73], it also needs to inherit the structured process of developing about security from traditional software 1.0 development process.  
 
 ## REFERENCES
