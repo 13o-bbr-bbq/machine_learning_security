@@ -2,29 +2,29 @@
 [original paper](https://arxiv.org/abs/2002.05646)  
 
 ## Abstract
-Based on interviews with 28 organizations, we found that industry practitioners are not equipped with tactical and strategic tools to protect, detect and respond to attacks on their Machine Learning (ML) systems. We leverage the insights from the interviews and we enumerate the gaps in perspective in securing machine learning systems when viewed in the context of traditional software security development. We write this paper from the perspective of two personas: developers/ML engineers and security incident responders who are tasked with securing ML systems as they are designed, developed and deployed ML systems. The goal of this paper is to engage researchers to revise and amend the Security Development Lifecycle for industrialgrade software in the adversarial ML era.  
+28の組織へのインタビューにより、AIを導入している多くの組織は、機械学習（ML）システムに対する攻撃を防御・検知、および適切にインシデント・レスポンス（IR）するための戦略を備えていないことが明らかになった。我々はインタビューから得られた洞察を活用し、機械学習システムの保護という観点から、従来のソフトウェア・セキュア開発におけるギャップを列挙する。このホワイトペーパーは、MLシステムの設計・開発・リリース時にMLシステムのセキュリティを確保する必要のある「開発者/MLエンジニア」と、インシデントが発生した際の「IR担当者」という2つの観点から書かれている。このホワイトペーパーの目標は、MLシステムに対する攻撃が横行する時代に向け、ML研究者をソフトウェア・セキュア開発ライフサイクルの修正に関与させることである。  
 
-## 1. Introduction
+## I Introduction
 Adversarial Machine Learning is now having a moment in the software industry - For instance, Google [1], Microsoft [2] and IBM [3] have signaled, separate from their commitment to securing their traditional software systems, initiatives to secure their ML systems. In Feb 2019, Gartner, the leading industry market research firm, published its first report on adversarial machine learning [4] advising that Application leaders must anticipate and prepare to mitigate potential risks of data corruption, model theft, and adversarial samples. The motivation for this paper is to understand the extent to which organizations across different industries are protecting their ML systems from attacks, detecting adversarial manipulation and to responding to attacks on their ML systems.  
 
-There are many reasons why organizations may already be ahead of the curve in systematically securing their ML assets. Firstly, in the last three years, companies heavily investing in machine learning themselves - Google , Amazon , Microsoft , Tesla faced some degree of adversarial attacks [5]–[8]; a bellwether of the rise of adversarial machine learning. Secondly, standards organizations like ISO [9] and NIST [10] are forming certification rubrics to assess security of ML systems and whose endorsements have been historically sought after in the industry [11]. Also, governments are showing signs that industries will have to build ML systems securely, with EU releasing a complete checklist to assess trustworthiness of ML systems, potentially snowballing into regulations [12] Finally, machine learning is rapidly becoming core to organizations’ value proposition (with a projected Annual Growth Rate of 39% for machine learning investments in 2020 [13]) and it is only natural that organizations invest in protecting their crown jewels.  
+MLシステムに対する攻撃は、今やソフトウェア業界では当たり前に認識されている。例えば、Google[1]、Microsoft[2]、IBM[3]は、従来のソフトウェアシステムのセキュア化とは別に、MLシステムの保護への取り組みを行っている。2019年2月、市場調査会社であるGartnerは、MLシステムを開発するリーディングカンパニーが、データ汚染、モデル抽出（窃盗）、およびAdversarial Examplesの潜在的なリスクを予測し、これらに対応する必要があることを示した世界初のレポート[4]を公開した。このホワイトペーパーの目的は、様々な業界の組織が攻撃からMLシステムを保護し、不正行為をいち早く検出すること重要性を理解させることである。  
 
-We make two contributions in this paper:  
+組織がMLシステムを体系的なセキュリティで保護する理由は多く存在する。先ず、過去3年間に機械学習に多大な投資をしている企業「Google、Amazon、Microsoft、Tesla」は、規模の大きなMLシステムに対する攻撃に直面した[5]～[8]。次に、ISO[9]やNIST[10]のような標準化団体は、MLシステムのセキュリティを評価するための認証基準を作成しており、その基準は業界で求められている[11]。また、政府は業界がMLシステムを安全に構築するためのルール策定に乗り出しており、EUはMLシステムの信頼性を評価するためのチェックリストをリリースした。これにより、MLシステムの開発は規制に"がんじがらめ"になる可能性がある。なお、2020年の機械学習への投資の年間成長率は39％と予測されているため[13]、組織がMLシステムの保護に投資するのは当然のことである。  
 
- 1. Despite the compelling reasons to secure ML systems, over a survey spanning 28 different organizations, we found that most industry practitioners are yet to come to terms with adversarial machine learning. 25 out of the 28 organizations indicated that they dont have the right tools in place to secure their ML systems and are explicitly looking for guidance.  
+このホワイトペーパーでは、以下2つの貢献をしている:  
 
- 2. We enumerate the security engineering aspects of building ML systems using Security development Lifecycle (SDL) frame work, the de facto software building process in industry.  
+ 1. MLシステムを保護する必要性があるにも関わらず、28もの組織に跨る調査において、殆どの組織はMLシステムの保護に対応していないことが判明した。28の組織のうち25が、MLシステムを保護するための適切な戦略を持っていないことも判明した。  
 
-This paper is a compendium of pain points and gaps in  securing machine learning systems as encountered by typical  software organizations. We hope to appeal to the research  community to help solve the problem faced by two personas  - software developers/ML engineers and security incident responders - when securing machine learning systems. The  goal of this paper is to engage ML researchers to revise and  amend Security Development Lifecycle for industrial-grade  software in the adversarial ML era.  
+ 2.セキュア開発ライフサイクル（SDL）フレームワークを使用し、MLシステムを構築するセキュア開発の一例を列挙する。これは、業界における事実上のソフトウェア構築プロセスである。  
 
-This paper has two parts: The first part outlines the survey  methodology and findings. The second part comprises gaps in  securing machine learning in three phases: when ML systems  are designed and developed; when the said system is prepped  for deployment and it is under attack.  
+このホワイトペーパーは、一般的なソフトウェア開発会社が直面するMLシステムの保護における問題点とギャップの概要である。機械学習システムを保護する際に、ソフトウェア開発者/MLエンジニアとIR担当者という2つの役割が直面する問題を解決するために、研究者のコミュニティに訴えたいと考えている。このホワイトペーパーの目標は、MLの研究者が、MLシステムに対する攻撃が横行する時代に向けて、ML研究者をソフトウェア・セキュア開発ライフサイクルの修正に関与させることである。  
 
+このホワイトペーパーは2つのパートから構成される。最初のパートでは、我々の調査方法と調査結果の概要を説明する。2番目のパートは、MLシステムを設計・実装する際に、3つのフェーズでMLシステムを保護する際のギャップを説明する。  
 
+# II INDUSTRY SURVEY ABOUT ADVERSARIAL ML
+我々は、Fortune 500、中小企業、非営利団体、政府機関に跨る28の組織にインタビューし、攻撃からMLシステムを保護する方法を調査した（調査対象組織の概要は表Iおよび表IIを参照のこと）。  
 
-# 2. INDUSTRY SURVEY ABOUT ADVERSARIAL ML
-We interviewed 28 organizations spanning Fortune 500, small-and-medium businesses, non-profits, and government organizations to understand how they secure their machine learning systems from adversarial attacks (See Table I and Table II).   
-
-22 out of the 28, were in security sensitive fields such as finance, consulting, cybersecurity, healthcare, government. The other 6 organizations represented social media analytics, publishing, agriculture, urban planning, food processing and translation services (See Table II for distribution).  
+我々が調査した28組織の内、22の組織は金融、コンサルティング、サイバーセキュリティ、ヘルスケア、政府などの機微な情報を保持する分野に属していた。残りの6組織は、ソーシャルメディア分析、出版、農業、都市計画、食品加工、翻訳サービスとなっていた（調査組織の分布は表IIを参照のこと）。  
 
 **TABLE I. Organization size**  
 |rganization size|Cunt|
@@ -47,9 +47,9 @@ We interviewed 28 organizations spanning Fortune 500, small-and-medium businesse
 |Food Processing|1|
 |Translation|1|
 
-At each organization, we interviewed two personas: the developer in charge of building machine models in the organization, and the security personnel who was on point for securing the organizations infrastructure. Depending on the size of the organization, these two personas were either in different teams, the same team or even the same person. All organizations we spoke to were familiar with the Security Development Lifecycle as pertaining to traditional software engineering, though the degree to which they executed varied larger corporations that had a more formal, documented process than small and medium sized corporations. We also limited to organizations had relatively mature machine learning investments, with a few of them centering their business around AI.  
+各組織の調査では、「MLシステムを開発する開発者」と「セキュリティ担当者」にインタビューを行った。組織の規模に応じて、これらの2つの役割は、異なるチーム、同じチーム、または兼任であった。我々がインタビューした全ての組織は、従来のソフトウェア開発におけるセキュア開発ライフサイクルに精通していたが、その実践の程度は、中小企業よりも文書化されたセキュア開発プロセスを持つ大企業の方が高かった。また、機械学習への投資が比較的成熟し、AIを核にしたビジネスを展開する企業もあった。  
 
-These organizations executed on their ML strategy in a variety of ways: most of them used ML toolkits such a Keras, TensorFlow or PyTorch to build ML models; 10 organizations relied on Machine Learning as a Service such as Microsofts Cognitive API [14], Amazon AI Services [15], Google CloudAI [16]; Only 2 organizations built ML systems from scratch and not relying on either existing toolkits/ML platforms (See Table III).  
+我々が調査した組織は様々な方法でMLシステムを実装している。殆どは、Keras・TensorFlow・PyTorchなどのMLフレームワークを使用していた。10の組織は、Microsoft Cognitive API[14]、Amazon AIサービス[15]、Google CloudAI[16]などのサービスに依存していた。なお、MLシステムをフルスクラッチで開発している組織は2つだけであった（表IIIを参照のこと）。  
 
 **TABLE III. ML STRATEGY**  
 |How do you build ML Systems|Count|
@@ -59,14 +59,14 @@ These organizations executed on their ML strategy in a variety of ways: most of 
 |Building ML Systems from scratch|2|
 
 ### Limitations of Study:
-Our sample size of 28 may not represent the entire population industries employing machine learning. For instance, the study does not include startups and has a pre-ponderance of security-sensitive organizations.  
+我々が調査した28の組織は、機械学習を利用している組織全体を表しているとは限らない。例えば、今回の調査には新興企業は含まれておらず、調査にはセキュリティに注意を払う組織が圧倒的に多いという特徴がある。  
 
-We also do not account for geographic distribution most of the organizations operate and head quartered in the United States or Europe. We limited ourselves to failures that are caused by a malicious attacker in the system and did not investigate broader safety failures such as common corruption [17], reward hacking [18], distributional shifts [19] or naturally occurring adversarial examples [20].  
+また、殆どの組織が米国またはヨーロッパで事業を展開しており、本社を構えている地理的分布も考慮していない。また、調査は攻撃者によって引き起こされる障害に限定し、一般的な破損[17]、報酬ハッキング[18]、分布変化[19]、または、自然発生するAdversarial Examples[20]などは調査に含めていない。  
 
 ### A. Findings:
- 1. Though, all 28 organizations indicated that security of AI system is important to their business productivity, the emphasis is still on traditional security. As one security analyst put it, Our top threat vector is spearphishing and malware on the box. This [adversarial ML] looks futuristic. While there is great interest in adversarial machine learning, only 6 organizations (all of whom are large organizations or government) are ready to assign head-count to solve the problem.  
+ 1. 28の組織全てが、AIシステムのセキュリティがビジネスにとって重要であるとの認識を示したが、依然として従来のセキュリティに重点が置かれている。あるセキュリティアナリストが言うように、我々の最大の脅威ベクターは、スピアフィッシングとマルウェアである。MLシステムに対する攻撃は未だ現実のものではない。MLシステムへの攻撃には大きな関心が寄せられているが、この問題に対処する人員を割り当てる準備ができている組織は6つだけである（大規模組織または政府）。  
 
- 2. Lack of adversarial ML know-how: Organizations seem lack the tactical knowledge to secure machine learning systems in production. As one of them put it, Traditional software attacks are a known unknown. Attacks on our ML models are unknown unknown. 22 out of the 25 (3 government organizations abstained from answering this question satisfactorily) organizations said that they dont have the right tools in place to secure their ML systems and are explicitly looking for guidance. Also, security engineers mostly do not have the ability to detect and respond to attacks on ML systems (See Table IV).  
+ 2. 機械学習セキュリティのノウハウ欠如：組織はMLシステムを保護するための知識を欠いているように思われる。調査対象組織のある1人が言うように、従来のソフトウェア攻撃は既知であるが、MLシステムへの攻撃は未知のものである。25組織中22組織（政府機関の3組織がこの質問に対する満足な回答は無かった）は、MLシステムを保護するための適切なツールが用意されていないと述べており、明示的なガイダンスを探しているとのことであった。また、殆どのセキュリティエンジニアは、MLシステムに対する攻撃を検知して対応することができない（表IVを参照のこと）。  
 
 **TABLE IV. STATE OF ADVERSARIAL ML**  
 |Do you secure your ML systems today|Count|
@@ -74,7 +74,7 @@ We also do not account for geographic distribution most of the organizations ope
 |Yes|3|
 |No|22|
 
- 3. We walked through the list of attacks as outlined in [21]  and asked them to pick the top attack that would affect  their businesses(See Table V). Note: respondents were  allowed to pick only one threat as opposed to stack rank  them all. The result were as follows:  
+ 3. [21]に概説されている攻撃の一覧を調べ、ビジネスに影響を与える可能性のある攻撃を選択するよう依頼した（表Vを参照のこと）。注：回答者は全ての攻撃をランク付けするのではなく、1つの攻撃のみを選択した。結果は次のとおりである。  
 
 **TABLE V. TOP ATTACK**  
 |Which attack would affect your org the most?|Distribution|
@@ -91,19 +91,19 @@ We also do not account for geographic distribution most of the organizations ope
 |Attacking the ML supply chain (e.g: [25])|0|
 |Exploit Software Dependencies (e.g: [30])|0|
 
-  * Data poisoning has caught the attention of enterprises, perhaps because of the cultural significance of Tay. A medium sized financial tech put it thus,  We use ML systems to suggest tips and financial products for our users. The integrity of our ML system matters a lot. Worried about inappropriate recommendation like attack on Tay.
+ * データ汚染は多くの組織の注目を集めた。中規模のフィンテック企業はこのように述べている。「我々はMLシステムを使用して顧客に金融商品を提案している。 MLシステムの整合性は非常に重要である。Microsoftのチャットボット「Tay（偏った学習データを学習したことで、差別的な発言を行った）」のように、不適切なことを顧客に発言しないか心配である。」。  
 
-  * Organizations care most about attacks that can lead  to potential breach of privacy. As one of the banks  put it, Want to protect client info, employee info used in ML models but we dont know have a plan in place.  
+ * 組織は、プライバシー侵害に繋がる可能性のある攻撃も重視している。ある銀行の担当者は「顧客情報やMLモデルで使用される従業員情報を保護したいと考えているが、未だ計画は整っていない。」。  
 
-  * Model Stealing that can lead to loss of Intellectual  property is another concern. A large retail organization said, We run a proprietary algorithm to solve our problem and it would be worrisome if someone can reverse engineer it.  
+ * 知的財産の損失に繋がる可能性のあるモデル抽出（窃盗）も懸念されている。大規模な小売組織は独自のアルゴリズムでMLシステムを運用しているため、攻撃者にMLシステム内のモデルをリバースエンジニアリングされないか懸念している。  
 
-  * Adversarial Examples in the physical domain, resonated with the respondents, but did not rank high on the list. One reason may be that the organizations we spoke to did not have physical component like cars or drones.  
+ * 物理ドメインにおけるAdversarial Examplesに回答者は興味を示したが、リストの上位にはランクされなかった。理由の一つは、我々がインタビューした組織は、自動運転自動車やドローンのような物理的な要素を持っていなかったかもしれない。  
 
- 4. For security analysts, there is a mismatch between expectations and reality when it comes to adversarial ML. Many security analysts expect that algorithms available in platforms such as Keras, TensorFlow or PyTorch are inherently secure against adversarial manipulations and have already been battle tested against adversarial ML attacks. This is perhaps, because security analysts who have mostly been exposed to traditional software, assume that libraries put out by large organizations such as Facebook or Google would have been already been security stress tested. Similarly, organizations seem to push the security responsibility upstream to service providers as one of the respondents said, We use Machine Learning as a Service and expect them to provide these robust algorithms and platforms.  
+ 4. セキュリティアナリストにとってMLシステムに対する攻撃は関心事項であるが、現実問題とはギャップがあると感じている。多くのセキュリティアナリストは、Keras、TensorFlow、PyTorchなどのMLフレームワークで利用可能なアルゴリズムはセキュアに実装されており、セキュリティテストも実施済みであることを期待している。 これはおそらく、FacebookやGoogleなどの大規模な組織によって公開されたライブラリは、既にセキュリティテストが実施されていると思い込んでいるからである。同様に、Machine Learning as a Serviceを使用している組織の回答者が言ったように、組織はMLシステムのセキュリティ責任をサービスプロバイダーに持たせようとしているようである。  
 
- 5. Finally, security analysts and developers do not know what to expect when systems get attacked. As one of the ML engineers put it, I dont expect any system to be immune from spoofing, but I need to know confidence levels and expected performance; as well as potential failure modes. If system is spoofed, what is the worst possible outcome?  
+ 5. 最後に、セキュリティアナリストと開発者は、MLシステムが攻撃された場合の影響を理解していない。あるMLエンジニアの一人が言ったように、「私はどのMLシステムもスプーフィングの影響を受けないとは思っていないが、潜在的な障害モードと同様に、信頼レベルと期待されるパフォーマンスを知る必要がある。MLシステムがスプーフィングされた場合の最悪の影響は何でしょうか？」。  
 
-In the following sections of the paper, summarized in Fig.1, we elaborate the gaps in current SDL process when building ML systems, as they are prepped for deployment and when the ML system is under attack. For each gap, we outline existing methods in traditional software development and sketch future research agenda.  
+Figure.1 に示す要約は、MLシステムを構築する際の現在のSDLプロセスのギャップについて詳しく説明している。各ギャップについて、従来のソフトウェア開発における既存手法の概要を示し、将来の研究課題を描いている。  
 
  <div align="center">
  <figure>
@@ -112,12 +112,12 @@ In the following sections of the paper, summarized in Fig.1, we elaborate the ga
  </figure>
  </div>
 
-## 3. ABOUT SDL
-In July 2001, Microsoft was affected by CodeRed, a computer worm that affected Internet Information Server (IIS) 4.0 and 5.0 [31]. This happened because of a single line error in code running by default in IIS4 and IIS5 systems, enabling a buffer overflow attack. In Jan 2002, Microsoft halted developing any new software for 2 months to fix all known security bugs in its system, pairing security experts with developers. Out of this close interaction, a systematic process of providing security guidance evolved, helping engineers look for software defects and implementation flaws. This set of practices has now come to be called the Secure Development Lifecycle (SDL). While SDL does not eliminate all software bugs, they do help to catch software vulnerabilities that could later be exploited, before it reaches the hands of a customer. For instance, after SDL was introduced in Microsoft, the number of reported vulnerabilities between Windows XP and Windows Vista, reduced by 45%, and number of vulnerabilities between SQL Server 2000 and SQL Server 2005, reduced by 91% [32]. Currently SDL, in some form, is a de-facto process in industrygrade software development adopted by 122 organizations [33], including Google [34], IBM [35], Facebook [36] and Netflix [37].  
+## III ABOUT SDL
+2001年7月、Microsoft Internet Information Server（IIS）4.0および5.0[31]はコンピューターワーム「CodeRed」の攻撃を受けた。これは、IIS4およびIIS5システムでデフォルトで実行されるコードのバグが原因で発生し、バッファオーバーフロー攻撃が可能となった。2002年1月、Microsoft はシステムに存在する既知の脆弱性を全て修正するために、2か月間に渡り新しいソフトウェア開発を停止し、セキュリティ専門家と開発者で対応を行った。この緊密な相互作用により、セキュリティガイダンスを提供する体系的なプロセスが進化し、エンジニアがソフトウェアのバグや実装のバグを探し出すのに大いに役立った。この一連の経験は、セキュア開発ライフサイクル（SDL）と呼ばれるようになった。SDLは全てのソフトウェアのバグを排除できる訳ではないが、脆弱性を含んだソフトウェアが顧客の手に届く前に、それを発見するのに役立つ。例えば、MicrosoftにSDLが導入された後、Windows XP～Windows Vistaで報告された脆弱性数は45％減少し、SQL Server 2000～SQL Server 2005で報告された脆弱性数は91％減少した[32]。現在、SDLは何らかの形でGoogle[34]、IBM[35]、Facebook[36]、Netflix[37]を含む122の組織[33]で採用されており、業界のデファクトスタンダードなソフトウェア開発プロセスとなっている。  
 
-The primary inquiry is amending and revising the SDL process used in securing traditional software, to secure ML systems against adversarial attacks.  
+我々の主な調査は、従来のソフトウェアの保護に使用されるSDLプロセスの修正と改訂であり、MLシステムを攻撃から保護する。  
 
-## 4. GAPS DURING DEVELOPMENT OF ML SOLUTION
+## IV GAPS DURING DEVELOPMENT OF ML SOLUTION
 ### A. Curated repository of attacks
 In traditional software security, attacks are decomposed into shareable tactics and procedures and are collectively organized in the MITRE ATT&CK framework [38]. This provides a search-able attack repository comprising, attacks by researchers as well as nation state attackers. For every attack, there is a description of the technique, which advanced persistent threat is known to use it, detection ideas as well as reference to publications with further context.  
 
@@ -141,7 +141,7 @@ Auditing in ML systems was initially pointed by Papernot [55] with solution sket
 ### E. Detection and Monitoring of ML systems
 Currently, ML environments are illegible to security analysts as they have no operational insights. There has been insightful working pointing to the brittleness of current adversarial detection mechanisms [47] and how to make them better [20]. In addition, we propose that detection methods are written so that they are easily shared among security analysts. For instance, in traditional software security, detection logic is written in a common format, the most popular of which is Sigma [56]. Where MITRE ATT&CK provides a great repository of insight in techniques used by adversaries, Sigma can turn one analyst’s insights into defensive action for many, by providing a way to self-documented concrete logic for detecting an attacker’s techniques.  
 
-## 5. GAPS WHEN PREPARING FOR DEPLOYMENT OF ML
+## V GAPS WHEN PREPARING FOR DEPLOYMENT OF ML
 ### A. Automating Tools in Deployment Pipeline
 In a typical traditional software setting, after a developer as the developer completes small chunks of the assigned task, the following sequence of steps generally follow: first, the code is committed to source control and Continuous Integration triggers application build and unit tests; once these are passed, Continuous Deployment triggers an automated deployment into testing and then production wherein it reaches the customer. At each step of the build, security tools are integrated.  
 
@@ -155,7 +155,7 @@ In traditional security, large organizations such as Microsoft [60], Kaspersky [
 
 In adversarial ML context, future transparency centers may need to attest over 3 modalities: that the ML platform is implemented in a secure fashion; that the MLaaS is implemented meeting basic security objectives and finally, that the ML model embedded in an edge device (such as models on mobile phones, for instance) meets basic security objectives. An interesting direction for future research is to providing tools/test harnesses to advance security assurance of products building on top of formal verification such as [63], [64] to extend to large scale ML models used in industry.  
 
-## 6. GAPS WHEN AN ML SYSTEM IS UNDER ATTACK
+## VI GAPS WHEN AN ML SYSTEM IS UNDER ATTACK
 ### A. Tracking and Scoring ML Vulnerabilities
 In traditional software security, when a researcher finds a vulnerability in a system, it is first assigned a unique identification number and registered in a database called Common Vulnerabilities and Exposure [65]. Accompanying these vulnerabilities are severity ratings calculated by using Common Vulnerability Scoring System [66]. For instance, in the recent zero day found against Internet Explorer that allowed for remote code execution [67] the vulnerability was referred to as ”CVE-2020-0674” and had assigned a base CVSS score 7.5 out of 10 [68], roughly indicating the seriousness of the bug. This enables the entire industry to refer to the problem using the same tongue.  
 
@@ -180,7 +180,7 @@ In traditional software security. Tuesday is often synonymous with Patch Tuesday
 
 In an ML context, when Tay was compromised because of poisoning attack, it was suspended by Microsoft. This may not be possible for all ML systems, especially those that have been deployed on the edge. It is not clear what the guidelines are for patching a system, that is vulnerable to model . On the same lines, it is not clear how one would validate if the patched ML model will perform as well as the previous one, but not be subject to the same vulnerabilities based on Papernot et. als [71] transferability result.
 
-## 7. CONCLUSION
+## VII CONCLUSION
 In a keynote in 2019, Nicholas Carlini [72] likened the adversarial ML field to crypto pre-Shannon based on the ease with which defenses are broken. We extend Carlinis metaphor beyond just attacks and defenses: through a study over 28 organizations, we conclude that most ML engineers and security incident responders are unequipped to secure industry-grade ML systems against adversarial attacks. We also enumerate how researchers can contribute to Security Development Lifecyle (SDL), the de facto process for building reliable software, in the era of adversarial ML. We conclude similar that if Machine learning is Software is 2.0 [73], it also needs to inherit the structured process of developing about security from traditional software 1.0 development process.  
 
 ## REFERENCES
