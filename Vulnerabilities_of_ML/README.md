@@ -186,6 +186,12 @@
 
 ## AIの脆弱性診断ツール
 ### 未分類
+ * [CleverHans](https://github.com/tensorflow/cleverhans)  
+ 誤認識誘発攻撃に対する耐性を評価するツール。  
+
+ * [Foolbox](https://github.com/bethgelab/foolbox)  
+ 誤認識誘発攻撃に対する耐性を評価するツール。  
+
  * [AutoZOOM: Autoencoder-based Zeroth Order Optimization Method for Attacking Black-box Neural Networks](https://arxiv.org/abs/1805.11770)  
  画像のAdversarial exampleに対する耐性を評価。  
 
