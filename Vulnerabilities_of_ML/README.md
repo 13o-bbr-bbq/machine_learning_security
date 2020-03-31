@@ -1,71 +1,73 @@
-## Vulnerabilities of Machine Learning
-安全性評価手法のカテゴリ分類（仮）。  
+## AIセキュリティの情報まとめ
 
- * Adversarial example  
- * Decision boundary manipulation  
- * Stealing model and privacy data  
- * Trojan  
- * Unsafety framework and library  
- * Other  
+## AIの脆弱性
+### 2020年
+ * (Submitted on 28 Mar 2020) [DaST: Data-free Substitute Training for Adversarial Attacks](https://arxiv.org/abs/2003.12703)  
+ ブラックボックス設定の誤認識誘発攻撃。  
+ 既存のブラックボックス誤認識誘発攻撃は、攻撃対象モデルの学習データに近似したデータを用いて（Adversarial Examplesを作成するための）代替モデルを作成しているが、本手法は生成モデル（GAN）で生成したデータを用いるとのこと。本手法で作成したAdversarial ExamplesをMicrosoft Azure上の機械学習モデルに分類させたところ、攻撃成功率は98.35%であったとのこと。実データを使用しないブラックボックス誤認識誘発攻撃はあまり例がない。  
+ 関連研究：[Adversarial Imitation Attack](https://arxiv.org/abs/2003.12760)  
 
-## Vulnerability
-### Adversarial example
- MLモデルに入力するデータ（画像や音声等）に微小な細工を加えることで、モデルの判断を誤らせる手法。  
- 微小な細工につき、データが細工されているか否か判断することは困難。  
+ * (Submitted on 28 Mar 2020) [Policy Teaching via Environment Poisoning: Training-time Adversarial Attacks against Reinforcement Learning](https://arxiv.org/abs/2003.12909)  
+ 強化学習（以下、RL）に対する報酬汚染攻撃。  
 
- * [Simple Black-Box Adversarial Perturbations for Deep Networks](https://arxiv.org/abs/1612.06299)  
- 画像のAdversarial example。  
- Convolutional Neural Network（以下、CNN）への入力画像を微小に細工することでCNNの判断を誤らせる手法。  
- 画素数が小さい画像では1pixel、大きな画像でも数pixelの細工で誤分類させることが可能。  
- 一部検証済み: [Convolutional Neural Networkに対する攻撃手法 -誤分類の誘発-](https://www.mbsd.jp/blog/20170516.html)  
+ * (Submitted on 27 Mar 2020) [Adaptive Reward-Poisoning Attacks against Reinforcement Learning](https://arxiv.org/abs/2003.12613)  
+ 強化学習（以下、RL）に対する報酬汚染攻撃。  
+ 各学習のエポックにおいて、報酬`rt`に細工を加えた汚染報酬`rt+δt`を作成し、RLエージェントに悪意のあるPolicyを学習させる。  
 
- * [Robust Physical-World Attacks on Deep Learning Models](https://arxiv.org/abs/1707.08945)  
- 画像のAdversarial example。  
- 自動運転自動車を念頭に、実環境にAdversarial exampleを適用した研究。  
- 道路標識に細工を加えることで、画像認識システムの判断を誤らせる手法。  
- 参考記事: [標識にシールを貼って自動運転カーを混乱に陥れるハッキング技術「Robust Physical Perturbations(RP2)」](https://gigazine.net/news/20170807-robust-physical-perturbations/)  
-
- * [Synthesizing Robust Adversarial Examples](https://arxiv.org/abs/1707.07397)  
- TBA.  
-
- * [Black-box Adversarial Attacks with Limited Queries and Information](https://arxiv.org/abs/1804.08598)  
- TBA.  
- 検証コード: [labsix/limited-blackbox-attacks](https://github.com/labsix/limited-blackbox-attacks/blob/master/attacks.py)  
-
- * [GenAttack: Practical Black-box Attacks with Gradient-Free Optimization](https://arxiv.org/abs/1805.11090)  
- 画像のAdversarial example。  
- 遺伝的アルゴリズムを使用して効率良くAdversarial exampleを生成する。  
- 既存手法よりも少ないクエリ数で攻撃可能とのこと。  
-
- * [Targeted Adversarial Examples for Black Box Audio Systems](https://arxiv.org/abs/1805.07820)  
- 音声のAdversarial example。  
- 音声に微小なノイズを入れて音声認識システムの判断を誤らせる手法。  
- 遺伝的アルゴリズムを使用してAdversarial exampleを生成する。  
+### 2019年
+ * (Last revised 20 Aug 2019) [Targeted Adversarial Examples for Black Box Audio Systems](https://arxiv.org/abs/1805.07820)  
+ 音声の誤認識誘発攻撃。  
+ オリジナル音声にノイズを入れて音声アシスタントを騙す手法。遺伝的アルゴリズムし、効率よくAdversarial exampleを生成。  
  検証コード: [rtaori/Black-Box-Audio](https://github.com/rtaori/Black-Box-Audio)  
 
- * [Adversarial Attacks Against Automatic Speech Recognition Systems via Psychoacoustic Hiding](https://arxiv.org/abs/1808.05665)  
- 音声のAdversarial example。  
- 音声に人間の知覚範囲外のノイズを加えることで、音声認識システムの判断を誤らせる手法。  
+ * (Llast revised 1 Jul 2019) [GenAttack: Practical Black-box Attacks with Gradient-Free Optimization](https://arxiv.org/abs/1805.11090)  
+ 誤認識誘発攻撃。  
+ 遺伝的アルゴリズムを使用し、効率良くAdversarial exampleを生成。少ないクエリ数で攻撃可能。  
 
- * [Black-Box Attacks against RNN based Malware Detection Algorithms](https://arxiv.org/abs/1705.08131v1)  
- アンチマルウエア版のAdversarial example。  
- RNNベースのアンチマルウエアの判断を誤らせる手法。  
-
- * [Gradient Band-based Adversarial Training for Generalized Attack Immunity of A3C Path Finding](https://arxiv.org/abs/1807.06752)  
- 強化学習版のAdversarial example。  
- 最適経路選択を行う強化学習エージェントの判断を誤らせる手法。  
- エージェントに入力される地図データに細工を加えることで、エージェントの経路選択を誤らせる手法。  
-
- * [Data Poisoning Attacks in Contextual Bandits](https://arxiv.org/abs/1808.05760)  
- 強化学習版のAdversarial example。  
- エージェントへの報酬に細工を加えることで、攻撃者が意図した行動をエージェントに行わせる手法。  
-
- * [Adversarial camera stickers: A Physical Camera Attack on Deep Learning Classifier](https://arxiv.org/abs/1904.00759)  
- 画像のAdversarial Examples。  
+ * (Last revised 8 Jun 2019) [Adversarial camera stickers: A Physical Camera Attack on Deep Learning Classifier](https://arxiv.org/abs/1904.00759)  
+ 実環境における誤認識誘発攻撃。  
  カメラのレンズに特殊な模様を付けたステッカーを貼り付けることで、物体認識モデルの判断を誤らせる手法。  
- これまで、認識対象のオブジェクト自体に細工を施す事例は数多く存在するが、画像を取り込むカメラのレンズを細工する事例は珍しいかもしれない。  
  デモ動画：[Adversarial Camera Sticker fooling ResNet-50 model](https://www.youtube.com/watch?v=wUVmL33Fx54)  
 
+### 2018年
+ * (Last revised 30 Oct 2018) [Adversarial Attacks Against Automatic Speech Recognition Systems via Psychoacoustic Hiding](https://arxiv.org/abs/1808.05665)  
+ 音声の誤認識誘発攻撃。  
+ 音声に高周波数のノイズを加えることで、音声アシスタントを騙す手法。  
+
+ * (Last revised 24 Aug 2018) [Data Poisoning Attacks in Contextual Bandits](https://arxiv.org/abs/1808.05760)  
+ 強化学習（以下、RL）の報酬汚染攻撃。  
+ RLエージェントの報酬を細工することで、攻撃者が意図した行動をRLエージェントに学習させる手法。  
+
+ * (Submitted on 18 Jul 2018) [Gradient Band-based Adversarial Training for Generalized Attack Immunity of A3C Path Finding](https://arxiv.org/abs/1807.06752)  
+ 強化学習（以下、RL）の環境汚染攻撃。  
+ RLエージェントが参照する地図データを細工することで、エージェントの経路選択を誤らせる手法。  
+
+ * (Last revised 11 Jul 2018) [Black-box Adversarial Attacks with Limited Queries and Information](https://arxiv.org/abs/1804.08598)  
+ ブラックボックス設定の誤認識誘発攻撃。  
+ 少ないクエリアクセスでAdversarial Examplesを作成し、Google Cloud Vision APIを騙すことが可能。  
+ 検証コード: [labsix/limited-blackbox-attacks](https://github.com/labsix/limited-blackbox-attacks/blob/master/attacks.py)  
+
+ * (Last revised 7 Jun 2018) [Synthesizing Robust Adversarial Examples](https://arxiv.org/abs/1707.07397)  
+ 実環境における誤認識誘発攻撃。  
+ ノイズ・歪み・アフィン変換に頑健性のある2次元のAdversarial Examples画像を複雑な3次元物体に適用し、リアルタイムカメラを騙すAdversarial Examplesを作成。  
+
+ * (Last revised 10 Apr 2018) [Robust Physical-World Attacks on Deep Learning Models](https://arxiv.org/abs/1707.08945)  
+ 実環境における誤認識誘発攻撃。  
+ 自動運転自動車を念頭に、実環境にAdversarial exampleを適用した研究。道路標識に細工を加えることで、画像認識システムの判断を誤らせる手法。  
+ 参考情報: [標識にシールを貼って自動運転カーを混乱に陥れるハッキング技術「Robust Physical Perturbations(RP2)」](https://gigazine.net/news/20170807-robust-physical-perturbations/)  
+
+### 2017年
+ * (Submitted on 23 May 2017) [Black-Box Attacks against RNN based Malware Detection Algorithms](https://arxiv.org/abs/1705.08131v1)  
+ アンチマルウエアに対する誤認識誘発攻撃。  
+ RNNベースのアンチマルウエアを騙す手法。  
+
+### 2016年
+ * (Submitted on 19 Dec 2016) [Simple Black-Box Adversarial Perturbations for Deep Networks](https://arxiv.org/abs/1612.06299)  
+ 誤認識誘発攻撃。  
+ Convolutional Neural Network（以下、CNN）への入力画像を微小に細工することでCNNの判断を誤らせる。画素数が小さい画像では1pixel、大きな画像でも数pixelの細工で誤分類させることが可能。  
+ 検証ブログ: [Convolutional Neural Networkに対する攻撃手法 -誤分類の誘発-](https://www.mbsd.jp/blog/20170516.html)  
+
+### 未分類
  * [Rallying Adversarial Techniques against Deep Learning for Network Security
 ](https://arxiv.org/abs/1903.11688)  
 
@@ -89,10 +91,6 @@
 
  * [Man-in-the-Middle Attacks against Machine Learning Classifiers via Malicious Generative Models](https://arxiv.org/abs/1910.06838)  
 
-### Decision boundary manipulation  
- 訓練データを細工することで、MLモデルのDecision boundary（以下、決定境界）を操作する手法。  
- これにより、機械学習ベースのスパムフィルタや侵入検知等を回避することが可能となる。  
-
  * [Making & Breaking Machine Learning Anomaly Detectors in Real Life](https://www.slideshare.net/codeblue_jp/making-breaking-machine-learning-anomaly-detectors-in-real-life-by-clarence-chio-code-blue-2015)  
  訓練データに少数の細工データを紛れ込ませることで、決定境界を操作する手法。  
  CODE BLUE 2015でClarence Chio氏により発表された手法。  
@@ -108,11 +106,6 @@
 
  * [Data Poisoning Attacks on Stochastic Bandits](https://arxiv.org/abs/1905.06494)  
  TBA  
-
-### Stealing model and privacy data
- MLモデルの入出力情報から、モデルの内部ロジックや（機微情報を含む可能性のある）訓練データを復元する手法。  
- モデルが復元されることで、（ユーザにクエリ数で課金してる）クラウドサービスに打撃を与える。  
- また、訓練データに機微情報が含まれている場合、機微情報が漏洩する可能性もある。  
 
  * [Membership Inference Attacks against Machine Learning Models](https://arxiv.org/abs/1610.05820)  
  攻撃対象モデルの学習データを取得する手法。  
@@ -130,10 +123,6 @@
  * [Deep Leakage from Gradients](https://arxiv.org/abs/1906.08935)  
  学習時に使用される勾配を基に学習データを復元する手法。  
  マルチノードで分散学習するMLにおいては、MLモデル間で勾配を共有する事がある。そのようなケースを想定し、他MLから共有された勾配から学習データを復元する。  
-
-### Trojan
- 平時はノーマルなMLモデルとして動作し、特定の値を入力した際に攻撃者の意図した動作を行わせる手法。  
- 機械学習版のTrojanのようなもの。  
 
  * [Neural Trojans](https://arxiv.org/abs/1710.00942v1)  
  TBA.  
@@ -180,17 +169,11 @@
  正しくラベル付けされたポイズニング画像が注入された学習データで学習を行うことで、画像認識モデルにバックドアを仕込む手法。  
  対象モデルの出力、ネットワーク構造、学習データにアクセスせずに攻撃を行うことが可能。  
 
-### Unsafety framework and library
- 機械学習フレームワークやライブラリに存在する脆弱性を利用する手法。  
-
  * [Summoning Demons: The Pursuit of Exploitable Bugs in Machine Learning](https://arxiv.org/abs/1701.04739)  
  OpenCVやScikit-Learn等の脆弱性を利用してDoSやBoF等を引き起こす手法。  
 
  * [Security Risks in Deep Learning Implementations](https://arxiv.org/abs/1711.11008)  
  TensorFlowやCaffe等が利用しているライブラリの脆弱性を利用してDoSやBoF等を引き起こす手法。  
-
-### Other
- 上記以外の手法。  
 
  * [StuxNNet:Practical Live Memory Attacks on Machine Learning Systems](https://aivillage.org/material/cn18-norwitz/slides.pdf)  
  実行中のNeural Network（以下、NN）の判断を誤らせる手法。  
@@ -201,9 +184,8 @@
  組み込み機器にビルドインされたDNNの判断を誤らせる手法。  
  機器にレーザを照射し、DNNの隠れ層の計算結果に誤りを生じさせる。  
 
-## Assessment tools
- MLモデルの安全性を評価するためのツール。  
-
+## AIの脆弱性診断ツール
+### 未分類
  * [AutoZOOM: Autoencoder-based Zeroth Order Optimization Method for Attacking Black-box Neural Networks](https://arxiv.org/abs/1805.11770)  
  画像のAdversarial exampleに対する耐性を評価。  
 
@@ -229,7 +211,7 @@
  モデルからの情報漏えいの可能性をチェックする手法。  
  スライド: [Comprehensive Privacy Analysis of Deep Learning](https://www.ieee-security.org/TC/SP2019/SP19-Slides-pdfs/Milad_Nasr_-_08-Milad_Nasr-Comprehensive_Privacy_Analysis_of_Deep_Learning_(1).pdf)  
 
-## Other contents
+## 参考情報
  * [ADVERSARIAL MACHINE LEARNING TUTORIAL](https://aaai18adversarial.github.io/)  
  Adversarial攻撃のチュートリアル。防御手法も掲載されている。  
  情報提供：[@icoxfog417](https://twitter.com/icoxfog417) 氏  
