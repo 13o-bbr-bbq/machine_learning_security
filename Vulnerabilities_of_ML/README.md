@@ -24,12 +24,41 @@
  誤認識誘発攻撃。  
  遺伝的アルゴリズムを使用し、効率良くAdversarial exampleを生成。少ないクエリ数で攻撃可能。  
 
+ * (Last revised 28 Jun 2019) [Black-box Adversarial Attacks on Video Recognition Models](https://arxiv.org/abs/1904.05181)  
+ リアルタイム物体認識に対する誤認識誘発攻撃。  
+ ブラックボックス設定で攻撃が可能。  
+
  * (Last revised 8 Jun 2019) [Adversarial camera stickers: A Physical Camera Attack on Deep Learning Classifier](https://arxiv.org/abs/1904.00759)  
  実環境における誤認識誘発攻撃。  
  カメラのレンズに特殊な模様を付けたステッカーを貼り付けることで、物体認識モデルの判断を誤らせる手法。  
  デモ動画：[Adversarial Camera Sticker fooling ResNet-50 model](https://www.youtube.com/watch?v=wUVmL33Fx54)  
 
+ * (Submitted on 16 May 2019) [Data Poisoning Attacks on Stochastic Bandits](https://arxiv.org/abs/1905.06494)  
+ 強化学習（以下、RL）に対する報酬汚染攻撃。  
+
+ * (Submitted on 18 Apr 2019) [Fooling automated surveillance cameras: adversarial patches to attack person detection](https://arxiv.org/abs/1904.08653)  
+ リアルタイム物体認識に対する誤認識誘発攻撃。  
+ 特殊な柄のパッチを人間が身に着けることで、物体認識器から人間を秘匿する手法。  
+ 検証コード: [adversarial-yolo](https://gitlab.com/EAVISE/adversarial-yolo)  
+
+ * (Submitted on 8 Apr 2019) [Adversarial Audio: A New Information Hiding Method and Backdoor for DNN-based Speech Recognition Models](https://arxiv.org/abs/1904.03829)  
+ 音声の誤認識誘発攻撃。  
+ オリジナル音声に人間には聞こえない別音声を埋め込む。細工音声を訓練した音声認識システムは埋め込み音声を認識できるが、他の音声認識システムは認識できない。バックドア攻撃にも転用できる可能性がある。  
+
+ * (Last revised 4 Apr 2019) [Discrete Attacks and Submodular Optimization with Applications to Text Classification
+](https://arxiv.org/abs/1812.00151)  
+テキスト分類器に対する誤認識誘発攻撃。  
+
+ * (Submitted on 27 Mar 2019) [Rallying Adversarial Techniques against Deep Learning for Network Security
+](https://arxiv.org/abs/1903.11688)  
+侵入検知システムに対する誤認識誘発攻撃。  
+
 ### 2018年
+ * (Last revised 10 Nov 2018) [Poison Frogs! Targeted Clean-Label Poisoning Attacks on Neural Networks](https://arxiv.org/abs/1804.00792)  
+ データ汚染攻撃。  
+ 学習データに少量の汚染データを紛れ込ませることで、決定境界を意図した方向に操作する手法。Webやメールボックスから定期的にデータを収集して再学習するモデルを標的にしている。  
+ 検証コード: [ashafahi/inceptionv3-transferLearn-poison](https://github.com/ashafahi/inceptionv3-transferLearn-poison)  
+
  * (Last revised 30 Oct 2018) [Adversarial Attacks Against Automatic Speech Recognition Systems via Psychoacoustic Hiding](https://arxiv.org/abs/1808.05665)  
  音声の誤認識誘発攻撃。  
  音声に高周波数のノイズを加えることで、音声アシスタントを騙す手法。  
@@ -56,6 +85,10 @@
  自動運転自動車を念頭に、実環境にAdversarial exampleを適用した研究。道路標識に細工を加えることで、画像認識システムの判断を誤らせる手法。  
  参考情報: [標識にシールを貼って自動運転カーを混乱に陥れるハッキング技術「Robust Physical Perturbations(RP2)」](https://gigazine.net/news/20170807-robust-physical-perturbations/)  
 
+ * (Submitted on 1 Apr 2018) [Manipulating Machine Learning: Poisoning Attacks and Countermeasures for Regression Learning](https://arxiv.org/abs/1804.00308)  
+ 線形回帰モデルに対するデータ汚染攻撃。  
+ 学習データに少量の汚染データを加えることで、モデルの予測結果を意図した方向に操作する。  
+
 ### 2017年
  * (Submitted on 23 May 2017) [Black-Box Attacks against RNN based Malware Detection Algorithms](https://arxiv.org/abs/1705.08131v1)  
  アンチマルウエアに対する誤認識誘発攻撃。  
@@ -68,45 +101,6 @@
  検証ブログ: [Convolutional Neural Networkに対する攻撃手法 -誤分類の誘発-](https://www.mbsd.jp/blog/20170516.html)  
 
 ### 未分類
- * [Rallying Adversarial Techniques against Deep Learning for Network Security
-](https://arxiv.org/abs/1903.11688)  
-
- * [Discrete Attacks and Submodular Optimization with Applications to Text Classification
-](https://arxiv.org/abs/1812.00151)  
-
- * [Black-box Adversarial Attacks on Video Recognition Models
-](https://arxiv.org/abs/1904.05181)  
- 動画のAdversarial Examples。  
- 動画認識モデルに対するブラックボックスのAdversarial Examples Attack。画像のAdversarial Examplesは多いが、動画は初めてみたかもしれない。  
-
- * [Adversarial Audio: A New Information Hiding Method and Backdoor for DNN-based Speech Recognition Models
-](https://arxiv.org/abs/1904.03829)  
- 音声のAdversarial Examples。  
- 元音声に（人間には知覚不能な）別音声を埋め込む手法。専用に訓練した音声認識システム（ASR）は埋め込み音声を認識できるが、他ASRは認識できない。ASRバックドアにも転用できそう。  
-
- * [Fooling automated surveillance cameras: adversarial patches to attack person detection](https://arxiv.org/abs/1904.08653)  
- 動画のAdversarial Examples。  
- 人間にAdversarial Patchを貼り付ける事で、物体検出器（Personal Detectorを想定）から人間を隠す（検出できなくする）手法。  
- 検証コード: [adversarial-yolo](https://gitlab.com/EAVISE/adversarial-yolo)  
-
- * [Man-in-the-Middle Attacks against Machine Learning Classifiers via Malicious Generative Models](https://arxiv.org/abs/1910.06838)  
-
- * [Making & Breaking Machine Learning Anomaly Detectors in Real Life](https://www.slideshare.net/codeblue_jp/making-breaking-machine-learning-anomaly-detectors-in-real-life-by-clarence-chio-code-blue-2015)  
- 訓練データに少数の細工データを紛れ込ませることで、決定境界を操作する手法。  
- CODE BLUE 2015でClarence Chio氏により発表された手法。  
- 
- * [Poison Frogs! Targeted Clean-Label Poisoning Attacks on Neural Networks](https://arxiv.org/abs/1804.00792)  
- 訓練データに少数の細工データを紛れ込ませることで、決定境界を操作する手法。  
- Webやメールボックスから定期的にデータを収集して学習するようなモデルを標的にしている。  
- 検証コード: [ashafahi/inceptionv3-transferLearn-poison](https://github.com/ashafahi/inceptionv3-transferLearn-poison)  
-
- * [Manipulating Machine Learning: Poisoning Attacks and Countermeasures for Regression Learning](https://arxiv.org/abs/1804.00308)  
- 線形回帰モデルを標的にしている。  
- 訓練データに細工を加えることで、MLモデルの予測結果を操作する手法。  
-
- * [Data Poisoning Attacks on Stochastic Bandits](https://arxiv.org/abs/1905.06494)  
- TBA  
-
  * [Membership Inference Attacks against Machine Learning Models](https://arxiv.org/abs/1610.05820)  
  攻撃対象モデルの学習データを取得する手法。  
  攻撃対象モデルの入力・出力から独自のモデルを作成し、学習済みのデータと未学習のデータの使用して攻撃対象モデルの挙動を確認する。本論文では、GoogleやAmazonなどの商用サービスで作成されたモデルを使用して本手法を評価している。  
@@ -185,7 +179,6 @@
  機器にレーザを照射し、DNNの隠れ層の計算結果に誤りを生じさせる。  
 
 ## AIの脆弱性診断ツール
-### 未分類
  * [CleverHans](https://github.com/tensorflow/cleverhans)  
  誤認識誘発攻撃に対する耐性を評価するツール。  
 
@@ -193,29 +186,29 @@
  誤認識誘発攻撃に対する耐性を評価するツール。  
 
  * [AutoZOOM: Autoencoder-based Zeroth Order Optimization Method for Attacking Black-box Neural Networks](https://arxiv.org/abs/1805.11770)  
- 画像のAdversarial exampleに対する耐性を評価。  
+ 誤認識誘発攻撃に対する耐性を評価するツール。  
 
  * [Adversarial Robustness Toolbox for Machine Learning Models](https://www.blackhat.com/us-18/arsenal/schedule/index.html#adversarial-robustness-toolbox-for-machine-learning-models---arsenal-theater-demo-12026)  
- 画像のAdversarial exampleに対する耐性を評価。  
+ 誤認識誘発攻撃に対する耐性を評価するツール。  
 
  * [MLSploit: Resilient ML Platform - Advanced Deep Learning Analytic Platform Made Easy for Every Security Researcher](https://www.blackhat.com/us-18/arsenal/schedule/index.html#mlsploit-resilient-ml-platform---advanced-deep-learning-analytic-platform-made-easy-for-every-security-researcher-11798)  
- 画像のAdversarial exampleに対する耐性を評価。  
+ 誤認識誘発攻撃に対する耐性を評価するツール。  
  検証コード: [intel/Resilient-ML-Research-Platform](https://github.com/intel/Resilient-ML-Research-Platform)  
 
  * [ADAGIO: Interactive Experimentation with Adversarial Attack and Defense for Audio](https://arxiv.org/abs/1805.11852)  
- 音声のAdversarial exampleに対する耐性を評価。  
+ 音声の誤認識誘発攻撃に対する耐性を評価するツール。  
 
  * [Deep Pwning](https://github.com/cchio/deep-pwning)  
- 機械学習版のMetasploitを目指したツール。  
- 更新は止まっているようだが、コンセプト等を参考にしたい。  
+ 機械学習版のMetasploit。  
+ 更新は止まっている。  
  検証コード: [cchio/deep-pwning](https://github.com/cchio/deep-pwning)  
 
  * [DeepSec](https://www.computer.org/csdl/proceedings-article/sp/2019/666000a398/19skfzVqzGE)  
- Adversarial Examplesへの耐性をチェックする手法。  
+  誤認識誘発攻撃に対する耐性を評価するツール。  
 
  * [Comprehensive Privacy Analysis of Deep Learning](https://www.computer.org/csdl/proceedings-article/sp/2019/666000b021/19skg8ZskUM)  
- モデルからの情報漏えいの可能性をチェックする手法。  
- スライド: [Comprehensive Privacy Analysis of Deep Learning](https://www.ieee-security.org/TC/SP2019/SP19-Slides-pdfs/Milad_Nasr_-_08-Milad_Nasr-Comprehensive_Privacy_Analysis_of_Deep_Learning_(1).pdf)  
+ AIからの情報漏えいをチェックする手法。  
+ 参考情報: [Comprehensive Privacy Analysis of Deep Learning](https://www.ieee-security.org/TC/SP2019/SP19-Slides-pdfs/Milad_Nasr_-_08-Milad_Nasr-Comprehensive_Privacy_Analysis_of_Deep_Learning_(1).pdf)  
 
 ## 参考情報
  * [ADVERSARIAL MACHINE LEARNING TUTORIAL](https://aaai18adversarial.github.io/)  
