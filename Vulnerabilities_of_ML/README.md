@@ -2,6 +2,14 @@
 
 ## AIの脆弱性
 ### 2020年
+ * (Submitted on 31 Mar 2020) [Inverting Gradients -- How easy is it to break privacy in federated learning?](https://arxiv.org/abs/2003.14053)  
+ 勾配ベースのデータ窃取攻撃。  
+ Federated learningにおいて、勾配を共有する仕組みが安全ではない事を示した研究。共有される勾配から高解像度の入力画像を復元し、DNNのプライバシー侵害が可能であることを実証している。  
+
+ * (Submitted on 30 Mar 2020) [DeepHammer: Depleting the Intelligence of Deep Neural Networks through Targeted Chain of Bit Flips](https://arxiv.org/abs/2003.13746)  
+ ハードウェアレベルの誤認識誘発攻撃。  
+ Row hammerの脆弱性を利用し、DNNモデルの重みビットを反転させることで、DNNモデルの推論精度を低下させる。  
+
  * (Submitted on 28 Mar 2020) [DaST: Data-free Substitute Training for Adversarial Attacks](https://arxiv.org/abs/2003.12703)  
  ブラックボックス設定の誤認識誘発攻撃。  
  既存のブラックボックス誤認識誘発攻撃は、攻撃対象モデルの学習データに近似したデータを用いて（Adversarial Examplesを作成するための）代替モデルを作成しているが、本手法は生成モデル（GAN）で生成したデータを用いるとのこと。本手法で作成したAdversarial ExamplesをMicrosoft Azure上の機械学習モデルに分類させたところ、攻撃成功率は98.35%であったとのこと。実データを使用しないブラックボックス誤認識誘発攻撃はあまり例がない。  
