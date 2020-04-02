@@ -2,7 +2,14 @@
 
 ## AIの脆弱性
 ### 2020年
- * (Submitted on 31 Mar 2020) [Inverting Gradients -- How easy is it to break privacy in federated learning?](https://arxiv.org/abs/2003.14053)  
+ * (Submitted on 1 Apr 2020) [Evading Deepfake-Image Detectors with White- and Black-Box Attacks](https://arxiv.org/abs/2004.00622)  
+ ホワイトボックス/ブラックボックス設定の誤認識誘発攻撃。  
+ DeepFakes検知器を攻撃する手法。1pixelの反転、全体の1%に摂動を加える等、ホワイトボックスとブラックボックス設定の攻撃手法を提案している。  
+
+ * (Submitted on 31 Mar 2020) [Adversarial Attacks on Multivariate Time Series](https://arxiv.org/abs/2004.00410)  
+ TBA.  
+
+* (Submitted on 31 Mar 2020) [Inverting Gradients -- How easy is it to break privacy in federated learning?](https://arxiv.org/abs/2003.14053)  
  勾配ベースのデータ窃取攻撃。  
  Federated learningにおいて、勾配を共有する仕組みが安全ではない事を示した研究。共有される勾配から高解像度の入力画像を復元し、DNNのプライバシー侵害が可能であることを実証している。  
 
