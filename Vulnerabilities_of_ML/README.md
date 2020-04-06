@@ -2,11 +2,16 @@
 
 ## AIの脆弱性
 ### 2020年
- * (Submitted on 1 Apr 2020) [Evading Deepfake-Image Detectors with White- and Black-Box Attacks](https://arxiv.org/abs/2004.00622)  
+ * (last revised 2 Apr 2020) [Real-world adversarial attack on MTCNN face detection system](https://arxiv.org/abs/1910.06261)  
+ 実環境における誤認識誘発攻撃。  
+ 医療用フェイスマスクや頬等に特殊な柄のパッチを貼り付けることで、MTCNNベースの顔検出器による顔検知を回避する手法。デジタルドメインのみならず、実環境でも利用可能。  
+ 検証コード：[Real-world attack on MTCNN face detection system](https://github.com/edosedgar/mtcnnattack)  
+
+* (Submitted on 1 Apr 2020) [Evading Deepfake-Image Detectors with White- and Black-Box Attacks](https://arxiv.org/abs/2004.00622)  
  ホワイトボックス/ブラックボックス設定の誤認識誘発攻撃。  
  DeepFakes検知器を攻撃する手法。1pixelの反転、全体の1%に摂動を加える等、ホワイトボックスとブラックボックス設定の攻撃手法を提案している。  
 
- * (Submitted on 31 Mar 2020) [Adversarial Attacks on Multivariate Time Series](https://arxiv.org/abs/2004.00410)  
+* (Submitted on 31 Mar 2020) [Adversarial Attacks on Multivariate Time Series](https://arxiv.org/abs/2004.00410)  
  TBA.  
 
 * (Submitted on 31 Mar 2020) [Inverting Gradients -- How easy is it to break privacy in federated learning?](https://arxiv.org/abs/2003.14053)  
