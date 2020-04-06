@@ -2,7 +2,7 @@
 
 ## AIの脆弱性
 ### 2020年
- * (last revised 2 Apr 2020) [Real-world adversarial attack on MTCNN face detection system](https://arxiv.org/abs/1910.06261)  
+ * (Last revised 2 Apr 2020) [Real-world adversarial attack on MTCNN face detection system](https://arxiv.org/abs/1910.06261)  
  実環境における誤認識誘発攻撃。  
  医療用フェイスマスクや頬等に特殊な柄のパッチを貼り付けることで、MTCNNベースの顔検出器による顔検知を回避する手法。デジタルドメインのみならず、実環境でも利用可能。  
  検証コード：[Real-world attack on MTCNN face detection system](https://github.com/edosedgar/mtcnnattack)  
