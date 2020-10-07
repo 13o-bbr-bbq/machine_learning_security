@@ -200,7 +200,7 @@ duration: continuous.,protocol_type: symbolic.,service: symbolic.,flag: symbolic
  3. テストデータを使用して侵入検知の可否を観測（モデル評価）
  4. 評価結果の出力
 
-```
+```python
 #!/bin/env python
 # -*- coding: utf-8 -*-
 import time
@@ -256,7 +256,7 @@ print('finish!!')
 scikit-learnの使用方法は[公式ドキュメント](http://scikit-learn.org/)を参照のこと。
 
 ##### パッケージのインポート
-```
+```python
 from sklearn import linear_model
 from sklearn import metrics
 ```
@@ -267,7 +267,7 @@ scikit-learnのロジスティック回帰パッケージ「`linear_model`」を
 また、分類精度を評価するためのパッケージ「`metrics`」も併せてインポートします。  
 
 ##### 学習データのロード
-```
+```python
 # Load train data
 df_train = pd.read_csv('..\\dataset\\kddcup_train.csv')
 X_train = df_train.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]  # feature(X)
@@ -283,7 +283,7 @@ y_train = df_train.iloc[:, [41]]                            # label(y)
 | 尺度が異なるデータ値を```0～1```等の一定の範囲に収まるように加工し、各特徴量の尺度を統一する手法。分類結果が数値的に大きな特徴量に大きく左右されることを防ぐ。正規化することで、学習精度が向上する場合がある。|
 
 ##### テストデータのロード
-```
+```python
 # Load test data
 df_test = pd.read_csv('..\\dataset\\kddcup_test.csv')
 X_test = df_test.iloc[:, [0, 7, 10, 11, 13, 35, 37, 39]]
@@ -294,7 +294,7 @@ y_test = df_test.iloc[:, [41]]
 テストデータを学習データと同様に取得します（`X_test`、`y_test`）。  
 
 ##### モデルの定義
-```
+```python
 logreg = linear_model.LogisticRegression(C=1e5)
 ```
 
@@ -306,35 +306,35 @@ logreg = linear_model.LogisticRegression(C=1e5)
 | 機械学習において過学習を抑えるための手法。|
 
 ##### モデルの作成（学習の実行）
-```
+```python
 logreg.fit(X_train, y_train)
 ```
 
 `logreg`の`fit`メソッドの引数として、各特徴量「`X_train`」とラベル「`y_train`」を渡すことで、学習が行われます。これにより、ロジスティック回帰モデルが作成されます。  
 
 ##### 分類確率の取得
-```
+```python
 probs = logreg.predict_proba(X_test)
 ```
 
 モデル`logreg`の`predict_proba`メソッドの引数としてテストデータ「`X_test`」を渡すことで、モデルがテストデータの分類を行い、分類確率「`probs`」を返します。
 
 ##### 分類結果の取得
-```
+```python
 y_pred = logreg.predict(X_test)
 ```
 
 モデル`logreg`の`predict`メソッドの引数としてテストデータ「`X_test`」を渡すことで、モデルがテストデータの分類を行い、分類結果「`y_pred`」を返します。  
 
 ##### モデルの評価
-```
+```python
 print('score : {0}'.format(metrics.accuracy_score(y_test, y_pred)))
 ```
 
 モデルが分類した結果「`y_pred`」と、予め用意したラベル「`y_test`」を`metrics.accuracy_score`メソッドの引数として渡すことで、モデルの分類結果とラベルの一致度合（分類精度）を計測することができます。  
 
 ##### 分類結果の出力
-```
+```python
 for predict, prob in zip(y_pred, probs):
     print('{0}\t{1}\t{2}'.format(y_test.iloc[idx, [0]].values[0], predict, np.max(prob)))
     idx += 1
@@ -345,7 +345,7 @@ for predict, prob in zip(y_pred, probs):
 #### 1.3.4.3. 実行結果
 このサンプルコードを実行すると、以下の結果がコンソール上に出力されます。  
 
-```
+```python
 train_time   : 10.235417526819267 [sec]
 predict_time : 0.023557101303234518 [sec]
 score : 0.8996588708933895
