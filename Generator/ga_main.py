@@ -11,6 +11,8 @@ import configparser
 import pandas as pd
 from decimal import Decimal
 from util import Utilty
+import urllib
+import urllib.parse
 
 # Type of printing.
 OK = 'ok'         # [*]
@@ -97,11 +99,20 @@ class GeneticAlgorithm:
     # Evaluation.
     def evaluation(self, obj_ga, df_gene, eval_place, individual_idx):
         # Build html syntax.
-        indivisual = self.util.transform_gene_num2str(df_gene, obj_ga.genom_list)
-        html = self.template.render({eval_place: indivisual})
+        individual = self.util.transform_gene_num2str(df_gene, obj_ga.genom_list)
+        encoded_individual = urllib.parse.quote(individual)
+        
+        html = self.template.render({eval_place: individual})
         eval_html_path = self.util.join_path(self.html_dir, self.html_file.replace('*', str(individual_idx)))
+        
+        encoded_html = self.template.render({eval_place: encoded_individual})
+        encoded_eval_html_path = self.util.join_path(self.html_dir, self.html_file.replace('*', 'Encoded'+str(individual_idx)))
+                
         with codecs.open(eval_html_path, 'w', encoding='utf-8') as fout:
             fout.write(html)
+            
+        with codecs.open(encoded_eval_html_path, 'w', encoding='utf-8') as fout:
+            fout.write(encoded_html)
 
         # Evaluate html syntax using tidy.
         command = self.html_checker + ' ' + self.html_checker_option + ' ' + \
@@ -131,25 +142,23 @@ class GeneticAlgorithm:
 
         # Evaluate running script using selenium.
         selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser, eval_html_path)
-        if error_flag:
+        
+        # Evaluate the running encoded script using selenium
+        encoded_selenium_score, encoded_error_flag = self.util.check_individual_selenium(self.obj_browser, eval_html_path)
+        
+        if error_flag and encoded_error_flag:
             return None, 1
 
         # Check result of selenium.
-        if selenium_score > 0:
-            self.util.print_message(OK, 'Detect running script: "{}" in {}.'.format(indivisual, eval_place))
+        if selenium_score > 0 or encoded_selenium_score > 0:
+            self.util.print_message(OK, 'Detect running script: "{}" in {}.'.format(individual, eval_place))
 
             # compute score for running script.
             int_score += self.bingo_score
-            self.result_list.append([eval_place, obj_ga.genom_list, indivisual])
+            self.result_list.append([eval_place, obj_ga.genom_list, individual, encoded_individual])
 
             # Output evaluation results.
-            self.util.print_message(OK, 'Evaluation result : Browser={} {}, '
-                                        'Individual="{} ({})", '
-                                        'Score={}'.format(self.obj_browser.name,
-                                                          self.obj_browser.capabilities['version'],
-                                                          indivisual,
-                                                          obj_ga.genom_list,
-                                                          str(int_score)))
+            self.util.print_message(OK, 'Evaluation result : Browser={} {}, ''Individual="{} ({})", ''Score={}'.format(self.obj_browser.name,self.obj_browser.capabilities['version'],individual,obj_ga.genom_list,str(int_score)))
         return int_score, 0
 
     # Select elite individual.
@@ -219,12 +228,9 @@ class GeneticAlgorithm:
         # Create saving file (only header).
         save_path = self.util.join_path(self.result_dir, self.result_file.replace('*', self.obj_browser.name))
         if os.path.exists(save_path) is False:
-            pd.DataFrame([], columns=['eval_place', 'sig_vector', 'sig_string']).to_csv(save_path,
-                                                                                        mode='w',
-                                                                                        header=True,
-                                                                                        index=False)
+            pd.DataFrame([], columns=['eval_place', 'sig_vector', 'sig_string', 'encoded_string']).to_csv(save_path,mode='w',header=True,index=False)
 
-        # Evaluate indivisual each evaluating place in html.
+        # Evaluate individual each evaluating place in html.
         for eval_place in self.html_eval_place_list:
             self.util.print_message(NOTE, 'Evaluating html place : {}'.format(eval_place))
 
@@ -238,22 +244,16 @@ class GeneticAlgorithm:
             for int_count in range(1, self.max_generation + 1):
                 self.util.print_message(NOTE, 'Evaluate individual : {}/{} generation.'.format(str(int_count),
                                                                                                self.max_generation))
-                for indivisual, idx in enumerate(range(self.max_genom_list)):
+                for individual, idx in enumerate(range(self.max_genom_list)):
                     self.util.print_message(OK, 'Evaluation individual in {}: '
-                                                '{}/{} in {} generation'.format(eval_place,
-                                                                                indivisual + 1,
-                                                                                self.max_genom_list,
-                                                                                str(int_count)))
-                    evaluation_result, eval_status = self.evaluation(current_generation[indivisual],
-                                                                     df_genes,
-                                                                     eval_place,
-                                                                     idx)
+                                                '{}/{} in {} generation'.format(eval_place,individual + 1,self.max_genom_list,str(int_count)))
+                    evaluation_result, eval_status = self.evaluation(current_generation[individual],df_genes,eval_place,idx)
 
                     idx += 1
                     if eval_status == 1:
-                        indivisual -= 1
+                        individual -= 1
                         continue
-                    current_generation[indivisual].setEvaluation(evaluation_result)
+                    current_generation[individual].setEvaluation(evaluation_result)
                     time.sleep(self.wait_time)
 
                 # Select elite's individual.
@@ -265,15 +265,10 @@ class GeneticAlgorithm:
                     progeny_gene.extend(self.crossover(elite_genes[i - 1], elite_genes[i]))
 
                 # Select elite group.
-                next_generation_individual_group = self.next_generation_gene_create(current_generation,
-                                                                                    elite_genes,
-                                                                                    progeny_gene)
+                next_generation_individual_group = self.next_generation_gene_create(current_generation,elite_genes,progeny_gene)
 
                 # Mutation
-                next_generation_individual_group = self.mutation(next_generation_individual_group,
-                                                                 self.individual_mutation_rate,
-                                                                 self.genom_mutation_rate,
-                                                                 df_genes)
+                next_generation_individual_group = self.mutation(next_generation_individual_group,self.individual_mutation_rate,self.genom_mutation_rate,df_genes)
 
                 # Finish evolution computing for current generation.
                 # Arrange fitness each individual.
@@ -281,11 +276,7 @@ class GeneticAlgorithm:
 
                 # evaluate evolution result.
                 flt_avg = sum(fits) / float(len(fits))
-                self.util.print_message(NOTE, '{} generation result: '
-                                              'Min={}, Max={}, Avg={}.'.format(int_count,
-                                                                               min(fits),
-                                                                               max(fits),
-                                                                               flt_avg))
+                self.util.print_message(NOTE, '{} generation result: ''Min={}, Max={}, Avg={}.'.format(int_count,min(fits),max(fits),flt_avg))
 
                 # Judge fitness.
                 if flt_avg > self.max_fitness:
