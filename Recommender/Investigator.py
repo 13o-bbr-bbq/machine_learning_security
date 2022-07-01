@@ -164,9 +164,7 @@ class Investigate:
         str_seek_after = self.gen_rand_str(3)
         str_signature = str(self.obj_signatures['Signature'][int_idx])
         lst_signatures = str_signature.split('|')
-        str_inspect_value = ''
-        for elem in lst_signatures:
-            str_inspect_value += elem
+        str_inspect_value = ''.join(lst_signatures)
         str_inspect = str_seek_before + dict_craft_params[str_param][0] + str_inspect_value + str_seek_after
         dict_craft_params[str_param] = str_inspect
         obj_session = Session()
