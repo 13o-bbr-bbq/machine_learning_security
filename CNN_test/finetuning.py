@@ -15,6 +15,8 @@ batch_size = 32
 nb_classes = len(classes)
 
 # CIFAR10の画像情報(x:32pic, y:32pic, channel:3)
+
+The batch_size of 32 is a common choice for training convolutional neural networks on the CIFAR-10 dataset. It strikes a balance between computational efficiency and model performance.
 img_rows, img_cols = 32, 32
 channels = 3
 
