@@ -12,7 +12,7 @@ classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck']
 
 batch_size = 32
-nb_classes = len(classes)
+num_classes = len(classes)
 
 # CIFAR10の画像情報(x:32pic, y:32pic, channel:3)
 img_rows, img_cols = 32, 32
