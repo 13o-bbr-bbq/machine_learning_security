@@ -22,7 +22,7 @@ Source codes about machine learning and security.
  Recommend optimal injection code for detecting web app vulnerabilities.
  * [SAIVS (Spider Artificial Intelligence Vulnerability Scanner)](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Saivs)  
  SAIVS is an artificial intelligence to find vulnerabilities in Web applications.  
- SAIVS was presented at **[Black Hat ASIA 2016 Arsenal](http://www.blackhat.com/asia-16/arsenal.html#saivs-spider-artificial-intelligence-vulnerability-scanner)**.  
+ SAIVS was presented at **[Black Hat ASIA 2016 Arsenal](http://www.blackhat.com/asia-16/arsenal.html#saivs-spider-artificial-intelligence-vulnerability-scanner)** and Black Hat ASIA 2018 Arsenal.  
 
 ## Contact us
 
