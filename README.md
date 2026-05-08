@@ -1,5 +1,5 @@
 # Machine Learning and Security
-Source codes about machine learning and security.
+Source code about machine learning and security.
 
 ## Line up.
  * [Cyber security and Machine Learning course](https://github.com/13o-bbr-bbq/machine_learning_security/tree/master/Security_and_MachineLearning)  
