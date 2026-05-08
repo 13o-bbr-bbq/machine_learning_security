@@ -11,7 +11,7 @@ from keras.layers import Input, Dropout, Flatten, Dense
 from keras.preprocessing import image
 
 # 検証対象のクラス
-CLASS = 'cat'
+class_name = 'cat'
 TEST_DIR = 'cifar10\\test_image\\' + CLASS + '\\'
 ADV_DIR = 'results\\' + CLASS + '\\'
 TEST_IMAGES = 1000
