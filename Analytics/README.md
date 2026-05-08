@@ -18,7 +18,7 @@
 
 ## Licence
 
-[Apache License 2.0](https://github.com/13o-bbr-bbq/machine_learning_security/blob/master/Analytics/LICENSE)
+[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0)
 
 ## Author
 
