@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
-# Cluster number using k-means.
+# Number of clusters used in KMeans clustering.
 CLUSTER_NUM = 5
 
 # Load data.
