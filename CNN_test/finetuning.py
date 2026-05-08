@@ -11,7 +11,7 @@ from keras import optimizers
 classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck']
 
-batch_size = 32
+# batch_size: The number of samples per batch for training and validation.
 nb_classes = len(classes)
 
 # CIFAR10の画像情報(x:32pic, y:32pic, channel:3)
