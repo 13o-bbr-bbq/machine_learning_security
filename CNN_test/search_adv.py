@@ -35,7 +35,7 @@ def random_adv(perturbation_filename, p):
 
         # ピクセル値の細工
         pixel = img[y, x]
-        average = sum(pixel) / len(pixel)
+        average = np.mean(pixel)
 
         if average < 128:
             img[y, x] = [0, 0, 0]
