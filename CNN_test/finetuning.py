@@ -8,6 +8,7 @@ from keras import optimizers
 
 
 # CIFAR10のクラス一覧
+
 classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck']
 
