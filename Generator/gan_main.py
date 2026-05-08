@@ -13,6 +13,8 @@ from keras.layers.advanced_activations import LeakyReLU
 from keras.layers import Dropout
 from keras import backend as K
 from util import Utilty
+import urllib
+import urllib.parse
 
 # Type of printing.
 OK = 'ok'         # [*]
@@ -157,36 +159,40 @@ class GAN:
                             gene_num -= 1
                         lst_genom.append(int(gene_num))
                     str_html = self.util.transform_gene_num2str(self.df_genes, lst_genom)
-                    self.util.print_message(OK, 'Train GAN : epoch={}, batch={}, g_loss={}, d_loss={}, {} ({})'.
-                                            format(epoch, batch, g_loss, d_loss,
-                                                   np.round((generated_code * self.flt_size) + self.flt_size),
-                                                   str_html))
+                    encoded_str_html = urllib.parse.quote(str_html)
+
+                    self.util.print_message(OK, 'Train GAN : epoch={}, batch={}, g_loss={}, d_loss={}, {} ({})'.format(epoch, batch, g_loss, d_loss,np.round((generated_code * self.flt_size) + self.flt_size),str_html))
 
                     # Evaluate generated injection code.
                     for eval_place in self.eval_place_list:
-                        # Build html syntax.
+                        # Build html syntax using str_html.
                         html = self.template.render({eval_place: str_html})
                         with codecs.open(self.eval_html_path, 'w', encoding='utf-8') as fout:
                             fout.write(html)
 
                         # Evaluate individual using selenium.
-                        selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser,
-                                                                                         self.eval_html_path)
-                        if error_flag:
+                        selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser,self.eval_html_path)
+                        
+                        # Build html syntax using encoded_str_html.
+                        html = self.template.render({eval_place: encoded_str_html})
+                        with codecs.open(self.eval_html_path, 'w', encoding='utf-8') as fout:
+                            fout.write(html)
+
+                        # Evaluate encoded individual using selenium.
+                        encoded_selenium_score, encoded_error_flag = self.util.check_individual_selenium(self.obj_browser,self.eval_html_path)
+                        
+                        if error_flag and encoded_error_flag:
                             continue
 
                         # Check generated individual using selenium.
-                        if selenium_score > 0:
-                            self.util.print_message(WARNING, 'Detect running script: "{}" in {}.'.format(str_html,
-                                                                                                         eval_place))
+                        if selenium_score > 0 or encoded_selenium_score > 0:
+                            self.util.print_message(WARNING, 'Detect running script: "{}" in {}.'.format(str_html,eval_place))
                             # Save running script.
-                            lst_scripts.append([eval_place, str_html])
+                            lst_scripts.append([eval_place, str_html, encoded_str_html])
 
             # Save weights of network each epoch.
-            self.generator.save_weights(self.util.join_path(self.weight_dir,
-                                                            self.gen_weight_file.replace('*', str(epoch))))
-            discriminator.save_weights(self.util.join_path(self.weight_dir,
-                                                           self.dis_weight_file.replace('*', str(epoch))))
+            self.generator.save_weights(self.util.join_path(self.weight_dir,self.gen_weight_file.replace('*', str(epoch))))
+            discriminator.save_weights(self.util.join_path(self.weight_dir,self.dis_weight_file.replace('*', str(epoch))))
 
         return lst_scripts
 
@@ -221,37 +227,42 @@ class GAN:
             valid_code_list = []
             result_list = []
             for idx in range(self.max_explore_codes_num):
-                self.util.print_message(NOTE, '{}/{} Explore valid injection code.'.format(idx + 1,
-                                                                                           self.max_explore_codes_num))
+                self.util.print_message(NOTE, '{}/{} Explore valid injection code.'.format(idx + 1,self.max_explore_codes_num))
                 # Generate injection codes.
                 noise = np.array([np.random.uniform(-1, 1, self.input_size) for _ in range(1)])
                 generated_codes = self.generator.predict(noise, verbose=0)
                 str_html = self.util.transform_gene_num2str(self.df_genes, self.transform_code2gene(generated_codes[0]))
-
+                encoded_str_html = urllib.parse.quote(str_html)
+                
                 # Evaluate injection code using selenium.
                 for eval_place in self.eval_place_list:
+                    #checking the str_html
                     html = self.template.render({eval_place: str_html})
                     with codecs.open(self.eval_html_path, 'w', encoding='utf-8') as fout:
                         fout.write(html)
 
-                    selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser,
-                                                                                     self.eval_html_path)
-                    if error_flag:
+                    selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser,self.eval_html_path)
+                    
+                    #checking the encoded_str_html
+                    html = self.template.render({eval_place: encoded_str_html})
+                    with codecs.open(self.eval_html_path, 'w', encoding='utf-8') as fout:
+                        fout.write(html)
+
+                    encoded_selenium_score, encoded_error_flag = self.util.check_individual_selenium(self.obj_browser,self.eval_html_path)
+                    
+                    
+                    if error_flag and encoded_error_flag:
                         continue
 
                     # Check generated injection code.
-                    if selenium_score > 0:
-                        self.util.print_message(WARNING, 'Find valid injection code: "{}" in {}.'.format(str_html,
-                                                                                                         eval_place))
+                    if selenium_score > 0 or encoded_selenium_score > 0:
+                        self.util.print_message(WARNING, 'Find valid injection code: "{}" in {}.'.format(str_html,eval_place))
                         valid_code_list.append([str_html, noise])
-                        result_list.append([eval_place, str_html])
+                        result_list.append([eval_place, str_html, encoded_str_html])
 
             # Save generated injection codes.
             if os.path.exists(gan_save_path) is False:
-                pd.DataFrame(result_list, columns=['eval_place', 'injection_code']).to_csv(gan_save_path,
-                                                                                           mode='w',
-                                                                                           header=True,
-                                                                                           index=False)
+                pd.DataFrame(result_list, columns=['eval_place', 'injection_code', 'encoded_injection_code']).to_csv(gan_save_path,mode='w',header=True,index=False)
             else:
                 pd.DataFrame(result_list).to_csv(gan_save_path, mode='a', header=False, index=False)
 
@@ -268,38 +279,41 @@ class GAN:
                 synthesized_noise = self.vector_mean(valid_code_list[noise_idx1][1], valid_code_list[noise_idx2][1])
                 generated_codes = self.generator.predict(synthesized_noise, verbose=0)
                 str_html = self.util.transform_gene_num2str(self.df_genes, self.transform_code2gene(generated_codes[0]))
-
+                encoded_str_html = urllib.parse.quote(str_html)
+                
                 # Evaluate synthesized injection code using selenium.
                 for eval_place in self.eval_place_list:
                     hit_flag = 'Failure'
+                    
+                    # evaluating str_html
                     html = self.template.render({eval_place: str_html})
                     with codecs.open(self.eval_html_path, 'w', encoding='utf-8') as fout:
                         fout.write(html)
 
-                    selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser,
-                                                                                     self.eval_html_path)
-                    if error_flag:
+                    selenium_score, error_flag = self.util.check_individual_selenium(self.obj_browser,self.eval_html_path)
+                    
+                    # evaluating encoded_str_html
+                    html = self.template.render({eval_place: encoded_str_html})
+                    with codecs.open(self.eval_html_path, 'w', encoding='utf-8') as fout:
+                        fout.write(html)
+
+                    encoded_selenium_score, encoded_error_flag = self.util.check_individual_selenium(self.obj_browser,self.eval_html_path)
+                    
+                    
+                    if error_flag and encoded_error_flag:
                         continue
 
                     # Check synthesized injection code using selenium.
-                    if selenium_score > 0:
+                    if selenium_score > 0 or encoded_selenium_score > 0:
                         self.util.print_message(WARNING, 'Find running script: "{}".'.format(str_html))
                         hit_flag = 'Bingo'
 
                     # Save running script.
-                    vector_result_list.append([eval_place, str_html,
-                                               valid_code_list[noise_idx1][0],
-                                               valid_code_list[noise_idx2][0],
-                                               hit_flag])
+                    vector_result_list.append([eval_place, str_html, encoded_str_html,valid_code_list[noise_idx1][0],valid_code_list[noise_idx2][0],hit_flag])
 
             # Save synthesized injection codes.
             if os.path.exists(vec_save_path) is False:
-                pd.DataFrame(vector_result_list,
-                             columns=['eval_place', 'synthesized_code',
-                                      'origin_code1', 'origin_code2', 'bingo']).to_csv(vec_save_path,
-                                                                                       mode='w',
-                                                                                       header=True,
-                                                                                       index=False)
+                pd.DataFrame(vector_result_list,columns=['eval_place', 'synthesized_code', 'encoded_synthesized_code','origin_code1', 'origin_code2', 'bingo']).to_csv(vec_save_path,mode='w',header=True,index=False)
             else:
                 pd.DataFrame(vector_result_list).to_csv(vec_save_path, mode='a', header=False, index=False)
         else:
@@ -324,10 +338,7 @@ class GAN:
 
             # Save generated injection codes.
             if os.path.exists(gan_save_path) is False:
-                pd.DataFrame(lst_scripts, columns=['eval_place', 'injection_code']).to_csv(gan_save_path,
-                                                                                           mode='w',
-                                                                                           header=True,
-                                                                                           index=False)
+                pd.DataFrame(lst_scripts, columns=['eval_place', 'injection_code', 'encoded_injection_code']).to_csv(gan_save_path,mode='w',header=True,index=False)
             else:
                 pd.DataFrame(lst_scripts).to_csv(gan_save_path, mode='a', header=False, index=False)
 
