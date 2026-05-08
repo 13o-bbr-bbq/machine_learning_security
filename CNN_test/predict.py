@@ -46,7 +46,7 @@ if sys.argv[1] == '':
 # 画像を4次元テンソルに変換
 img = image.load_img(sys.argv[1], target_size=(img_height, img_width))
 x = image.img_to_array(img)
-x = np.expand_dims(x, axis=0)
+img_data = np.expand_dims(x, axis=0)
 x = x / 255.0
 
 # クラスの予測(top3を出力)
