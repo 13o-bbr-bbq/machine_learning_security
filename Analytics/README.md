@@ -13,6 +13,7 @@
 * numpy 1.11.3
 * scikit-learn 0.18.1
 
+
 ## Inquiry
 [takaesu235@gmail.com](<mailto:takaesu235@gmail.com>)
 
