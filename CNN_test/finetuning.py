@@ -12,6 +12,7 @@ classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck']
 
 batch_size = 32
+# The batch size determines how many images are processed at once during training. A larger batch size can speed up the training process but requires more memory.
 nb_classes = len(classes)
 
 # CIFAR10の画像情報(x:32pic, y:32pic, channel:3)
