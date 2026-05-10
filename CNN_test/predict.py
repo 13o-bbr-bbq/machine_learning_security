@@ -10,7 +10,7 @@ from keras.preprocessing import image
 # CIFAR10のクラス一覧
 classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
            'dog', 'frog', 'horse', 'ship', 'truck']
-nb_classes = len(classes)
+num_classes = len(classes)
 
 # CIFAR10の画像情報(x:32pic, y:32pic, channel:3)
 img_height, img_width = 32, 32
