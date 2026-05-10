@@ -73,7 +73,7 @@ if __name__ == "__main__":
     # CIFAR10のクラス一覧
     classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
                'dog', 'frog', 'horse', 'ship', 'truck']
-    nb_classes = len(classes)
+    batch_size = len(classes)
 
     # CIFAR10の画像情報(x:32pixel, y:32pixel, channel:3)
     img_height, img_width = 32, 32
