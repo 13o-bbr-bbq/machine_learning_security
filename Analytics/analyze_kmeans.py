@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 
 # Cluster number using k-means.
-CLUSTER_NUM = 5
+NUM_CLUSTERS = 5
 
 # Load data.
 df_kddcup = pd.read_csv('.\\dataset\\kddcup.data_small.csv')
